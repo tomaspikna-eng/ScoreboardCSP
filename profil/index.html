@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>CSP – Profil používateľa</title>
+<style>
+:root{
+  --bg:#050505;
+  --bg2:#0b0b0b;
+  --line:rgba(255,255,255,.08);
+  --line-soft:rgba(255,255,255,.05);
+  --text:#f4f4f4;
+  --muted:#a7a7a7;
+  --gold:#d8b04b;
+  --green:#22d36b;
+  --blue:#6ea8ff;
+  --shadow:0 20px 60px rgba(0,0,0,.34);
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  min-height:100vh;
+  font-family:Inter,Arial,Helvetica,sans-serif;
+  color:var(--text);
+  background:
+    radial-gradient(circle at top center, rgba(216,176,75,.08), transparent 26%),
+    linear-gradient(180deg,var(--bg2) 0%,var(--bg) 100%);
+}
+a{text-decoration:none;color:inherit}
+button,input,select{font:inherit}
+.page{
+  width:min(1460px,calc(100% - 32px));
+  margin:24px auto 40px;
+  display:grid;
+  gap:18px;
+}
+.panel{
+  border:1px solid var(--line);
+  border-radius:28px;
+  background:linear-gradient(180deg,rgba(255,255,255,.03),rgba(255,255,255,.015));
+  box-shadow:var(--shadow);
+}
+.card{
+  border:1px solid var(--line);
+  border-radius:22px;
+  background:rgba(255,255,255,.02);
+  padding:16px;
+}
+.panel-inner{padding:18px}
+.section-title{margin:0 0 12px;font-size:1.04rem;color:var(--gold)}
+.name{margin:0;font-size:2.3rem;letter-spacing:-.05em;color:var(--gold);line-height:1}
+.sub{color:var(--muted);font-size:.95rem;margin:0}
+.tag-row,.top-actions,.mini-actions,.hero-cta{display:flex;gap:8px;flex-wrap:wrap}
+.tag{
+  display:inline-flex;
+  align-items:center;
+  min-height:30px;
+  padding:0 10px;
+  border-radius:999px;
+  border:1px solid var(--line);
+  background:rgba(255,255,255,.03);
+  color:#ddd;
+  font-size:.78rem;
+  font-weight:800;
+}
+.tag.gold{color:var(--gold);border-color:rgba(216,176,75,.22);background:rgba(216,176,75,.08)}
+.tag.green{color:#c8ffdc;border-color:rgba(34,211,107,.24);background:rgba(34,211,107,.10)}
+.stat{
+  border:1px solid var(--line);
+  border-radius:18px;
+  background:rgba(255,255,255,.02);
+  padding:14px;
+}
+.stat small,.section-title small,.field label,.status-box small{
+  display:block;
+  color:#8f8f8f;
+  font-size:.66rem;
+  font-weight:800;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+  margin-bottom:6px;
+}
+.stat strong,.status-box strong{display:block;font-size:1.15rem;color:var(--text)}
+.grid-6{display:grid;grid-template-columns:repeat(6,1fr);gap:12px;padding:18px}
+.grid-2{display:grid;grid-template-columns:1.2fr .8fr;gap:18px}
+.performance-grid{display:grid;grid-template-columns:1fr 320px;gap:14px}
+.form-box{display:grid;gap:10px}
+.field input,.field select{
+  width:100%;
+  min-height:46px;
+  border-radius:14px;
+  border:1px solid var(--line);
+  background:rgba(255,255,255,.02);
+  color:var(--text);
+  padding:0 14px;
+  outline:none;
+  font:inherit;
+}
+.mini-stats{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.form-strip{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-top:2px}
+.recent-form{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
+.form-pill{min-height:42px;display:grid;place-items:center;border-radius:12px;border:1px solid var(--line);font-weight:900}
+.win{background:rgba(34,211,107,.12); color:#c8ffdc; border-color:rgba(34,211,107,.24)}
+.loss{background:rgba(217,106,106,.12); color:#ffd0d0; border-color:rgba(217,106,106,.22)}
+.table-wrap{border:1px solid var(--line);border-radius:18px;overflow:auto;background:rgba(255,255,255,.02)}
+table{width:100%;border-collapse:collapse;min-width:980px}
+thead th{text-align:left;padding:14px 12px;font-size:.74rem;text-transform:uppercase;letter-spacing:.12em;color:#8f8f8f;background:rgba(0,0,0,.22);border-bottom:1px solid var(--line)}
+tbody td{padding:14px 12px;border-bottom:1px solid var(--line-soft);vertical-align:middle;font-size:.92rem}
+tbody tr:hover{background:rgba(255,255,255,.02)}
+.place{font-weight:900;color:var(--gold)}
+.achievements{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.achievement{border:1px solid var(--line);border-radius:18px;background:rgba(255,255,255,.02);padding:14px;display:grid;gap:8px}
+.achievement-icon{width:44px;height:44px;border-radius:14px;display:grid;place-items:center;background:rgba(216,176,75,.08);border:1px solid rgba(216,176,75,.2);color:var(--gold);font-weight:900}
+.settings-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.now-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:14px}
+.status-box{padding:14px;border-radius:18px;border:1px solid var(--line);background:rgba(255,255,255,.02)}
+.btn{
+  min-height:44px;
+  padding:0 14px;
+  border:none;
+  border-radius:14px;
+  font:inherit;
+  font-weight:900;
+  cursor:pointer;
+}
+.btn-green{background:var(--green);color:#06230f}
+.btn-dark{background:rgba(255,255,255,.04);color:var(--text);border:1px solid var(--line)}
+.btn-blue{background:rgba(110,168,255,.14);color:#d7e8ff;border:1px solid rgba(110,168,255,.22)}
+.btn-red{background:rgba(239,90,79,.12);border:1px solid rgba(239,90,79,.2);color:#ffd0ce}
+.muted{color:var(--muted)}
+.hero{
+  padding:20px;
+  display:grid;
+  gap:18px;
+}
+.hero-top{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:18px;
+  flex-wrap:wrap;
+}
+.hero-main{
+  display:flex;
+  align-items:center;
+  gap:18px;
+  flex-wrap:wrap;
+}
+.avatar-wrap{
+  width:154px;
+  height:154px;
+  border-radius:50%;
+  padding:5px;
+  background:linear-gradient(135deg,var(--gold),rgba(110,168,255,.95));
+  box-shadow:0 0 0 1px rgba(216,176,75,.24);
+}
+.avatar-wrap img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  border-radius:50%;
+  display:block;
+  background:#0a0a0a;
+}
+.hero-info{
+  display:grid;
+  gap:8px;
+}
+.plan-pill{
+  display:inline-flex;
+  align-items:center;
+  width:max-content;
+  padding:4px 16px;
+  border-radius:999px;
+  font-size:.78rem;
+  font-weight:900;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+}
+.plan-free{background:rgba(255,255,255,.06);border:1px solid var(--line);color:var(--muted)}
+.plan-pro{background:rgba(34,211,107,.12);border:1px solid rgba(34,211,107,.3);color:var(--green)}
+.plan-ultra{background:rgba(216,176,75,.12);border:1px solid rgba(216,176,75,.3);color:var(--gold)}
+.hero-side{
+  display:grid;
+  grid-template-columns:repeat(4, minmax(120px,1fr));
+  gap:10px;
+  width:100%;
+}
+.hero-stat{
+  border:1px solid var(--line);
+  border-radius:18px;
+  background:rgba(255,255,255,.02);
+  padding:14px;
+}
+.hero-stat small{
+  display:block;
+  color:#8f8f8f;
+  font-size:.66rem;
+  font-weight:800;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+  margin-bottom:6px;
+}
+.hero-stat strong{display:block;font-size:1.05rem}
+.hero-lock{
+  font-size:.78rem;
+  color:var(--muted);
+}
+.hero-lock a{color:var(--gold)}
+@media (max-width:1200px){
+  .grid-6{grid-template-columns:repeat(3,1fr)}
+  .grid-2,.now-grid{grid-template-columns:1fr}
+  .performance-grid{grid-template-columns:1fr}
+  .achievements{grid-template-columns:repeat(2,1fr)}
+  .form-strip{grid-template-columns:repeat(3,1fr)}
+  .hero-side{grid-template-columns:repeat(2,1fr)}
+}
+@media (max-width:760px){
+  .grid-6,.settings-grid,.mini-stats,.form-strip{grid-template-columns:1fr 1fr}
+  .achievements{grid-template-columns:1fr}
+  .name{font-size:1.8rem}
+  .hero-side{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<div class="page">
+
+<section class="panel hero">
+  <div class="hero-top">
+    <div class="hero-main">
+      <div style="display:flex;flex-direction:column;align-items:center;gap:10px">
+        <div class="avatar-wrap">
+          <img src="a_digital_illustration_showcases_a_billiard_8_ball.png" id="avatarImg" alt="Avatar">
+        </div>
+        <div style="display:flex;gap:8px">
+          <label for="photoInput" class="btn btn-dark" style="min-height:36px;padding:0 12px;font-size:.8rem;cursor:pointer;display:inline-flex;align-items:center;gap:6px">📷 Foto</label>
+          <input type="file" id="photoInput" accept="image/jpeg,image/png,image/webp" style="display:none">
+        </div>
+      </div>
+
+      <div class="hero-info">
+        <h1 class="name" id="profileName">Tomáš Pikna</h1>
+        <div class="plan-pill plan-free" id="planPill">Free</div>
+        <p class="sub" id="profileSub">Kanianka • Slovensko</p>
+        <div class="tag-row" id="tagRow">
+          <span class="tag">Biliard</span>
+          <span class="tag">8-Ball</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="top-actions">
+      <a href="/nastavenie-profilu/" class="btn btn-dark" style="display:inline-flex;align-items:center;gap:8px;text-decoration:none">⚙️ Nastavenia</a>
+      <button id="logoutBtn" class="btn btn-red" style="display:inline-flex;align-items:center;gap:8px">🚪 Odhlásiť</button>
+    </div>
+  </div>
+
+  <div class="hero-cta">
+    <a href="/trening/" class="btn btn-green" style="display:inline-flex;align-items:center;gap:8px;text-decoration:none">▶ Spustiť tréning</a>
+    <a id="btnUdalost" href="/nastavenie-turnaja/" class="btn btn-dark" style="display:inline-flex;align-items:center;gap:8px;text-decoration:none;opacity:.4;pointer-events:none">📅 Pridať udalosť</a>
+    <a id="btnTurnaj" href="/nastavenie-turnaja/" class="btn btn-dark" style="display:inline-flex;align-items:center;gap:8px;text-decoration:none;opacity:.4;pointer-events:none">🏆 Nastaviť turnaj</a>
+  </div>
+
+  <div class="hero-side">
+    <div class="hero-stat"><small>Rebríčkové body</small><strong>0</strong></div>
+    <div class="hero-stat"><small>Turnaje celkom</small><strong>0</strong></div>
+    <div class="hero-stat"><small>Výhry</small><strong>0</strong></div>
+    <div class="hero-stat"><small>Tituly</small><strong>0</strong></div>
+  </div>
+
+  <div class="hero-lock" id="lockNote">🔒 Pre <a href="/cennik/">Pro / Ultra</a></div>
+</section>
+
+<section class="panel">
+  <div class="panel-inner">
+    <h2 class="section-title">Profil</h2>
+    <div class="form-box">
+      <div class="field"><label>Prezývka / meno</label><input id="fName" value="Tomáš Pikna" /></div>
+      <div class="form-strip">
+        <div class="field"><label>Mesto</label><input id="fCity" value="Kanianka" /></div>
+        <div class="field"><label>Krajina</label><input id="fCountry" value="Slovensko" /></div>
+        <div class="field"><label>Klub</label><input id="fClub" value="Moment Club" /></div>
+        <div class="field"><label>Hlavný šport</label><select id="fSport"><option value="biliard" selected>Biliard</option><option value="sipky">Šípky</option><option value="bowling">Bowling</option></select></div>
+        <div class="field"><label>Disciplína</label><input id="fDisciplina" value="8-Ball" /></div>
+      </div>
+      <button class="btn btn-green" id="saveBtn" style="width:fit-content">💾 Uložiť profil</button>
+    </div>
+  </div>
+</section>
+
+<section class="panel">
+  <div class="panel-inner">
+    <h2 class="section-title">Aktuálne hrám</h2>
+    <div class="now-grid">
+      <div class="card">
+        <div class="status-box">
+          <small>Aktuálny turnaj</small>
+          <strong>Kaniansky pohár Apríl</strong>
+        </div>
+        <div class="status-box" style="margin-top:10px">
+          <small>Fáza turnaja</small>
+          <strong>Štvrťfinále • Stôl 3</strong>
+        </div>
+        <div class="status-box" style="margin-top:10px">
+          <small>Aktuálny súper</small>
+          <strong>Peter Kováč</strong>
+        </div>
+      </div>
+      <div class="card">
+        <div class="status-box">
+          <small>Priebežné umiestnenie</small>
+          <strong>Top 8</strong>
+        </div>
+        <div class="status-box" style="margin-top:10px">
+          <small>Najbližší krok</small>
+          <strong>Pokračovať v zápase</strong>
+        </div>
+        <div class="mini-actions" style="margin-top:12px">
+          <button class="btn btn-green">Otvoriť turnaj</button>
+          <button class="btn btn-blue">Pokračovať v zápase</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="panel"><div class="panel-inner"><h2 class="section-title">Rýchle štatistiky</h2><div class="grid-6"><div class="stat"><small>Turnaje</small><strong>28</strong></div><div class="stat"><small>Zápasy</small><strong>116</strong></div><div class="stat"><small>Výhry</small><strong>71</strong></div><div class="stat"><small>Prehry</small><strong>45</strong></div><div class="stat"><small>Úspešnosť</small><strong>61 %</strong></div><div class="stat"><small>Tituly</small><strong>4</strong></div></div></div></section>
+
+<div class="grid-2">
+  <section class="panel"><div class="panel-inner"><h2 class="section-title">Výkonnosť hráča</h2><div class="performance-grid"><div class="card"><div class="mini-stats"><div class="stat"><small>Finále</small><strong>9</strong></div><div class="stat"><small>Semifinále</small><strong>14</strong></div><div class="stat"><small>Najlepší šport</small><strong>Biliard</strong></div><div class="stat"><small>Najlepšia disciplína</small><strong>8-Ball</strong></div></div></div><div class="card"><h3 class="section-title" style="margin-bottom:10px">Posledných 5 výsledkov</h3><div class="recent-form"><div class="form-pill win">V</div><div class="form-pill win">V</div><div class="form-pill loss">P</div><div class="form-pill win">V</div><div class="form-pill loss">P</div></div></div></div></div></section>
+  <section class="panel"><div class="panel-inner"><h2 class="section-title">Úspechy a odznaky</h2><div class="achievements"><div class="achievement"><div class="achievement-icon">1</div><strong>Prvý turnaj</strong><span class="muted">Prvé štartovanie v CSP.</span></div><div class="achievement"><div class="achievement-icon">10</div><strong>10 turnajov</strong><span class="muted">Stabilný aktívny hráč.</span></div><div class="achievement"><div class="achievement-icon">F</div><strong>Finalista</strong><span class="muted">Aspoň jedno finále.</span></div><div class="achievement"><div class="achievement-icon">W</div><strong>Víťaz</strong><span class="muted">Turnajové prvenstvo.</span></div></div></div></section>
+</div>
+
+<section class="panel"><div class="panel-inner"><h2 class="section-title">História turnajov</h2><div class="table-wrap"><table><thead><tr><th>Turnaj</th><th>Dátum</th><th>Šport</th><th>Disciplína</th><th>Štruktúra</th><th>Umiestnenie</th><th>Detail</th></tr></thead><tbody><tr><td>Kaniansky pohár Apríl</td><td>16. 04. 2026</td><td>Biliard</td><td>8-Ball</td><td>Double KO</td><td class="place">1. miesto</td><td><button class="btn btn-blue">Otvoriť</button></td></tr><tr><td>Moment Club Open</td><td>02. 04. 2026</td><td>Biliard</td><td>9-Ball</td><td>Single KO</td><td class="place">5. miesto</td><td><button class="btn btn-blue">Otvoriť</button></td></tr><tr><td>Pool Night League</td><td>24. 03. 2026</td><td>Biliard</td><td>8-Ball</td><td>Round Robin</td><td class="place">2. miesto</td><td><button class="btn btn-blue">Otvoriť</button></td></tr><tr><td>Spring Challenge</td><td>12. 03. 2026</td><td>Šípky</td><td>501</td><td>Groups + Single KO</td><td class="place">9. miesto</td><td><button class="btn btn-blue">Otvoriť</button></td></tr></tbody></table></div></div></section>
+
+<section class="panel"><div class="panel-inner"><h2 class="section-title">Nastavenia profilu</h2><div class="settings-grid"><div class="card"><div class="field"><label>Jazyk</label><select><option selected>Slovenčina</option><option>Čeština</option><option>English</option></select></div><div class="field"><label>Preferovaný šport</label><select><option selected>Biliard</option><option>Šípky</option><option>Bowling</option></select></div></div><div class="card"><div class="field"><label>Notifikácie</label><select><option selected>Všetky</option><option>Len turnaje</option><option>Vypnuté</option></select></div><div class="field"><label>Súkromie profilu</label><select><option selected>Verejný profil</option><option>Len registrovaní</option><option>Súkromný</option></select></div></div></div></div></section>
+
+</div>
+
+<script>
+const USER_PLAN = 'free';
+(function checkPlan() {
+  const plan = USER_PLAN;
+  const pill = document.getElementById('planPill');
+  const btnUdalost = document.getElementById('btnUdalost');
+  const btnTurnaj = document.getElementById('btnTurnaj');
+  const lockNote = document.getElementById('lockNote');
+
+  if (plan === 'pro') {
+    pill.textContent = 'Pro';
+    pill.className = 'plan-pill plan-pro';
+    btnUdalost.style.opacity = '1';
+    btnUdalost.style.pointerEvents = 'auto';
+    btnTurnaj.style.opacity = '1';
+    btnTurnaj.style.pointerEvents = 'auto';
+    lockNote.textContent = 'Pro plán: 2 turnaje a 2 udalosti.';
+  } else if (plan === 'ultra') {
+    pill.textContent = 'Ultra';
+    pill.className = 'plan-pill plan-ultra';
+    btnUdalost.style.opacity = '1';
+    btnUdalost.style.pointerEvents = 'auto';
+    btnTurnaj.style.opacity = '1';
+    btnTurnaj.style.pointerEvents = 'auto';
+    lockNote.textContent = 'Ultra plán: všetko bez limitu.';
+  } else {
+    pill.textContent = 'Free';
+    pill.className = 'plan-pill plan-free';
+    lockNote.innerHTML = '🔒 Pre <a href="/cennik/">Pro / Ultra</a>';
+  }
+})();
+</script>
+
+</body>
+</html>
