@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>CSP – Vytvoriť udalosť</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#050505;--bg2:#0b0b0b;--line:rgba(255,255,255,.08);--text:#f4f4f4;--muted:#a7a7a7;--gold:#d8b04b;--green:#22d36b;--danger:#c85757;--shadow:0 20px 60px rgba(0,0,0,.34)}
+*{box-sizing:border-box}html,body{margin:0;padding:0}
+body{min-height:100vh;font-family:"Barlow",sans-serif;color:var(--text);background:radial-gradient(circle at top center,rgba(216,176,75,.08),transparent 26%),linear-gradient(180deg,var(--bg2) 0%,var(--bg) 100%)}
+.page{width:min(860px,calc(100% - 32px));margin:28px auto 48px;display:grid;gap:18px}
+.panel{border:1px solid var(--line);border-radius:28px;background:linear-gradient(180deg,rgba(255,255,255,.03),rgba(255,255,255,.015));box-shadow:var(--shadow)}
+.btn{min-height:48px;padding:0 22px;border:none;border-radius:14px;font:inherit;font-weight:900;cursor:pointer;display:inline-flex;align-items:center;gap:8px;text-decoration:none;font-size:.95rem}
+.btn-green{background:var(--green);color:#06230f}.btn-green:hover{background:#1fbf5e}
+.btn-dark{background:rgba(255,255,255,.04);color:var(--text);border:1px solid var(--line)}
+.btn-dark:hover{background:rgba(255,255,255,.08)}
+
+/* TOPBAR */
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;padding:14px 22px}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none}
+.brand-title{font-size:1.1rem;font-weight:900;letter-spacing:-.04em}
+.brand-title .gold{color:var(--gold)}
+
+/* FORM */
+.form-wrap{padding:32px 36px}
+.form-title{font-size:1.8rem;font-weight:900;color:var(--gold);letter-spacing:-.04em;margin:0 0 6px}
+.form-sub{color:var(--muted);font-size:.9rem;margin:0 0 28px}
+.section-label{font-size:.7rem;font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:24px 0 12px;padding-bottom:8px;border-bottom:1px solid var(--line)}
+.field{display:grid;gap:6px;margin-bottom:14px}
+.field label{font-size:.85rem;font-weight:800;color:#ddd}
+.field input,.field select,.field textarea{width:100%;min-height:50px;padding:0 14px;border-radius:14px;border:1px solid var(--line);background:rgba(255,255,255,.03);color:var(--text);font:inherit;font-size:.92rem;outline:none;transition:border-color .15s}
+.field textarea{min-height:90px;padding:12px 14px;resize:vertical}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:rgba(216,176,75,.45);background:rgba(216,176,75,.03)}
+.field select option{background:#111}
+.field-hint{font-size:.76rem;color:var(--muted);margin-top:3px}
+.field-err{font-size:.76rem;color:#ff8080;margin-top:3px;display:none}
+.field input.err,.field select.err{border-color:var(--danger)}
+.row-2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.row-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
+.row-4{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:14px}
+.link-preview{display:none;margin-top:8px;padding:10px 14px;border-radius:12px;background:rgba(34,211,107,.06);border:1px solid rgba(34,211,107,.2);font-size:.84rem;color:#c8ffdc;word-break:break-all}
+.link-preview strong{display:block;font-size:.68rem;color:var(--green);text-transform:uppercase;letter-spacing:.08em;margin-bottom:3px}
+.submit-row{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-top:10px}
+.success-box{display:none;text-align:center;padding:32px}
+.success-box h2{color:var(--green);font-size:1.6rem;margin:0 0 8px}
+.success-box p{color:#ddd;margin:0 0 20px}
+.success-link{background:rgba(255,255,255,.04);border:1px solid var(--line);border-radius:12px;padding:12px 16px;font-size:.88rem;color:var(--gold);word-break:break-all;margin-bottom:16px}
+.copy-btn{background:rgba(216,176,75,.1);border:1px solid rgba(216,176,75,.3);color:var(--gold);border-radius:10px;padding:6px 14px;font:inherit;font-weight:800;font-size:.82rem;cursor:pointer}
+.share-row{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-top:16px}
+.share-btn{display:inline-flex;align-items:center;gap:6px;padding:9px 16px;border-radius:12px;border:none;font:inherit;font-weight:800;font-size:.84rem;cursor:pointer;text-decoration:none}
+.sh-fb{background:#1877f2;color:#fff}
+.sh-wa{background:#25d366;color:#fff}
+.sh-tg{background:#229ed9;color:#fff}
+.sh-vi{background:#7360f2;color:#fff}
+@media(max-width:640px){.row-2,.row-3,.row-4{grid-template-columns:1fr}.form-wrap{padding:20px 18px}}
+</style>
+</head>
+<body>
+<div class="page">
+
+<header class="panel topbar">
+  <a href="../profil/" class="brand">
+    <div class="brand-title"><span class="gold">CardScores</span><span style="color:#fff">Pro</span></div>
+  </a>
+  <a href="../profil/" class="btn btn-dark">← Profil</a>
+</header>
+
+<div class="panel">
+  <div class="form-wrap" id="formWrap">
+    <h1 class="form-title">Vytvoriť udalosť</h1>
+    <p class="form-sub">Vyplň údaje o udalosti. Po vytvorení dostaneš odkaz na zdieľanie.</p>
+
+    <!-- ŠPORT -->
+    <div class="section-label">Šport a disciplína</div>
+    <div class="row-2">
+      <div class="field">
+        <label>Šport *</label>
+        <select id="sport" onchange="updateDiscipliny()">
+          <option value="">– Vyber šport –</option>
+          <option value="biliard">🎱 Biliard</option>
+          <option value="sipky">🎯 Šípky</option>
+          <option value="bowling">🎳 Bowling</option>
+          <option value="karty">🃏 Karty</option>
+        </select>
+        <span class="field-err" id="err-sport">Vyber šport</span>
+      </div>
+      <div class="field">
+        <label>Disciplína *</label>
+        <select id="disciplina" disabled>
+          <option value="">– Najprv vyber šport –</option>
+        </select>
+        <span class="field-err" id="err-disciplina">Vyber disciplínu</span>
+      </div>
+    </div>
+
+    <!-- INFORMÁCIE -->
+    <div class="section-label">Informácie o udalosti</div>
+    <div class="field">
+      <label>Názov udalosti *</label>
+      <input type="text" id="nazov" placeholder="napr. Kaniansky pohár – Máj 2026" maxlength="80">
+      <span class="field-err" id="err-nazov">Zadaj názov</span>
+    </div>
+    <div class="row-2">
+      <div class="field">
+        <label>Dátum *</label>
+        <input type="date" id="datum">
+        <span class="field-err" id="err-datum">Vyber dátum</span>
+      </div>
+      <div class="field">
+        <label>Čas začiatku *</label>
+        <input type="time" id="cas" value="18:00">
+      </div>
+    </div>
+    <div class="row-2">
+      <div class="field">
+        <label>Max. počet hráčov</label>
+        <select id="maxHracov">
+          <option value="8">8 hráčov</option>
+          <option value="16" selected>16 hráčov</option>
+          <option value="32">32 hráčov</option>
+          <option value="64">64 hráčov</option>
+          <option value="0">Neobmedzený</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Startovné</label>
+        <input type="number" id="startovne" placeholder="0" min="0" step="0.5">
+        <span class="field-hint">Zadaj 0 pre bezplatný vstup</span>
+      </div>
+    </div>
+
+    <!-- MIESTO -->
+    <div class="section-label">Miesto konania</div>
+    <div class="field">
+      <label>Názov klubu / podniku *</label>
+      <input type="text" id="klub" placeholder="napr. Moment Club, Herňa U Janka" maxlength="80">
+      <span class="field-err" id="err-klub">Zadaj názov klubu</span>
+    </div>
+    <div class="field">
+      <label>Adresa *</label>
+      <input type="text" id="adresa" placeholder="napr. Hlavná 12" maxlength="100">
+      <span class="field-err" id="err-adresa">Zadaj adresu</span>
+    </div>
+    <div class="row-3">
+      <div class="field">
+        <label>PSČ *</label>
+        <input type="text" id="psc" placeholder="97201" maxlength="6" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
+        <span class="field-err" id="err-psc">Zadaj PSČ</span>
+      </div>
+      <div class="field">
+        <label>Mesto *</label>
+        <input type="text" id="mesto" placeholder="Kanianka" maxlength="60">
+        <span class="field-err" id="err-mesto">Zadaj mesto</span>
+      </div>
+      <div class="field">
+        <label>Štát</label>
+        <select id="stat">
+          <option value="SK" selected>🇸🇰 Slovensko</option>
+          <option value="CZ">🇨🇿 Česko</option>
+          <option value="AT">🇦🇹 Rakúsko</option>
+          <option value="HU">🇭🇺 Maďarsko</option>
+          <option value="PL">🇵🇱 Poľsko</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- PRIHLASOVANIE -->
+    <div class="section-label">Prihlasovanie a poznámka</div>
+    <div class="field">
+      <label>Odkaz na prihlasovanie</label>
+      <input type="url" id="regLink" placeholder="napr. https://forms.google.com/... alebo vlastný link">
+      <span class="field-hint">Voliteľné – vlastný registračný formulár</span>
+    </div>
+    <div class="field">
+      <label>Poznámka pre hráčov</label>
+      <textarea id="poznamka" placeholder="napr. Parkovanie k dispozícii. Kontakt: 0900 000 000"></textarea>
+    </div>
+
+    <div class="submit-row">
+      <button class="btn btn-green" onclick="vytvorUdalost()">✅ Vytvoriť udalosť</button>
+      <button class="btn btn-dark" onclick="resetForm()">Vymazať</button>
+    </div>
+  </div>
+
+  <!-- SUCCESS -->
+  <div class="success-box" id="successBox">
+    <h2>🎉 Udalosť vytvorená!</h2>
+    <p>Zdieľaj odkaz s hráčmi – môžu sa prihlásiť priamo cez neho.</p>
+    <div class="success-link" id="successLink"></div>
+    <button class="copy-btn" onclick="copyLink()">📋 Kopírovať odkaz</button>
+    <div class="share-row" id="shareRow"></div>
+    <br>
+    <button class="btn btn-dark" onclick="resetForm()" style="margin-top:8px">➕ Vytvoriť ďalšiu udalosť</button>
+    <a href="../profil/" class="btn btn-green" style="margin-top:8px">← Späť na profil</a>
+  </div>
+</div>
+
+</div>
+
+<script>
+const DISCIPLINY = {
+  biliard: ['8-Ball','9-Ball','10-Ball','Blackball','Snooker','Karambol'],
+  sipky:   ['501 (Double Out)','301 (Double Out)','Cricket','Around the Clock','Killer'],
+  bowling: ['Tenpins','Ninepin','Duckpin','5-Pin'],
+  karty:   ['Mariáš','Žolíky','Poker','Canasta','Sedma'],
+};
+
+function updateDiscipliny() {
+  const s = document.getElementById('sport').value;
+  const d = document.getElementById('disciplina');
+  d.disabled = !s;
+  d.innerHTML = s
+    ? DISCIPLINY[s].map(x => `<option value="${x}">${x}</option>`).join('')
+    : '<option value="">– Najprv vyber šport –</option>';
+}
+
+function showErr(id, show) {
+  const el = document.getElementById('err-' + id);
+  if(el) el.style.display = show ? 'block' : 'none';
+  const inp = document.getElementById(id);
+  if(inp) inp.classList.toggle('err', show);
+}
+
+function vytvorUdalost() {
+  let ok = true;
+  const required = [
+    ['sport', v => v !== ''],
+    ['disciplina', v => v !== ''],
+    ['nazov', v => v.trim().length > 2],
+    ['datum', v => v !== ''],
+    ['klub', v => v.trim().length > 1],
+    ['adresa', v => v.trim().length > 2],
+    ['psc', v => v.length >= 4],
+    ['mesto', v => v.trim().length > 1],
+  ];
+  required.forEach(([id, check]) => {
+    const val = document.getElementById(id).value;
+    const err = !check(val);
+    showErr(id, err);
+    if(err) ok = false;
+  });
+  if(!ok) return;
+
+  const nazov = document.getElementById('nazov').value.trim();
+  const slug = nazov.toLowerCase()
+    .replace(/[^\w\s-]/g,'')
+    .replace(/\s+/g,'-')
+    .replace(/-+/g,'-')
+    .substring(0,40);
+
+  const regLink = document.getElementById('regLink').value.trim();
+  const url = regLink || `prihlasenie-hracov.html?slug=${slug}&nazov=${encodeURIComponent(nazov)}`;
+
+  // Ulož do localStorage
+  const udalost = {
+    slug, nazov,
+    sport: document.getElementById('sport').value,
+    disciplina: document.getElementById('disciplina').value,
+    datum: document.getElementById('datum').value,
+    cas: document.getElementById('cas').value,
+    maxHracov: document.getElementById('maxHracov').value,
+    startovne: document.getElementById('startovne').value,
+    klub: document.getElementById('klub').value.trim(),
+    adresa: document.getElementById('adresa').value.trim(),
+    psc: document.getElementById('psc').value,
+    mesto: document.getElementById('mesto').value.trim(),
+    stat: document.getElementById('stat').value,
+    regLink: url,
+    poznamka: document.getElementById('poznamka').value.trim(),
+    created: new Date().toISOString(),
+  };
+
+  const udalosti = JSON.parse(localStorage.getItem('csp_udalosti') || '{}');
+  udalosti[slug] = udalost;
+  localStorage.setItem('csp_udalosti', JSON.stringify(udalosti));
+
+  // Zobraz success
+  document.getElementById('formWrap').style.display = 'none';
+  document.getElementById('successBox').style.display = 'block';
+  document.getElementById('successLink').textContent = url;
+  buildShareButtons(url, nazov);
+}
+
+function buildShareButtons(url, nazov) {
+  const text = encodeURIComponent(`Prihlás sa na udalosť: ${nazov}`);
+  const enc = encodeURIComponent(url);
+  const btns = [
+    {cls:'sh-fb', icon:'📘', label:'Facebook', href:`https://www.facebook.com/sharer/sharer.php?u=${enc}`},
+    {cls:'sh-wa', icon:'💬', label:'WhatsApp', href:`https://wa.me/?text=${text}%20${enc}`},
+    {cls:'sh-tg', icon:'✈️', label:'Telegram', href:`https://t.me/share/url?url=${enc}&text=${text}`},
+    {cls:'sh-vi', icon:'📱', label:'Viber', href:`viber://forward?text=${text}%20${enc}`},
+  ];
+  document.getElementById('shareRow').innerHTML = btns.map(b =>
+    `<a class="share-btn ${b.cls}" href="${b.href}" target="_blank">${b.icon} ${b.label}</a>`
+  ).join('');
+}
+
+function copyLink() {
+  navigator.clipboard.writeText(document.getElementById('successLink').textContent).then(() => {
+    const btn = document.querySelector('.copy-btn');
+    btn.textContent = '✅ Skopírované!';
+    setTimeout(() => btn.textContent = '📋 Kopírovať odkaz', 2000);
+  });
+}
+
+function resetForm() {
+  document.getElementById('formWrap').style.display = 'block';
+  document.getElementById('successBox').style.display = 'none';
+  document.querySelectorAll('input,textarea').forEach(el => {
+    if(el.type === 'time') el.value = '18:00';
+    else el.value = '';
+  });
+  document.getElementById('sport').value = '';
+  document.getElementById('maxHracov').value = '16';
+  document.getElementById('stat').value = 'SK';
+  document.getElementById('disciplina').disabled = true;
+  document.getElementById('disciplina').innerHTML = '<option value="">– Najprv vyber šport –</option>';
+  document.querySelectorAll('.field-err').forEach(e => e.style.display = 'none');
+  document.querySelectorAll('.err').forEach(e => e.classList.remove('err'));
+}
+</script>
+</body>
+</html>
