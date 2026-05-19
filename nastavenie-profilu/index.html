@@ -159,7 +159,7 @@ body{
             </div>
 
             <div class="actions">
-              <button class="btn btn-dark" type="button">Preskočiť zatiaľ</button>
+              <a href="../profil/" class="btn btn-dark">Preskočiť zatiaľ</a>
               <button class="btn btn-green" type="button" onclick="saveProfile()">Uložiť profil</button>
             </div>
           </div>
@@ -199,7 +199,7 @@ async function saveProfile(){
   if(!name||!user){ alert('Vyplň meno a prezývku.'); return; }
   const { error } = await db.from('profiles').update({ full_name:name, username:user }).eq('id', currentUser.id);
   if(error){ alert(error.message.includes('unique')?'Prezývka je obsadená.':error.message); return; }
-  alert('✓ Profil uložený!');
+  window.location.href = '../profil/';
 }
 
 async function uploadAvatar(input){
