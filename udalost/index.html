@@ -79,6 +79,7 @@ body{min-height:100vh;font-family:"Barlow",sans-serif;color:var(--text);backgrou
 @media(max-width:800px){.event-hero{grid-template-columns:1fr}.event-hero-right{border-top:1px solid var(--line);padding:20px}.players-grid{grid-template-columns:1fr 1fr}.event-info-grid{grid-template-columns:1fr}}
 @media(max-width:500px){.players-grid{grid-template-columns:1fr}}
 </style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
 <div class="page">
@@ -230,58 +231,55 @@ body{min-height:100vh;font-family:"Barlow",sans-serif;color:var(--text);backgrou
 </div>
 
 <script>
-(function(){
-  const params = new URLSearchParams(location.search);
-  const slug   = params.get('slug') || '';
-  const nazov  = params.get('nazov') ? decodeURIComponent(params.get('nazov')) : '';
+const _sb = window.supabase.createClient("https://gilzomwhuwcxpkegtlhj.supabase.co", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdpbHpvbXdodXdjeHBrZWd0bGhqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzcwMzMwMTgsImV4cCI6MjA5MjYwOTAxOH0.-KiLSdiB2mRWqUDB9GWyISfCu2o_ZBM80aGUEW9CcUg");
 
-  // Nastav linky na predregistráciu so slug parametrom
-  function setRegLinks(){
-    const q = slug ? '?slug=' + slug + (nazov ? '&nazov=' + encodeURIComponent(nazov) : '') : '';
-    ['regLinkTop','regLinkBottom'].forEach(function(id){
-      const el = document.getElementById(id);
-      if(el) el.href = '../preregistracia/' + q;
-    });
-  }
+(async function(){
+  const params  = new URLSearchParams(location.search);
+  const slug    = params.get('slug') || '';
 
-  // Načítaj detail udalosti z localStorage
-  function loadEventDetail(){
-    if(!slug) return;
-    try{
-      const udalosti = JSON.parse(localStorage.getItem('csp_udalosti')||'{}');
-      const u = udalosti[slug];
-      if(!u) return;
+  if(!slug) return;
 
-      // Nastav titulok ak je prázdny
-      const h1 = document.querySelector('h1');
-      if(h1 && h1.textContent.trim()==='') h1.textContent = u.nazov;
+  // Načítaj udalosť z DB
+  const { data: ev } = await _sb.from('events').select('*').eq('slug', slug).single();
+  const u = ev || JSON.parse(localStorage.getItem('csp_udalosti')||'{}')[slug];
+  if(!u) return;
 
-      // Aktualizuj meta info
-      const sportEl = document.getElementById('sport-label');
-      if(sportEl) sportEl.textContent = u.sport + (u.disciplina?' – '+u.disciplina:'');
-      const datumEl = document.getElementById('datum-label');
-      if(datumEl) datumEl.textContent = u.datum + (u.cas?' • '+u.cas:'');
-      const klubEl = document.getElementById('klub-label');
-      if(klubEl) klubEl.textContent = u.klub + (u.adresa?', '+u.adresa:'');
-    }catch(e){}
-  }
+  // Nastav titulok
+  const h1 = document.querySelector('h1');
+  if(h1) h1.textContent = u.nazov || u.name || '';
+
+  // Meta info
+  const sportEl = document.getElementById('sport-label');
+  if(sportEl) sportEl.textContent = (u.sport||'') + (u.disciplina?' – '+u.disciplina:'');
+  const datumEl = document.getElementById('datum-label');
+  if(datumEl) datumEl.textContent = (u.datum||'') + (u.cas?' · '+u.cas:'');
+  const klubEl  = document.getElementById('klub-label');
+  if(klubEl)  klubEl.textContent  = (u.klub||'') + (u.adresa?', '+u.adresa:'');
+
+  // Linky na predregistráciu
+  const preregUrl = `https://cspboard.digital/preregistracia/?slug=${slug}&nazov=${encodeURIComponent(u.nazov||u.name||'')}`;
+  ['regLinkTop','regLinkBottom'].forEach(id => {
+    const el = document.getElementById(id);
+    if(el) el.href = preregUrl;
+  });
 
   // Zdieľanie
-  function setupShare(){
-    const url = location.href;
-    const text = encodeURIComponent('Pozri si turnaj: ' + (nazov||'CSP turnaj'));
-    const enc  = encodeURIComponent(url);
-    const fbBtn = document.getElementById('share-fb');
-    const waBtn = document.getElementById('share-wa');
-    if(fbBtn) fbBtn.href = 'https://www.facebook.com/sharer/sharer.php?u=' + enc;
-    if(waBtn) waBtn.href = 'https://wa.me/?text=' + text + '%20' + enc;
-  }
+  const url  = location.href;
+  const text = encodeURIComponent('Pozri si turnaj: ' + (u.nazov||''));
+  const enc  = encodeURIComponent(url);
+  const fb = document.getElementById('share-fb');
+  const wa = document.getElementById('share-wa');
+  if(fb) fb.href = 'https://www.facebook.com/sharer/sharer.php?u=' + enc;
+  if(wa) wa.href = 'https://wa.me/?text=' + text + '%20' + enc;
 
-  document.addEventListener('DOMContentLoaded', function(){
-    setRegLinks();
-    loadEventDetail();
-    setupShare();
-  });
+  // Počet registrovaných
+  if(ev?.id){
+    const { count } = await _sb.from('preregistrations')
+      .select('id', {count:'exact', head:true})
+      .eq('event_id', ev.id);
+    const countEl = document.getElementById('reg-count');
+    if(countEl) countEl.textContent = (count||0) + ' / ' + (u.max_hracov||16);
+  }
 })();
 </script>
 </body>

@@ -223,7 +223,18 @@ function showErr(id, show) {
   if(inp) inp.classList.toggle('err', show);
 }
 
-function vytvorUdalost() {
+// Supabase init
+const _sb = window.supabase.createClient("https://gilzomwhuwcxpkegtlhj.supabase.co", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdpbHpvbXdodXdjeHBrZWd0bGhqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzcwMzMwMTgsImV4cCI6MjA5MjYwOTAxOH0.-KiLSdiB2mRWqUDB9GWyISfCu2o_ZBM80aGUEW9CcUg");
+let _currentUser = null;
+
+// Skontroluj session
+(async function(){
+  const { data } = await _sb.auth.getSession();
+  if(!data?.session){ window.location.href = '../login/'; return; }
+  _currentUser = data.session.user;
+})();
+
+async function vytvorUdalost() {
   let ok = true;
   const required = [
     ['sport', v => v !== ''],
@@ -243,46 +254,66 @@ function vytvorUdalost() {
   });
   if(!ok) return;
 
-  const nazov = document.getElementById('nazov').value.trim();
-  const slug = nazov.toLowerCase()
+  const nazov    = document.getElementById('nazov').value.trim();
+  const slug     = nazov.toLowerCase()
+    .replace(/[äáâàãåæčćďéêèëěğíîìïłľňñóôòõøœřšśťúûùüůýžžź]/g, c => ({ä:'a',á:'a',č:'c',ď:'d',é:'e',ě:'e',í:'i',ľ:'l',ĺ:'l',ň:'n',ó:'o',ô:'o',ř:'r',š:'s',ś:'s',ť:'t',ú:'u',ů:'u',ý:'y',ž:'z'})[c]||c)
     .replace(/[^\w\s-]/g,'')
     .replace(/\s+/g,'-')
     .replace(/-+/g,'-')
-    .substring(0,40);
+    .substring(0,40)
+    + '-' + Date.now().toString(36);
 
-  const regLink = document.getElementById('regLink').value.trim();
-  const url = regLink || `https://cspboard.digital/preregistracia/?slug=${slug}&nazov=${encodeURIComponent(nazov)}`;
+  const preregUrl = `https://cspboard.digital/preregistracia/?slug=${slug}&nazov=${encodeURIComponent(nazov)}`;
+  const udalostUrl = `https://cspboard.digital/udalost/?slug=${slug}`;
+  const regLink = document.getElementById('regLink').value.trim() || preregUrl;
 
-  // Ulož do localStorage
-  const udalost = {
-    slug, nazov,
-    sport: document.getElementById('sport').value,
-    disciplina: document.getElementById('disciplina').value,
-    datum: document.getElementById('datum').value,
-    cas: document.getElementById('cas').value,
-    maxHracov: document.getElementById('maxHracov').value,
-    startovne: document.getElementById('startovne').value,
-    klub: document.getElementById('klub').value.trim(),
-    adresa: document.getElementById('adresa').value.trim(),
-    psc: document.getElementById('psc').value,
-    mesto: document.getElementById('mesto').value.trim(),
-    stat: document.getElementById('stat').value,
-    regLink: url,
-    poznamka: document.getElementById('poznamka').value.trim(),
-    created: new Date().toISOString(),
+  const event = {
+    slug,
+    organizer_id: _currentUser?.id || null,
+    nazov,
+    sport:       document.getElementById('sport').value,
+    disciplina:  document.getElementById('disciplina').value,
+    struktura:   '',
+    datum:       document.getElementById('datum').value || null,
+    cas:         document.getElementById('cas').value   || null,
+    klub:        document.getElementById('klub').value.trim(),
+    adresa:      document.getElementById('adresa').value.trim() + ', ' +
+                 document.getElementById('psc').value + ' ' +
+                 document.getElementById('mesto').value.trim(),
+    mesto:       document.getElementById('mesto').value.trim(),
+    max_hracov:  parseInt(document.getElementById('maxHracov').value) || 16,
+    startovne:   parseFloat(document.getElementById('startovne').value) || 0,
+    poznamka:    document.getElementById('poznamka').value.trim(),
+    status:      'open',
   };
 
+  // Ulož do Supabase
+  const { error } = await _sb.from('events').insert(event);
+  if(error){
+    alert('Chyba: ' + error.message);
+    return;
+  }
+
+  // Záloha do localStorage
   const udalosti = JSON.parse(localStorage.getItem('csp_udalosti') || '{}');
-  udalosti[slug] = udalost;
+  udalosti[slug] = {...event, regLink};
   localStorage.setItem('csp_udalosti', JSON.stringify(udalosti));
+  localStorage.setItem('csp_current_event', JSON.stringify({...event, regLink}));
 
   // Zobraz success
   document.getElementById('formWrap').style.display = 'none';
   document.getElementById('successBox').style.display = 'block';
-  document.getElementById('successLink').textContent = url;
-  // Ulož aj do csp_current_event pre udalost detail
-  localStorage.setItem('csp_current_event', JSON.stringify(udalost));
-  buildShareButtons(url, nazov);
+  document.getElementById('successLink').textContent = preregUrl;
+
+  // Kopírovateľné linky
+  const copyBtn = document.getElementById('copyBtn');
+  if(copyBtn) copyBtn.onclick = () => {
+    navigator.clipboard.writeText(preregUrl);
+    copyBtn.textContent = '✓ Skopírované';
+    setTimeout(() => copyBtn.textContent = '📋 Kopírovať', 2000);
+  };
+
+  buildShareButtons(preregUrl, nazov);
 }
 
 function buildShareButtons(url, nazov) {

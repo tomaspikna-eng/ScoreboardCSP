@@ -367,21 +367,11 @@ body::before {
 </div>
 
 <script>
-// Načítaj info o udalosti z URL params a localStorage
-const params  = new URLSearchParams(location.search);
-const SLUG    = params.get('slug') || '';
-const NAZOV   = params.get('nazov') ? decodeURIComponent(params.get('nazov')) : 'Turnaj';
-const LS_KEY  = 'csp_prereg_' + SLUG;
-
-// Zobraz názov udalosti
-document.addEventListener('DOMContentLoaded', function(){
-  // Nastav titulok
-  const h2 = document.querySelector('h2');
-  if(h2 && NAZOV) h2.textContent = 'Predregistrácia – ' + NAZOV;
-
-  // Načítaj existujúce registrácie
-  loadRegistrations();
-});
+const _sb   = window.supabase.createClient("https://gilzomwhuwcxpkegtlhj.supabase.co", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdpbHpvbXdodXdjeHBrZWd0bGhqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzcwMzMwMTgsImV4cCI6MjA5MjYwOTAxOH0.-KiLSdiB2mRWqUDB9GWyISfCu2o_ZBM80aGUEW9CcUg");
+const params = new URLSearchParams(location.search);
+const SLUG   = params.get('slug') || '';
+const NAZOV  = params.get('nazov') ? decodeURIComponent(params.get('nazov')) : 'Turnaj';
+let EVENT_ID = null;
 
 const nameInput  = document.getElementById('playerName');
 const nickInput  = document.getElementById('playerNick');
@@ -395,33 +385,52 @@ function showMsg(text, type){ msgBox.textContent=text; msgBox.className='msg sho
 function hideMsg(){ msgBox.className='msg'; }
 function setLoading(on){ submitBtn.disabled=on; submitBtn.classList.toggle('loading',on); }
 
-function getRegs(){
-  try{ return JSON.parse(localStorage.getItem(LS_KEY)||'[]'); }
-  catch(e){ return []; }
-}
-function saveRegs(regs){
-  localStorage.setItem(LS_KEY, JSON.stringify(regs));
+document.addEventListener('DOMContentLoaded', async function(){
+  const h2 = document.querySelector('h2');
+  if(h2 && NAZOV) h2.textContent = 'Predregistrácia – ' + NAZOV;
+
+  // Načítaj event_id zo Supabase
+  if(SLUG){
+    const { data: ev } = await _sb.from('events').select('id,nazov').eq('slug', SLUG).single();
+    if(ev){
+      EVENT_ID = ev.id;
+      if(h2) h2.textContent = 'Predregistrácia – ' + ev.nazov;
+    }
+  }
+  loadRegistrations();
+});
+
+async function loadRegistrations(){
+  if(!EVENT_ID){
+    // Fallback localStorage
+    const regs = JSON.parse(localStorage.getItem('csp_prereg_'+SLUG)||'[]');
+    renderList(regs.map(r => ({nick: r.nick||r.name, klub: r.club})));
+    return;
+  }
+  const { data } = await _sb
+    .from('preregistrations')
+    .select('nick, klub, created_at')
+    .eq('event_id', EVENT_ID)
+    .order('created_at', {ascending: true});
+  renderList(data||[]);
 }
 
-function loadRegistrations(){
-  const regs = getRegs();
+function renderList(regs){
   countBadge.textContent = regs.length;
   if(!regs.length){
     regList.innerHTML='<div class="empty-list">Zatiaľ sa nikto neprihlásil. Buď prvý!</div>';
     return;
   }
-  regList.innerHTML = regs.map(function(r, i){
-    return '<div class="reg-item">' +
-      '<span class="reg-num">' + (i+1) + '</span>' +
-      '<div>' +
-        '<div class="reg-name">' + esc(r.nick||r.name) + '</div>' +
-        (r.club ? '<div class="reg-club">' + esc(r.club) + '</div>' : '') +
-      '</div>' +
-    '</div>';
-  }).join('');
+  regList.innerHTML = regs.map((r,i) =>
+    '<div class="reg-item">' +
+    '<span class="reg-num">'+(i+1)+'</span>' +
+    '<div><div class="reg-name">'+esc(r.nick||'—')+'</div>' +
+    (r.klub?'<div class="reg-club">'+esc(r.klub)+'</div>':'')+
+    '</div></div>'
+  ).join('');
 }
 
-submitBtn.addEventListener('click', function(){
+submitBtn.addEventListener('click', async function(){
   const name = nameInput.value.trim();
   const nick = nickInput ? nickInput.value.trim() : '';
   const club = clubInput.value.trim();
@@ -429,33 +438,48 @@ submitBtn.addEventListener('click', function(){
   if(!name){ showMsg('Zadaj celé meno.','error'); nameInput.focus(); return; }
   if(!nick){ showMsg('Zadaj prezývku.','error'); if(nickInput)nickInput.focus(); return; }
 
-  // Skontroluj duplicitu prezývky
-  const regs = getRegs();
-  if(regs.find(function(r){ return r.nick && r.nick.toLowerCase()===nick.toLowerCase(); })){
-    showMsg('Táto prezývka je už obsadená.','error');
-    return;
+  setLoading(true);
+
+  if(EVENT_ID){
+    // Skontroluj duplicitu v DB
+    const { data: exists } = await _sb
+      .from('preregistrations')
+      .select('id')
+      .eq('event_id', EVENT_ID)
+      .ilike('nick', nick)
+      .single();
+    if(exists){
+      showMsg('Táto prezývka je už obsadená.','error');
+      setLoading(false); return;
+    }
+    const { error } = await _sb.from('preregistrations').insert({
+      event_id:  EVENT_ID,
+      full_name: name,
+      nick:      nick,
+      klub:      club,
+    });
+    if(error){ showMsg('Chyba: '+error.message,'error'); setLoading(false); return; }
+  } else {
+    // Fallback localStorage
+    const regs = JSON.parse(localStorage.getItem('csp_prereg_'+SLUG)||'[]');
+    if(regs.find(r => r.nick&&r.nick.toLowerCase()===nick.toLowerCase())){
+      showMsg('Táto prezývka je už obsadená.','error');
+      setLoading(false); return;
+    }
+    regs.push({id:Date.now(), name, nick, club, created: new Date().toISOString()});
+    localStorage.setItem('csp_prereg_'+SLUG, JSON.stringify(regs));
   }
 
-  setLoading(true);
-  setTimeout(function(){
-    const reg = {
-      id:   Date.now(),
-      name: name,   // súkromné
-      nick: nick,   // verejné
-      club: club,
-      created: new Date().toISOString(),
-    };
-    regs.push(reg);
-    saveRegs(regs);
-    loadRegistrations();
-    nameInput.value='';
-    if(nickInput)nickInput.value='';
-    clubInput.value='';
-    showMsg('✓ Zaregistrovaný ako ' + nick + '!','success');
-    setLoading(false);
-    setTimeout(hideMsg, 3000);
-  }, 400);
+  nameInput.value='';
+  if(nickInput) nickInput.value='';
+  clubInput.value='';
+  showMsg('✓ Zaregistrovaný ako '+nick+'!','success');
+  setLoading(false);
+  setTimeout(hideMsg, 3000);
+  loadRegistrations();
 });
 
 function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 </script>
+</body>
+</html>
