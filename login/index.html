@@ -207,12 +207,12 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-const SUPABASE_URL  = "https://gqtbxjkuemggelepkhrl.supabase.co";
-const SUPABASE_ANON = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imllcmxpc3dyZ3J0bHRycnZscXN6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzcyMDE3MjQsImV4cCI6MjA5Mjc3NzcyNH0.Y2dH1MkSUxhnKGl_5vnebZAgaBBcfrNQFJk6PONNJMU";
+const SUPABASE_URL  = "https://gilzomwhuwcxpkegtlhj.supabase.co";
+const SUPABASE_ANON = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdpbHpvbXdodXdjeHBrZWd0bGhqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzcwMzMwMTgsImV4cCI6MjA5MjYwOTAxOH0.-KiLSdiB2mRWqUDB9GWyISfCu2o_ZBM80aGUEW9CcUg";
 const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
 
 // Relatívna cesta po prihlásení
-const REDIRECT = 'https://tomaspikna-eng.github.io/cspfinal/profil/';
+const REDIRECT = 'https://cspboard.digital/profil/';
 
 // ── Tabs ──────────────────────────────────────────────────
 function showTab(tab) {
@@ -289,7 +289,7 @@ document.getElementById('btnRegEmail').addEventListener('click', async () => {
 // ── Session check – ak už je prihlásený, presmeruj ────────
 (async () => {
   const { data } = await db.auth.getSession();
-  if(data?.session) window.location.href = REDIRECT;
+  if(data?.session) window.location.href = 'https://cspboard.digital/profil/';
 })();
 </script>
 </body>
