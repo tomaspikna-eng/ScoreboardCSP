@@ -250,7 +250,7 @@ function vytvorUdalost() {
     .substring(0,40);
 
   const regLink = document.getElementById('regLink').value.trim();
-  const url = regLink || `prihlasenie-hracov.html?slug=${slug}&nazov=${encodeURIComponent(nazov)}`;
+  const url = regLink || `https://cspboard.digital/preregistracia/?slug=${slug}&nazov=${encodeURIComponent(nazov)}`;
 
   // Ulož do localStorage
   const udalost = {
@@ -279,6 +279,8 @@ function vytvorUdalost() {
   document.getElementById('formWrap').style.display = 'none';
   document.getElementById('successBox').style.display = 'block';
   document.getElementById('successLink').textContent = url;
+  // Ulož aj do csp_current_event pre udalost detail
+  localStorage.setItem('csp_current_event', JSON.stringify(udalost));
   buildShareButtons(url, nazov);
 }
 

@@ -311,7 +311,6 @@ body::before {
   .card { padding: 22px 18px; }
 }
 </style>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
 <div class="page">
@@ -330,8 +329,13 @@ body::before {
     <h2>Predregistrácia</h2>
 
     <div class="field">
-      <label for="playerName">Meno hráča</label>
+      <label for="playerName">Celé meno <span style="font-size:.7rem;color:#666">(súkromné – vidí len organizátor)</span></label>
       <input type="text" id="playerName" placeholder="Napr. Ján Novák" maxlength="80" autocomplete="name" />
+    </div>
+
+    <div class="field">
+      <label for="playerNick">Prezývka <span style="font-size:.7rem;color:#22d36b">(verejná – zobrazuje sa v pavúku)</span></label>
+      <input type="text" id="playerNick" placeholder="Napr. Shark, T-Novak, Killer" maxlength="40" />
     </div>
 
     <div class="field">
@@ -362,139 +366,95 @@ body::before {
 </div>
 
 <script>
-const SUPABASE_URL  = "https://gqtbxjkuemggelepkhrl.supabase.co";
-const SUPABASE_ANON = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imllcmxpc3dyZ3J0bHRycnZscXN6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzcyMDE3MjQsImV4cCI6MjA5Mjc3NzcyNH0.Y2dH1MkSUxhnKGl_5vnebZAgaBBcfrNQFJk6PONNJMU";
+// Načítaj info o udalosti z URL params a localStorage
+const params  = new URLSearchParams(location.search);
+const SLUG    = params.get('slug') || '';
+const NAZOV   = params.get('nazov') ? decodeURIComponent(params.get('nazov')) : 'Turnaj';
+const LS_KEY  = 'csp_prereg_' + SLUG;
 
-const { createClient } = supabase;
-const db = createClient(SUPABASE_URL, SUPABASE_ANON);
+// Zobraz názov udalosti
+document.addEventListener('DOMContentLoaded', function(){
+  // Nastav titulok
+  const h2 = document.querySelector('h2');
+  if(h2 && NAZOV) h2.textContent = 'Predregistrácia – ' + NAZOV;
 
-// Get tournament ID from URL param ?id=xxx
-const params   = new URLSearchParams(location.search);
-const TOUR_ID  = params.get("id");
+  // Načítaj existujúce registrácie
+  loadRegistrations();
+});
 
-let lastNewId  = null;
+const nameInput  = document.getElementById('playerName');
+const nickInput  = document.getElementById('playerNick');
+const clubInput  = document.getElementById('playerClub');
+const submitBtn  = document.getElementById('submitBtn');
+const msgBox     = document.getElementById('msgBox');
+const regList    = document.getElementById('regList');
+const countBadge = document.getElementById('countBadge');
 
-// ── DOM refs ──────────────────────────────────────────────
-const nameInput  = document.getElementById("playerName");
-const clubInput  = document.getElementById("playerClub");
-const submitBtn  = document.getElementById("submitBtn");
-const msgBox     = document.getElementById("msgBox");
-const regList    = document.getElementById("regList");
-const countBadge = document.getElementById("countBadge");
+function showMsg(text, type){ msgBox.textContent=text; msgBox.className='msg show '+type; }
+function hideMsg(){ msgBox.className='msg'; }
+function setLoading(on){ submitBtn.disabled=on; submitBtn.classList.toggle('loading',on); }
 
-// ── HELPERS ───────────────────────────────────────────────
-function showMsg(text, type) {
-  msgBox.textContent = text;
-  msgBox.className = "msg show " + type;
+function getRegs(){
+  try{ return JSON.parse(localStorage.getItem(LS_KEY)||'[]'); }
+  catch(e){ return []; }
 }
-function hideMsg() { msgBox.className = "msg"; }
-
-function setLoading(on) {
-  submitBtn.disabled = on;
-  submitBtn.classList.toggle("loading", on);
-}
-
-function formatDate(str) {
-  if (!str) return "";
-  const d = new Date(str);
-  return d.toLocaleDateString("sk-SK", { day:"2-digit", month:"2-digit", year:"numeric" });
+function saveRegs(regs){
+  localStorage.setItem(LS_KEY, JSON.stringify(regs));
 }
 
-// ── LOAD REGISTRATIONS ────────────────────────────────────
-async function loadRegistrations() {
-  if (!TOUR_ID) return;
-
-  const { data, error } = await db
-    .from("preregistrations")
-    .select("id, player_name, club, created_at")
-    .eq("tournament_id", TOUR_ID)
-    .order("created_at", { ascending: true });
-
-  if (error) return;
-
-  countBadge.textContent = data ? data.length : 0;
-
-  if (!data || data.length === 0) {
-    regList.innerHTML = `<div class="empty-list">Zatiaľ sa nikto neprihlásil. Buď prvý!</div>`;
+function loadRegistrations(){
+  const regs = getRegs();
+  countBadge.textContent = regs.length;
+  if(!regs.length){
+    regList.innerHTML='<div class="empty-list">Zatiaľ sa nikto neprihlásil. Buď prvý!</div>';
     return;
   }
-
-  regList.innerHTML = data.map((r, i) => `
-    <div class="reg-row">
-      <div class="reg-num">${i + 1}</div>
-      <div class="reg-info">
-        <div class="reg-name">${escHtml(r.player_name)}</div>
-        <div class="reg-club">${escHtml(r.club || "—")}</div>
-      </div>
-      ${r.id === lastNewId ? '<span class="reg-new">Nový</span>' : ""}
-    </div>
-  `).join("");
+  regList.innerHTML = regs.map(function(r, i){
+    return '<div class="reg-item">' +
+      '<span class="reg-num">' + (i+1) + '</span>' +
+      '<div>' +
+        '<div class="reg-name">' + esc(r.nick||r.name) + '</div>' +
+        (r.club ? '<div class="reg-club">' + esc(r.club) + '</div>' : '') +
+      '</div>' +
+    '</div>';
+  }).join('');
 }
 
-function escHtml(str) {
-  return String(str).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
-}
-
-// ── SUBMIT ─────────────────────────────────────────────────
-async function submit() {
-  hideMsg();
+submitBtn.addEventListener('click', function(){
   const name = nameInput.value.trim();
+  const nick = nickInput ? nickInput.value.trim() : '';
   const club = clubInput.value.trim();
 
-  nameInput.classList.remove("error-input");
-  clubInput.classList.remove("error-input");
+  if(!name){ showMsg('Zadaj celé meno.','error'); nameInput.focus(); return; }
+  if(!nick){ showMsg('Zadaj prezývku.','error'); if(nickInput)nickInput.focus(); return; }
 
-  if (!name) { nameInput.classList.add("error-input"); nameInput.focus(); showMsg("Zadaj meno hráča.", "error"); return; }
-  if (!club) { clubInput.classList.add("error-input"); clubInput.focus(); showMsg("Zadaj mesto alebo klub.", "error"); return; }
-  if (!TOUR_ID) { showMsg("Chýba ID turnaja v URL.", "error"); return; }
+  // Skontroluj duplicitu prezývky
+  const regs = getRegs();
+  if(regs.find(function(r){ return r.nick && r.nick.toLowerCase()===nick.toLowerCase(); })){
+    showMsg('Táto prezývka je už obsadená.','error');
+    return;
+  }
+
   setLoading(true);
-
-  // Check duplicate
-  const { data: existing } = await db
-    .from("preregistrations")
-    .select("id")
-    .eq("tournament_id", TOUR_ID)
-    .ilike("player_name", name)
-    .maybeSingle();
-
-  if (existing) {
-    showMsg(`Hráč „${name}" je už prihlásený.`, "error");
+  setTimeout(function(){
+    const reg = {
+      id:   Date.now(),
+      name: name,   // súkromné
+      nick: nick,   // verejné
+      club: club,
+      created: new Date().toISOString(),
+    };
+    regs.push(reg);
+    saveRegs(regs);
+    loadRegistrations();
+    nameInput.value='';
+    if(nickInput)nickInput.value='';
+    clubInput.value='';
+    showMsg('✓ Zaregistrovaný ako ' + nick + '!','success');
     setLoading(false);
-    return;
-  }
+    setTimeout(hideMsg, 3000);
+  }, 400);
+});
 
-  const { data, error } = await db
-    .from("preregistrations")
-    .insert({ tournament_id: TOUR_ID, player_name: name, club: club })
-    .select("id")
-    .single();
-
-  setLoading(false);
-
-  if (error) {
-    showMsg("Chyba pri ukladaní: " + error.message, "error");
-    return;
-  }
-
-  lastNewId = data.id;
-  showMsg(`✓ ${name} — úspešne prihlásený!`, "success");
-  nameInput.value = "";
-  clubInput.value = "";
-  nameInput.focus();
-  loadRegistrations();
-}
-
-submitBtn.addEventListener("click", submit);
-nameInput.addEventListener("keydown", e => { if (e.key === "Enter") clubInput.focus(); });
-clubInput.addEventListener("keydown", e => { if (e.key === "Enter") submit(); });
-
-// ── INIT ───────────────────────────────────────────────────
-(async () => {
-  await loadRegistrations();
-})();
-
-// Live refresh every 20s
-setInterval(loadRegistrations, 20000);
+function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 </script>
-</body>
-</html>

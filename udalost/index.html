@@ -90,7 +90,7 @@ body{min-height:100vh;font-family:"Barlow",sans-serif;color:var(--text);backgrou
     <div class="brand-title"><span class="gold">CardScores</span><span style="color:#fff">Pro</span></div>
   </a>
   <div class="topbar-right">
-    <a href="../preregistracia/" class="btn btn-green">✍️ Prihlásiť sa</a>
+    <a href="../preregistracia/" id="regLinkTop" class="btn btn-green">✍️ Prihlásiť sa</a>
     <a href="../profil/" class="btn btn-dark">← Profil</a>
   </div>
 </header>
@@ -176,7 +176,7 @@ body{min-height:100vh;font-family:"Barlow",sans-serif;color:var(--text);backgrou
         <div class="deadline-sub">o 24:00 hod.</div>
       </div>
 
-      <a href="../preregistracia/" class="btn btn-green" style="width:100%;justify-content:center;min-height:48px">✍️ Prihlásiť sa na turnaj</a>
+      <a href="../preregistracia/" id="regLinkBottom" class="btn btn-green" style="width:100%;justify-content:center;min-height:48px">✍️ Prihlásiť sa na turnaj</a>
     </div>
 
   </div>
@@ -228,5 +228,61 @@ body{min-height:100vh;font-family:"Barlow",sans-serif;color:var(--text);backgrou
 </div>
 
 </div>
+
+<script>
+(function(){
+  const params = new URLSearchParams(location.search);
+  const slug   = params.get('slug') || '';
+  const nazov  = params.get('nazov') ? decodeURIComponent(params.get('nazov')) : '';
+
+  // Nastav linky na predregistráciu so slug parametrom
+  function setRegLinks(){
+    const q = slug ? '?slug=' + slug + (nazov ? '&nazov=' + encodeURIComponent(nazov) : '') : '';
+    ['regLinkTop','regLinkBottom'].forEach(function(id){
+      const el = document.getElementById(id);
+      if(el) el.href = '../preregistracia/' + q;
+    });
+  }
+
+  // Načítaj detail udalosti z localStorage
+  function loadEventDetail(){
+    if(!slug) return;
+    try{
+      const udalosti = JSON.parse(localStorage.getItem('csp_udalosti')||'{}');
+      const u = udalosti[slug];
+      if(!u) return;
+
+      // Nastav titulok ak je prázdny
+      const h1 = document.querySelector('h1');
+      if(h1 && h1.textContent.trim()==='') h1.textContent = u.nazov;
+
+      // Aktualizuj meta info
+      const sportEl = document.getElementById('sport-label');
+      if(sportEl) sportEl.textContent = u.sport + (u.disciplina?' – '+u.disciplina:'');
+      const datumEl = document.getElementById('datum-label');
+      if(datumEl) datumEl.textContent = u.datum + (u.cas?' • '+u.cas:'');
+      const klubEl = document.getElementById('klub-label');
+      if(klubEl) klubEl.textContent = u.klub + (u.adresa?', '+u.adresa:'');
+    }catch(e){}
+  }
+
+  // Zdieľanie
+  function setupShare(){
+    const url = location.href;
+    const text = encodeURIComponent('Pozri si turnaj: ' + (nazov||'CSP turnaj'));
+    const enc  = encodeURIComponent(url);
+    const fbBtn = document.getElementById('share-fb');
+    const waBtn = document.getElementById('share-wa');
+    if(fbBtn) fbBtn.href = 'https://www.facebook.com/sharer/sharer.php?u=' + enc;
+    if(waBtn) waBtn.href = 'https://wa.me/?text=' + text + '%20' + enc;
+  }
+
+  document.addEventListener('DOMContentLoaded', function(){
+    setRegLinks();
+    loadEventDetail();
+    setupShare();
+  });
+})();
+</script>
 </body>
 </html>
