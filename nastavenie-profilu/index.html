@@ -55,6 +55,7 @@ body{
   .hero-title h1{font-size:1.7rem}
 }
 </style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
 <div class="page">
@@ -81,13 +82,16 @@ body{
 
         <div class="card avatar-card">
           <div class="avatar-wrap">
-            <img src="a_digital_illustration_showcases_a_billiard_8_ball.png" alt="Dočasný avatar">
+            <img src="" alt="Avatar" id="avatarImg" style="width:100%;height:100%;object-fit:cover;border-radius:50%">
           </div>
           <div class="tag gold">Dočasný avatar</div>
           <div class="note">
             Zatiaľ používame billiardovú guľu 8 ako profilový avatar. Neskôr si ho používateľ môže zmeniť.
           </div>
-          <button class="btn btn-dark" type="button">Zmeniť avatar</button>
+          <label style="cursor:pointer;display:inline-block">
+        <span class="btn btn-dark">Zmeniť avatar</span>
+        <input type="file" accept="image/*" id="avatarFile" style="display:none" onchange="uploadAvatar(this)"/>
+      </label>
         </div>
 
         <div class="card">
@@ -110,11 +114,11 @@ body{
             <div class="two">
               <div>
                 <label class="label">Meno / prezývka</label>
-                <input class="input" value="Tomáš Pikna" />
+                <input class="input" id="inputName" value="" />
               </div>
               <div>
                 <label class="label">Klub</label>
-                <input class="input" value="Moment Club" />
+                <input class="input" id="inputClub" value="" />
               </div>
             </div>
 
@@ -156,7 +160,7 @@ body{
 
             <div class="actions">
               <button class="btn btn-dark" type="button">Preskočiť zatiaľ</button>
-              <button class="btn btn-green" type="button">Uložiť profil</button>
+              <button class="btn btn-green" type="button" onclick="saveProfile()">Uložiť profil</button>
             </div>
           </div>
         </div>
@@ -166,5 +170,62 @@ body{
   </section>
 
 </div>
+
+<script>
+const SB_URL  = "https://gilzomwhuwcxpkegtlhj.supabase.co";
+const SB_ANON = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdpbHpvbXdodXdjeHBrZWd0bGhqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzcwMzMwMTgsImV4cCI6MjA5MjYwOTAxOH0.-KiLSdiB2mRWqUDB9GWyISfCu2o_ZBM80aGUEW9CcUg";
+const db = window.supabase.createClient(SB_URL, SB_ANON);
+let currentUser = null;
+
+(async function(){
+  const { data } = await db.auth.getSession();
+  if(!data?.session){ window.location.href = '../login/'; return; }
+  currentUser = data.session.user;
+
+  const { data: p } = await db.from('profiles').select('*').eq('id', currentUser.id).single();
+  if(p){
+    const nameEl = document.getElementById('inputName');
+    const clubEl = document.getElementById('inputClub');
+    const imgEl  = document.getElementById('avatarImg');
+    if(nameEl) nameEl.value = p.full_name || '';
+    if(clubEl) clubEl.value = p.username  || '';
+    if(imgEl && p.avatar_url) imgEl.src = p.avatar_url;
+  }
+})();
+
+async function saveProfile(){
+  const name = document.getElementById('inputName')?.value.trim();
+  const user = document.getElementById('inputClub')?.value.trim().toLowerCase().replace(/[^a-z0-9_.]/g,'');
+  if(!name||!user){ alert('Vyplň meno a prezývku.'); return; }
+  const { error } = await db.from('profiles').update({ full_name:name, username:user }).eq('id', currentUser.id);
+  if(error){ alert(error.message.includes('unique')?'Prezývka je obsadená.':error.message); return; }
+  alert('✓ Profil uložený!');
+}
+
+async function uploadAvatar(input){
+  const file = input.files[0]; if(!file) return;
+  const img = new Image();
+  const reader = new FileReader();
+  reader.onload = e => img.src = e.target.result;
+  img.onload = async function(){
+    const canvas = document.createElement('canvas');
+    const size = Math.min(img.width, img.height, 400);
+    canvas.width = canvas.height = size;
+    canvas.getContext('2d').drawImage(img,(img.width-size)/2,(img.height-size)/2,size,size,0,0,size,size);
+    canvas.toBlob(async blob => {
+      const path = currentUser.id + '/avatar.jpg';
+      const { error } = await db.storage.from('avatars').upload(path, blob, {upsert:true, contentType:'image/jpeg'});
+      if(error){ alert('Chyba: '+error.message); return; }
+      const { data: u } = db.storage.from('avatars').getPublicUrl(path);
+      const url = u.publicUrl + '?t=' + Date.now();
+      await db.from('profiles').update({ avatar_url: url }).eq('id', currentUser.id);
+      const imgEl = document.getElementById('avatarImg');
+      if(imgEl) imgEl.src = url;
+      alert('✓ Avatar aktualizovaný!');
+    }, 'image/jpeg', 0.85);
+  };
+  reader.readAsDataURL(file);
+}
+</script>
 </body>
 </html>
