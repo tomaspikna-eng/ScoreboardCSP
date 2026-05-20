@@ -517,6 +517,7 @@ button,input,select{font:inherit}
   if(r){ sessionStorage.removeItem('csp_redirect'); window.history.replaceState(null,null,r); }
 })();
 </script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
 <div class="page">
@@ -906,6 +907,37 @@ tabButtons.forEach(btn => {
 searchBtn.addEventListener("click", runSearch);
 searchInput.addEventListener("input", runSearch);
 cityFilter.addEventListener("change", runSearch);
+</script>
+
+<script>
+(async function(){
+  if(!window.supabase) return;
+  const db = window.supabase.createClient("https://gilzomwhuwcxpkegtlhj.supabase.co", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdpbHpvbXdodXdjeHBrZWd0bGhqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzcwMzMwMTgsImV4cCI6MjA5MjYwOTAxOH0.-KiLSdiB2mRWqUDB9GWyISfCu2o_ZBM80aGUEW9CcUg");
+  const { data: events } = await db
+    .from('events')
+    .select('*')
+    .eq('status', 'open')
+    .order('datum', {ascending: true})
+    .limit(6);
+  
+  if(!events || !events.length) return;
+  
+  // Nájdi kontajner pre udalosti
+  const container = document.getElementById('events-list') || 
+                    document.querySelector('.events-grid') ||
+                    document.querySelector('.upcoming-events');
+  if(!container) return;
+  
+  const sports = {billiard:'🎱',darts:'🎯',bowling:'🎳',tennis:'🎾',tabletennis:'🏓',foosball:'⚽',chess:'♟️',petanque:'🎳',badminton:'🏸'};
+  
+  container.innerHTML = events.map(e => `
+    <a href="/udalost/?slug=${e.slug}" class="event-card">
+      <div class="event-sport">${sports[e.sport]||'🏆'} ${e.sport||''}</div>
+      <div class="event-name">${e.nazov}</div>
+      <div class="event-meta">${e.datum||''} · ${e.klub||''} · ${e.mesto||''}</div>
+    </a>
+  `).join('');
+})();
 </script>
 </body>
 </html>
