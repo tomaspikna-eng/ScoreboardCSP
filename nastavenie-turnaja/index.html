@@ -507,8 +507,10 @@ async function spustTurnaj() {
   localStorage.setItem('csp_tournament_setup', JSON.stringify(setup));
 
   // Presmeruj na správny priebeh
-  if(selectedStruct==='rr'||selectedStruct==='rrko') {
-    window.location.href = '/priebeh-turnaja/rr/';
+  if(selectedSport === 'karty') {
+    window.location.href = '/karty/';
+  } else if(selectedStruct==='rr'||selectedStruct==='rrko') {
+    window.location.href = '/priebeh-turnaja/?mode=rr';
   } else {
     window.location.href = '/priebeh-turnaja/';
   }
