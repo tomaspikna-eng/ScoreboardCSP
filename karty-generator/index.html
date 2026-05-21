@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Nastavenie turnaja | CardScoresPro</title>
+  <style>
+    :root{
+      --bg:#000000; --line:rgba(255,255,255,.10); --line-soft:rgba(255,255,255,.06);
+      --text:#f5f5f5; --muted:rgba(255,255,255,.72); --gold:#d8b04b; --green:#1db954; --danger:#d96a6a;
+      --shadow:0 22px 60px rgba(0,0,0,.34); --radius:22px; --max:1320px;
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0;min-height:100%}
+    body{font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--bg);color:var(--text)}
+    a{color:inherit;text-decoration:none}
+    button,input,select,textarea{font:inherit}
+    .container{width:min(100% - 32px, var(--max));margin:0 auto}
+    .site-header{position:sticky;top:0;z-index:30;background:rgba(0,0,0,.92);border-bottom:1px solid var(--line-soft);backdrop-filter:blur(10px)}
+    .header-wrap{min-height:72px;display:flex;align-items:center;justify-content:space-between;gap:20px}
+    .brand{display:flex;align-items:center;gap:14px;min-width:0}
+    .brand-mark{width:48px;height:48px;border-radius:14px;display:grid;place-items:center;border:1px solid rgba(216,176,75,.34);background:rgba(216,176,75,.06);color:var(--gold);font-weight:800;letter-spacing:.04em}
+    .brand-title{font-size:1.28rem;font-weight:800;letter-spacing:-.04em;white-space:nowrap}
+    .brand-title .gold{color:var(--gold)} .brand-title .white{color:#fff}
+    .header-meta{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+    .header-pill{min-height:40px;padding:0 14px;border-radius:12px;border:1px solid var(--line);display:inline-flex;align-items:center;color:var(--muted);background:rgba(255,255,255,.02);font-size:.92rem;font-weight:700}
+    .page{padding:28px 0 48px}
+    .hero{margin-bottom:20px}
+    .hero h1{margin:0;color:var(--gold);font-size:clamp(2rem, 4vw, 2.8rem);letter-spacing:-.05em;font-weight:800}
+    .layout{display:grid;grid-template-columns:1.18fr .82fr;gap:20px;align-items:start}
+    .panel{background:linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.015));border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}
+    .panel-inner{padding:22px}
+    .panel-head{display:flex;align-items:flex-start;justify-content:space-between;gap:18px;margin-bottom:18px}
+    .panel-head h2{margin:0;font-size:1.2rem;font-weight:800;letter-spacing:-.03em;color:var(--gold)}
+    .label{display:block;margin:0 0 10px;color:var(--muted);font-size:.94rem;font-weight:700}
+    textarea,input[type="number"],select{width:100%;border:1px solid rgba(255,255,255,.10);background:rgba(0,0,0,.22);color:var(--text);border-radius:16px;outline:none}
+    textarea{min-height:430px;resize:vertical;padding:18px;line-height:1.65;font-size:1.02rem}
+    input[type="number"],select{min-height:50px;padding:0 14px;font-weight:700}
+    textarea:focus,input[type="number"]:focus,select:focus{border-color:rgba(216,176,75,.55);box-shadow:0 0 0 3px rgba(216,176,75,.10)}
+    .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:18px}
+    .stat{background:rgba(255,255,255,.02);border:1px solid var(--line-soft);border-radius:16px;padding:14px}
+    .stat-label{color:var(--muted);font-size:.82rem;margin-bottom:6px}
+    .stat-value{font-size:1.32rem;font-weight:900;letter-spacing:-.03em}
+    .field{margin-bottom:14px}
+    .checkbox-row{display:flex;align-items:center;gap:12px;margin-top:10px;padding:14px 16px;border-radius:16px;border:1px solid var(--line-soft);background:rgba(255,255,255,.02)}
+    .checkbox-row input{width:18px;height:18px;accent-color:var(--green)}
+    .checkbox-row span{font-size:.96rem;font-weight:700}
+    .duplicate-box{margin-top:16px;padding:14px 16px;border-radius:16px;border:1px solid rgba(217,106,106,.28);background:rgba(217,106,106,.08);color:#ffb9b9;display:none;font-size:.94rem;font-weight:700}
+    .duplicate-box.show{display:block}
+    .actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:20px}
+    .btn{min-height:52px;padding:0 22px;border-radius:16px;font-size:1rem;font-weight:800;cursor:pointer;border:none}
+    .btn-primary{background:var(--green);color:#fff;box-shadow:0 10px 22px rgba(29,185,84,.20)}
+    .btn-secondary{background:rgba(255,255,255,.03);color:var(--text);border:1px solid var(--line)}
+    .btn-disabled{opacity:.45;cursor:not-allowed;pointer-events:none}
+    .round-section{margin-top:24px;display:grid;gap:16px}
+    .round-head{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+    .round-head h3{margin:0;font-size:1.18rem;color:var(--gold);letter-spacing:-.03em}
+    .round-status{color:var(--muted);font-size:.92rem;font-weight:700}
+    .tables-grid{display:grid;gap:14px}
+    .table-card{background:rgba(255,255,255,.02);border:1px solid var(--line-soft);border-radius:18px;padding:16px}
+    .table-top{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:12px;flex-wrap:wrap}
+    .table-title{font-size:1rem;font-weight:800;color:var(--gold)}
+    .table-badge{min-height:32px;padding:0 10px;border-radius:999px;border:1px solid var(--line);display:inline-flex;align-items:center;font-size:.82rem;font-weight:800;color:var(--muted);background:rgba(255,255,255,.02)}
+    .players-list{display:grid;gap:10px}
+    .player-row{display:grid;grid-template-columns:1fr auto;align-items:center;gap:12px;padding:10px 12px;border-radius:14px;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.05)}
+    .player-row label{display:flex;align-items:center;gap:10px;cursor:pointer;min-width:0}
+    .player-row input[type="checkbox"]{width:18px;height:18px;accent-color:var(--danger);flex:0 0 auto}
+    .player-name{font-size:.96rem;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    .player-state{color:var(--muted);font-size:.9rem;font-weight:700}
+    .table-actions{display:flex;gap:10px;margin-top:14px;flex-wrap:wrap}
+    .mini-btn{min-height:40px;padding:0 14px;border-radius:12px;font-size:.9rem;font-weight:800;cursor:pointer;border:1px solid var(--line);background:rgba(255,255,255,.03);color:var(--text)}
+    .mini-btn.success{background:rgba(29,185,84,.12);border-color:rgba(29,185,84,.28);color:#caffd7}
+    .history-panel{margin-top:24px;padding:18px;border-radius:20px;border:1px solid var(--line);background:rgba(255,255,255,.015)}
+    .history-panel h3{margin:0 0 8px;font-size:1.08rem;color:var(--gold)}
+    .history-panel p{margin:0;color:var(--muted);font-size:.94rem;line-height:1.5}
+    @media (max-width: 1024px){.layout{grid-template-columns:1fr}}
+    @media (max-width: 720px){.stats{grid-template-columns:1fr} textarea{min-height:280px} .player-row{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-wrap">
+      <a href="/profil/" class="brand" aria-label="CardScoresPro">
+        <div class="brand-mark">CSP</div>
+        <div class="brand-title"><span class="gold">CardScores</span><span class="white">Pro</span></div>
+      </a>
+      <div class="header-meta">
+        <div class="header-pill" id="headerDiscipline">Disciplína: Žolíky</div>
+        <div class="header-pill" id="headerRound">Kolo: 1</div>
+      </div>
+    </div>
+    <a href="/profil/" style="padding:6px 14px;border-radius:10px;border:1px solid rgba(255,255,255,.1);
+    background:rgba(255,255,255,.03);color:rgba(255,255,255,.5);font-size:.8rem;font-weight:700;
+    text-decoration:none;margin-right:16px">← Profil</a>
+</header>
+
+  <main class="page">
+    <div class="container">
+      <section class="hero">
+        <h1>Nastavenie turnaja</h1>
+      </section>
+
+      <section class="layout">
+        <div class="panel">
+          <div class="panel-inner">
+            <div class="panel-head"><h2>Hráči</h2></div>
+            <label class="label" for="playerNames">Zoznam hráčov</label>
+            <textarea id="playerNames" placeholder="Ján Novák
+Peter Kováč
+Martin Horváth
+Roman Baláž"></textarea>
+            <div class="stats">
+              <div class="stat"><div class="stat-label">Počet hráčov</div><div class="stat-value" id="playerCount">0</div></div>
+              <div class="stat"><div class="stat-label">Počet stolov</div><div class="stat-value" id="suggestedTables">0</div></div>
+              <div class="stat"><div class="stat-label">Aktuálne kolo</div><div class="stat-value" id="roundValue">1</div></div>
+            </div>
+            <div class="duplicate-box" id="duplicateBox"></div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-inner">
+            <div class="panel-head"><h2>Stoly</h2></div>
+            <div class="field">
+              <label class="label" for="disciplineSelect">Disciplína</label>
+              <select id="disciplineSelect">
+                <option value="Žolíky" selected>Žolíky</option>
+                <option value="Mariáš">Mariáš</option>
+                <option value="Faraón">Faraón</option>
+                <option value="Rummy">Rummy</option>
+                <option value="Kanasta">Kanasta</option>
+              </select>
+            </div>
+            <div class="field">
+              <label class="label" for="playersPerTable">Počet hráčov pri stole</label>
+              <select id="playersPerTable"></select>
+            </div>
+            <div class="field">
+              <label class="label" for="tableCount">Počet stolov</label>
+              <input id="tableCount" type="number" min="1" value="1" />
+            </div>
+            <div class="checkbox-row">
+              <input id="enableElimination" type="checkbox" checked />
+              <span>Vypadávajúci hráč</span>
+            </div>
+            <div class="actions">
+              <button class="btn btn-primary" id="generateBtn" type="button">Generovať stoly</button>
+              <button class="btn btn-secondary btn-disabled" id="nextRoundBtn" type="button">Ďalšie kolo</button>
+              <button class="btn btn-secondary" id="finishBtn" type="button">Ukončiť turnaj</button>
+              <button class="btn btn-secondary" id="clearBtn" type="button">Vymazať všetko</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="round-section" id="roundSection">
+        <div class="round-head">
+          <h3 id="roundTitle">1. kolo</h3>
+          <div class="round-status" id="roundStatus">Stoly zatiaľ nie sú vygenerované</div>
+        </div>
+        <div class="tables-grid" id="tablesGrid"></div>
+      </section>
+
+      <section class="history-panel" id="historyPanel" style="display:none;">
+        <h3>Turnaj ukončený</h3>
+        <p id="historyText"></p>
+      </section>
+    </div>
+  </main>
+
+  <script>
+    const STORAGE_KEY = 'csp_karty_turnaj_local_v2';
+    const playerNamesEl = document.getElementById('playerNames');
+    const disciplineSelectEl = document.getElementById('disciplineSelect');
+    const playersPerTableEl = document.getElementById('playersPerTable');
+    const tableCountEl = document.getElementById('tableCount');
+    const enableEliminationEl = document.getElementById('enableElimination');
+    const playerCountEl = document.getElementById('playerCount');
+    const suggestedTablesEl = document.getElementById('suggestedTables');
+    const duplicateBoxEl = document.getElementById('duplicateBox');
+    const generateBtn = document.getElementById('generateBtn');
+    const nextRoundBtn = document.getElementById('nextRoundBtn');
+    const finishBtn = document.getElementById('finishBtn');
+    const clearBtn = document.getElementById('clearBtn');
+    const tablesGridEl = document.getElementById('tablesGrid');
+    const roundTitleEl = document.getElementById('roundTitle');
+    const roundStatusEl = document.getElementById('roundStatus');
+    const roundValueEl = document.getElementById('roundValue');
+    const headerRoundEl = document.getElementById('headerRound');
+    const headerDisciplineEl = document.getElementById('headerDiscipline');
+    const historyPanelEl = document.getElementById('historyPanel');
+    const historyTextEl = document.getElementById('historyText');
+    const state = { round: 1, currentPlayers: [], tables: [], history: [] };
+
+    function fillPlayersPerTableOptions() {
+      playersPerTableEl.innerHTML = '';
+      for (let i = 3; i <= 20; i++) {
+        const option = document.createElement('option');
+        option.value = String(i);
+        option.textContent = String(i);
+        if (i === 4) option.selected = true;
+        playersPerTableEl.appendChild(option);
+      }
+    }
+    function normalizeName(name) { return name.trim().toLowerCase(); }
+    function getPlayersFromInput() { return playerNamesEl.value.split('\n').map(v => v.trim()).filter(Boolean); }
+    function getDuplicateNames(players) {
+      const counts = new Map();
+      players.forEach(name => {
+        const key = normalizeName(name);
+        counts.set(key, (counts.get(key) || 0) + 1);
+      });
+      return [...new Set(players.filter(name => counts.get(normalizeName(name)) > 1))];
+    }
+    function distribute(playerCount, tableCount) {
+      const base = Math.floor(playerCount / tableCount);
+      let remainder = playerCount % tableCount;
+      const sizes = [];
+      for (let i = 0; i < tableCount; i++) {
+        sizes.push(base + (remainder > 0 ? 1 : 0));
+        if (remainder > 0) remainder -= 1;
+      }
+      return sizes.filter(size => size > 0);
+    }
+    function computeBalancedSizes(playerCount, preferredSize, forcedTableCount = null) {
+      if (playerCount <= 0) return [];
+      let tableCount = forcedTableCount && forcedTableCount > 0 ? forcedTableCount : Math.ceil(playerCount / preferredSize);
+      tableCount = Math.max(1, Math.min(tableCount, playerCount));
+      while (Math.ceil(playerCount / tableCount) > preferredSize) tableCount += 1;
+      let sizes = distribute(playerCount, tableCount);
+      if (sizes.includes(1) && tableCount > 1) {
+        for (let candidate = tableCount - 1; candidate >= 1; candidate--) {
+          if (Math.ceil(playerCount / candidate) <= preferredSize + 1) {
+            const candidateSizes = distribute(playerCount, candidate);
+            if (!candidateSizes.includes(1)) {
+              sizes = candidateSizes;
+              break;
+            }
+          }
+        }
+      }
+      return sizes.sort((a, b) => b - a);
+    }
+    function getFormState() {
+      return {
+        playerNames: playerNamesEl.value,
+        discipline: disciplineSelectEl.value,
+        playersPerTable: playersPerTableEl.value,
+        tableCount: tableCountEl.value,
+        tableCountTouched: !!tableCountEl.dataset.touched,
+        enableElimination: enableEliminationEl.checked
+      };
+    }
+    function saveState() { localStorage.setItem(STORAGE_KEY, JSON.stringify({ form: getFormState(), state })); }
+    function loadState() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (!raw) return false;
+        const parsed = JSON.parse(raw);
+        if (parsed.form) {
+          playerNamesEl.value = parsed.form.playerNames || '';
+          disciplineSelectEl.value = parsed.form.discipline || 'Žolíky';
+          playersPerTableEl.value = parsed.form.playersPerTable || '4';
+          tableCountEl.value = parsed.form.tableCount || '1';
+          if (parsed.form.tableCountTouched) tableCountEl.dataset.touched = '1';
+          else delete tableCountEl.dataset.touched;
+          enableEliminationEl.checked = parsed.form.enableElimination !== false;
+        }
+        if (parsed.state) {
+          state.round = parsed.state.round || 1;
+          state.currentPlayers = Array.isArray(parsed.state.currentPlayers) ? parsed.state.currentPlayers : [];
+          state.tables = Array.isArray(parsed.state.tables) ? parsed.state.tables : [];
+          state.history = Array.isArray(parsed.state.history) ? parsed.state.history : [];
+        }
+        return true;
+      } catch (e) { return false; }
+    }
+    function clearSavedState() { localStorage.removeItem(STORAGE_KEY); }
+    function updateHeaderDiscipline() { headerDisciplineEl.textContent = `Disciplína: ${disciplineSelectEl.value}`; }
+    function updateRoundMeta() {
+      roundTitleEl.textContent = `${state.round}. kolo`;
+      roundValueEl.textContent = String(state.round);
+      headerRoundEl.textContent = `Kolo: ${state.round}`;
+    }
+    function updateStats() {
+      const players = getPlayersFromInput();
+      const preferredSize = Number(playersPerTableEl.value);
+      const duplicates = getDuplicateNames(players);
+      const sizes = computeBalancedSizes(players.length, preferredSize);
+      playerCountEl.textContent = String(players.length);
+      suggestedTablesEl.textContent = String(sizes.length || 0);
+      if (!tableCountEl.dataset.touched) tableCountEl.value = sizes.length || 1;
+      if (duplicates.length) {
+        duplicateBoxEl.classList.add('show');
+        duplicateBoxEl.textContent = 'Duplicitné mená: ' + duplicates.join(', ');
+      } else {
+        duplicateBoxEl.classList.remove('show');
+        duplicateBoxEl.textContent = '';
+      }
+    }
+    function splitIntoTables(players, preferredSize, forcedTableCount) {
+      const sizes = computeBalancedSizes(players.length, preferredSize, forcedTableCount);
+      const tables = [];
+      let cursor = 0;
+      sizes.forEach((size, index) => {
+        const slice = players.slice(cursor, cursor + size);
+        cursor += size;
+        tables.push({ name: `Stôl ${index + 1}`, players: slice.map(name => ({ name, eliminated: false })), completed: false });
+      });
+      return tables;
+    }
+    function updateButtons() {
+      const allCompleted = state.tables.length > 0 && state.tables.every(table => table.completed);
+      if (allCompleted) nextRoundBtn.classList.remove('btn-disabled');
+      else nextRoundBtn.classList.add('btn-disabled');
+    }
+    function renderTables() {
+      tablesGridEl.innerHTML = '';
+      if (!state.tables.length) {
+        roundStatusEl.textContent = 'Stoly zatiaľ nie sú vygenerované';
+        updateButtons();
+        return;
+      }
+      roundStatusEl.textContent = state.tables.every(table => table.completed) ? 'Všetky stoly sú ukončené' : 'Čaká sa na ukončenie všetkých stolov';
+      state.tables.forEach((table, tableIndex) => {
+        const card = document.createElement('article');
+        card.className = 'table-card';
+        const top = document.createElement('div');
+        top.className = 'table-top';
+        top.innerHTML = `<div class="table-title">${table.name}</div><div class="table-badge">${table.players.length} hráči</div>`;
+        const list = document.createElement('div');
+        list.className = 'players-list';
+        table.players.forEach((player, playerIndex) => {
+          const row = document.createElement('div');
+          row.className = 'player-row';
+          if (enableEliminationEl.checked) {
+            row.innerHTML = `
+              <label>
+                <input type="checkbox" data-table="${tableIndex}" data-player="${playerIndex}" ${player.eliminated ? 'checked' : ''}>
+                <span class="player-name">${player.name}</span>
+              </label>
+              <span class="player-state">${player.eliminated ? 'vypadáva' : 'hrá'}</span>
+            `;
+          } else {
+            row.innerHTML = `
+              <label><span class="player-name">${player.name}</span></label>
+              <span class="player-state">hrá</span>
+            `;
+          }
+          list.appendChild(row);
+        });
+        const actions = document.createElement('div');
+        actions.className = 'table-actions';
+        actions.innerHTML = `<button class="mini-btn ${table.completed ? 'success' : ''}" data-complete="${tableIndex}">${table.completed ? 'Stôl ukončený' : 'Ukončiť stôl'}</button>`;
+        card.appendChild(top);
+        card.appendChild(list);
+        card.appendChild(actions);
+        tablesGridEl.appendChild(card);
+      });
+      document.querySelectorAll('[data-complete]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const idx = Number(btn.dataset.complete);
+          state.tables[idx].completed = !state.tables[idx].completed;
+          renderTables();
+          saveState();
+        });
+      });
+      document.querySelectorAll('[data-table][data-player]').forEach(box => {
+        box.addEventListener('change', () => {
+          const tableIdx = Number(box.dataset.table);
+          const playerIdx = Number(box.dataset.player);
+          state.tables[tableIdx].players[playerIdx].eliminated = box.checked;
+          renderTables();
+          saveState();
+        });
+      });
+      updateButtons();
+    }
+    function buildRound() {
+      const players = state.round === 1 ? getPlayersFromInput() : state.currentPlayers.slice();
+      const duplicates = getDuplicateNames(players);
+      if (players.length < 2) { alert('Zadaj aspoň 2 hráčov.'); return; }
+      if (duplicates.length) { alert('Najprv oprav duplicity v zozname hráčov.'); return; }
+      state.tables = splitIntoTables(players, Number(playersPerTableEl.value) || 4, Math.max(1, Number(tableCountEl.value) || 1));
+      state.currentPlayers = players.slice();
+      historyPanelEl.style.display = 'none';
+      updateRoundMeta();
+      renderTables();
+      saveState();
+    }
+    function finishTournament(remainingPlayers = []) {
+      const players = remainingPlayers.length ? remainingPlayers : (state.currentPlayers.length ? state.currentPlayers : getPlayersFromInput());
+      historyPanelEl.style.display = 'block';
+      historyTextEl.textContent = `Turnaj bol ukončený. Posledné aktívne mená: ${players.join(', ') || 'bez hráčov'}.`;
+      state.tables = [];
+      renderTables();
+      saveState();
+    }
+    function generateNextRound() {
+      const allCompleted = state.tables.length > 0 && state.tables.every(table => table.completed);
+      if (!allCompleted) return;
+      const remainingPlayers = state.tables.flatMap(table => table.players).filter(player => !player.eliminated).map(player => player.name);
+      state.history.push({ round: state.round, totalTables: state.tables.length, activePlayers: remainingPlayers.length });
+      if (remainingPlayers.length <= 1) { finishTournament(remainingPlayers); return; }
+      state.round += 1;
+      state.currentPlayers = remainingPlayers.slice();
+      tableCountEl.dataset.touched = '';
+      tableCountEl.value = computeBalancedSizes(remainingPlayers.length, Number(playersPerTableEl.value)).length || 1;
+      state.tables = splitIntoTables(remainingPlayers, Number(playersPerTableEl.value), Number(tableCountEl.value));
+      updateRoundMeta();
+      renderTables();
+      saveState();
+    }
+    function resetTournament() {
+      playerNamesEl.value = '';
+      tableCountEl.dataset.touched = '';
+      tableCountEl.value = 1;
+      playersPerTableEl.value = 4;
+      disciplineSelectEl.value = 'Žolíky';
+      enableEliminationEl.checked = true;
+      state.round = 1;
+      state.currentPlayers = [];
+      state.tables = [];
+      state.history = [];
+      historyPanelEl.style.display = 'none';
+      updateHeaderDiscipline();
+      updateRoundMeta();
+      updateStats();
+      renderTables();
+      clearSavedState();
+    }
+    playerNamesEl.addEventListener('input', () => { updateStats(); saveState(); });
+    playersPerTableEl.addEventListener('change', () => { updateStats(); saveState(); });
+    disciplineSelectEl.addEventListener('change', () => { updateHeaderDiscipline(); saveState(); });
+    enableEliminationEl.addEventListener('change', () => { renderTables(); saveState(); });
+    tableCountEl.addEventListener('input', () => { tableCountEl.dataset.touched = '1'; saveState(); });
+    generateBtn.addEventListener('click', buildRound);
+    nextRoundBtn.addEventListener('click', generateNextRound);
+    finishBtn.addEventListener('click', () => finishTournament());
+    clearBtn.addEventListener('click', resetTournament);
+    fillPlayersPerTableOptions();
+    loadState();
+    updateHeaderDiscipline();
+    updateRoundMeta();
+    updateStats();
+    renderTables();
+  </script>
+
+<script>
+// Načítaj hráčov z nastavenia turnaja
+(function(){
+  try {
+    const setup = JSON.parse(localStorage.getItem('csp_tournament_setup')||'null');
+    if(!setup || !setup.players || !setup.players.length) return;
+    // Nastav hráčov do textarea ak existuje
+    const ta = document.querySelector('textarea');
+    if(ta && !ta.value.trim()) {
+      ta.value = setup.players.map(p => p.name).join('\n');
+      // Trigger input event
+      ta.dispatchEvent(new Event('input'));
+    }
+    // Nastav názov
+    const h1 = document.querySelector('h1');
+    if(h1) h1.textContent = setup.name || 'Kartový turnaj';
+  } catch(e) {}
+})();
+</script>
+</body>
+</html>
