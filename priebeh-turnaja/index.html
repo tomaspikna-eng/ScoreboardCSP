@@ -267,472 +267,368 @@ tbody tr.finished-row{background:rgba(110,168,255,.08)}
   </div>
 </div>
 
+<script src="engine.js"></script>
+<script src="rr-engine.js"></script>
 <script>
 
-const SUPABASE_URL = "https://gqtbxjkuemggelepkhrl.supabase.co";
-const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imllcmxpc3dyZ3J0bHRycnZscXN6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzcyMDE3MjQsImV4cCI6MjA5Mjc3NzcyNH0.Y2dH1MkSUxhnKGl_5vnebZAgaBBcfrNQFJk6PONNJMU";
-const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-const tournament = {
-  name: "Turnaj",
-  sport: "",
-  discipline: "",
-  structure: "",
-  state: "Prebieha",
-  fieldSize: 0,
-  location: "",
-  date: "",
-  time: ""
-};
-
-const players = {};
-let matches = [];
-
-function getTournamentIdFromUrl(){
-  const url = new URL(window.location.href);
-  return url.searchParams.get("id");
-}
-
-async function loadTournamentFromDb(){
-  const tournamentId = getTournamentIdFromUrl();
-  if(!supabaseClient) throw new Error("Doplň SUPABASE_URL a SUPABASE_ANON_KEY.");
-  if(!tournamentId) throw new Error("Chýba ID turnaja v adrese.");
-
-  const { data: tournamentRow, error: tournamentError } = await supabaseClient
-    .from("tournaments")
-    .select("*")
-    .eq("id", tournamentId)
-    .single();
-
-  if(tournamentError) throw tournamentError;
-
-  tournament.name = tournamentRow.name || "Turnaj";
-  tournament.sport = tournamentRow.sport === "billiard" ? "Biliard" : "Šípky";
-  tournament.discipline = tournamentRow.discipline || "";
-  tournament.structure = tournamentRow.structure === "double_ko" ? "Dvojité KO" : tournamentRow.structure;
-  tournament.state = tournamentRow.status === "finished" ? "Ukončený" : "Prebieha";
-  tournament.fieldSize = tournamentRow.field_size || 0;
-  tournament.location = tournamentRow.location || "";
-  tournament.date = tournamentRow.event_date || "";
-  tournament.time = tournamentRow.event_time || "";
-
-  const { data: playerRows, error: playersError } = await supabaseClient
-    .from("players")
-    .select("*")
-    .eq("tournament_id", tournamentId)
-    .order("seed", { ascending: true, nullsFirst: false });
-
-  if(playersError) throw playersError;
-
-  Object.keys(players).forEach(k => delete players[k]);
-  playerRows.forEach((p, idx) => {
-    players[p.id] = { name: p.name || `Hráč ${idx+1}`, club: p.club || "", seed: p.seed ?? "" };
-  });
-  players.WO = { name:"w.o.", club:"Voľný žreb", seed:"" };
-
-  const { data: matchRows, error: matchesError } = await supabaseClient
-    .from("matches")
-    .select("*")
-    .eq("tournament_id", tournamentId)
-    .order("round", { ascending: true })
-    .order("position", { ascending: true });
-
-  if(matchesError) throw matchesError;
-
-  matches = matchRows.map(m => ({
-    id: `Z${String(m.position || 0).padStart(2,"0")}`,
-    dbId: m.id,
-    round: m.round,
-    bracket: m.bracket || "winners",
-    stage: m.round,
-    p1: m.player1_id || "WO",
-    p2: m.player2_id || "WO",
-    score1: m.score_p1 ?? "",
-    score2: m.score_p2 ?? "",
-    status: m.status || "pending",
-    tableId: m.table_id,
-    assignedAt: m.assigned_at,
-    startedAt: m.started_at,
-  }));
-}
+// ═══════════════════════════════════════════
+// STAV
+// ═══════════════════════════════════════════
+let E   = null;  // DKO/SKO engine
+let RR  = null;  // RR engine
+let MODE = 'dko'; // dko | sko | rr | rrko
+let RACE = 7;
 
 const el = {
-  titleName: document.getElementById("titleName"),
-  titleLine: document.getElementById("titleLine"),
-  tournamentState: document.getElementById("tournamentState"),
-  summarySport: document.getElementById("summarySport"),
-  summaryDiscipline: document.getElementById("summaryDiscipline"),
-  summaryStructure: document.getElementById("summaryStructure"),
-  summaryPlayers: document.getElementById("summaryPlayers"),
-  summaryLive: document.getElementById("summaryLive"),
-  summaryFinished: document.getElementById("summaryFinished"),
-  matchesBody: document.getElementById("matchesBody"),
-  roundFilter: document.getElementById("roundFilter"),
-  statusFilter: document.getElementById("statusFilter"),
-  searchInput: document.getElementById("searchInput"),
-  listNotice: document.getElementById("listNotice"),
-  bracketNotice: document.getElementById("bracketNotice"),
-  modal: document.getElementById("matchModal"),
-  modalTitle: document.getElementById("modalTitle"),
-  modalSubtitle: document.getElementById("modalSubtitle"),
-  modalPlayer1: document.getElementById("modalPlayer1"),
-  modalPlayer2: document.getElementById("modalPlayer2"),
-  modalClub1: document.getElementById("modalClub1"),
-  modalClub2: document.getElementById("modalClub2"),
-  score1: document.getElementById("score1"),
-  score2: document.getElementById("score2"),
-  modalError: document.getElementById("modalError")
+  titleName:       document.getElementById('titleName'),
+  titleLine:       document.getElementById('titleLine'),
+  tournamentState: document.getElementById('tournamentState'),
+  summarySport:    document.getElementById('summarySport'),
+  summaryDiscipline:document.getElementById('summaryDiscipline'),
+  summaryStructure: document.getElementById('summaryStructure'),
+  summaryPlayers:  document.getElementById('summaryPlayers'),
+  summaryLive:     document.getElementById('summaryLive'),
+  summaryFinished: document.getElementById('summaryFinished'),
+  matchesBody:     document.getElementById('matchesBody'),
+  roundFilter:     document.getElementById('roundFilter'),
+  statusFilter:    document.getElementById('statusFilter'),
+  searchInput:     document.getElementById('searchInput'),
+  listNotice:      document.getElementById('listNotice'),
+  bracketNotice:   document.getElementById('bracketNotice'),
+  modal:           document.getElementById('matchModal'),
+  modalTitle:      document.getElementById('modalTitle'),
+  modalSubtitle:   document.getElementById('modalSubtitle'),
+  modalPlayer1:    document.getElementById('modalPlayer1'),
+  modalPlayer2:    document.getElementById('modalPlayer2'),
+  modalClub1:      document.getElementById('modalClub1'),
+  modalClub2:      document.getElementById('modalClub2'),
+  score1:          document.getElementById('score1'),
+  score2:          document.getElementById('score2'),
+  modalError:      document.getElementById('modalError'),
 };
 
 let activeMatchId = null;
 let pendingAction = null;
 
-function playerLabel(key){
-  if(players[key]) return players[key];
-  return {name:key, club:""};
+// ═══════════════════════════════════════════
+// NAČÍTANIE
+// ═══════════════════════════════════════════
+function loadTournament(){
+  const setup = JSON.parse(localStorage.getItem('csp_tournament_setup')||'null');
+  if(!setup || !setup.players || !setup.players.length){
+    showNotice('Žiadny aktívny turnaj. <a href="/nastavenie-turnaja/">Nastav turnaj →</a>');
+    return;
+  }
+
+  RACE = setup.race || 7;
+  MODE = setup.structure || 'dko';
+
+  const sports = {billiard:'Biliard',darts:'Šípky',bowling:'Bowling',tennis:'Tenis',
+    tabletennis:'Stolný tenis',foosball:'Stolný futbal',petanque:'Pétanque',
+    chess:'Šach',badminton:'Bedminton',karty:'Karty'};
+  const structs = {dko:'Double KO',sko:'Single KO',rr:'Round Robin',rrko:'RR + KO',liga:'Liga'};
+
+  if(el.titleName)    el.titleName.textContent    = setup.name || 'Turnaj';
+  if(el.titleLine)    el.titleLine.textContent    = [setup.venue, setup.date].filter(Boolean).join(' · ') || 'Priebeh turnaja';
+  if(el.summarySport)    el.summarySport.textContent    = sports[setup.sport] || setup.sport || '';
+  if(el.summaryDiscipline) el.summaryDiscipline.textContent = setup.disc || '';
+  if(el.summaryStructure)  el.summaryStructure.textContent  = structs[MODE] || MODE;
+  if(el.summaryPlayers)    el.summaryPlayers.textContent    = String(setup.players.length);
+
+  const seeded = setup.players.map((p,i) => ({...p, seed: i+1}));
+
+  if(MODE === 'rr' || MODE === 'rrko'){
+    RR = new RREngine(seeded, {
+      groups:    setup.groups    || 1,
+      groupSize: setup.groupSize || seeded.length,
+      race:      RACE,
+      advance:   setup.advance   || 2,
+      phase2:    'dko',
+    });
+    renderRR();
+  } else if(MODE === 'sko'){
+    E = new SKOEngine(seeded, {bracketSize: nearestPow2(seeded.length), thirdPlace: true});
+    renderTable();
+    renderBracketSKO();
+  } else {
+    // DKO default
+    const saved = DKOEngine.load();
+    E = saved || new DKOEngine(seeded, {bracketSize: setup.fieldSize||16, thirdPlace: true});
+    renderTable();
+    renderBracket();
+  }
+  updateSummary();
+  buildRoundFilter();
 }
-function statusClass(status){
-  if(status==="active") return "status-live";
-  if(status==="paused") return "status-paused";
-  if(status==="done") return "status-finished";
-  return "status-ready";
+
+function showNotice(msg){
+  if(el.listNotice){ el.listNotice.innerHTML = msg; el.listNotice.style.display = 'block'; }
 }
-function statusText(status){
-  if(status==="active") return "Hrá sa";
-  if(status==="paused") return "Pauza";
-  if(status==="done") return "Ukončený";
-  if(status==="cancelled") return "Zrušený";
-  return "Čaká";
-}
-function scoreText(match){
-  if(match.score1==="" && match.score2==="") return "—";
-  return `${match.score1} : ${match.score2}`;
-}
+
 function updateSummary(){
-  el.titleName.textContent = tournament.name;
-  el.titleLine.textContent = [tournament.location, tournament.date, tournament.time].filter(Boolean).join(" • ") || "Priebeh turnaja";
-  el.tournamentState.textContent = tournament.state;
-  el.summarySport.textContent = tournament.sport;
-  el.summaryDiscipline.textContent = tournament.discipline;
-  el.summaryStructure.textContent = tournament.structure;
-  el.summaryPlayers.textContent = String(Object.keys(players).filter(k=>k!=="WO").length);
-  el.summaryLive.textContent = String(matches.filter(m=>m.status==="active").length);
-  el.summaryFinished.textContent = String(matches.filter(m=>m.status==="done").length);
+  const matches = E ? E.matches : (RR ? RR.matches : []);
+  if(el.summaryLive)     el.summaryLive.textContent    = String(matches.filter(m=>m.status==='active').length);
+  if(el.summaryFinished) el.summaryFinished.textContent = String(matches.filter(m=>m.status==='done').length);
 }
+
+// ═══════════════════════════════════════════
+// RENDER TABULKA (DKO / SKO)
+// ═══════════════════════════════════════════
 function buildRoundFilter(){
+  if(!el.roundFilter) return;
+  const matches = E ? E.matches : (RR ? RR.matches : []);
   const rounds = [...new Set(matches.map(m=>m.round))];
-  rounds.forEach(round=>{
-    const opt = document.createElement("option");
-    opt.value = round;
-    opt.textContent = round;
-    el.roundFilter.appendChild(opt);
+  el.roundFilter.innerHTML = '<option value="all">Všetky kolá</option>';
+  rounds.forEach(r => {
+    const o = document.createElement('option');
+    o.value = r; o.textContent = r;
+    el.roundFilter.appendChild(o);
   });
 }
+
+function playerLabel(p){ return {name: p?.name||'—', club: p?.club||''}; }
+
+function statusClass(s){
+  if(s==='active')  return 'status-live';
+  if(s==='paused')  return 'status-paused';
+  if(s==='done')    return 'status-finished';
+  if(s==='lock')    return 'status-finished';
+  return 'status-ready';
+}
+function statusText(s){
+  if(s==='active') return '🟢 Hrá sa';
+  if(s==='paused') return '⏸ Pauza';
+  if(s==='done')   return '✓ Ukončený';
+  if(s==='lock')   return '⏭ Voľný postup';
+  return 'Čaká';
+}
+function scoreText(m){ return m.s1===null ? '—' : m.s1+' : '+m.s2; }
+
 function renderTable(){
-  const q = el.searchInput.value.trim().toLowerCase();
-  const round = el.roundFilter.value;
-  const status = el.statusFilter.value;
-  el.matchesBody.innerHTML = "";
-  const filtered = matches.filter(match=>{
-    const p1 = playerLabel(match.p1).name.toLowerCase();
-    const p2 = playerLabel(match.p2).name.toLowerCase();
-    const hay = `${match.id} ${match.round} ${p1} ${p2}`.toLowerCase();
-    return (round==="all" || match.round===round) &&
-           (status==="all" || match.status===status) &&
-           (!q || hay.includes(q));
-  });
+  if(!el.matchesBody) return;
+  const matches = E ? E.matches : [];
+  const q      = el.searchInput?.value.trim().toLowerCase() || '';
+  const round  = el.roundFilter?.value || 'all';
+  const status = el.statusFilter?.value || 'all';
+  el.matchesBody.innerHTML = '';
 
-  filtered.forEach(match=>{
-    const tr = document.createElement("tr");
-    if(match.status==="active") tr.classList.add("live-row");
-    if(match.status==="done") tr.classList.add("finished-row");
-
-    const p1 = playerLabel(match.p1);
-    const p2 = playerLabel(match.p2);
-
+  matches.filter(m => {
+    const p1 = playerLabel(m.p1).name.toLowerCase();
+    const p2 = playerLabel(m.p2).name.toLowerCase();
+    const hay = (m.label+' '+m.round+' '+p1+' '+p2).toLowerCase();
+    return (round==='all'||m.round===round) && (status==='all'||m.status===status) && (!q||hay.includes(q));
+  }).forEach(m => {
+    const tr = document.createElement('tr');
+    if(m.status==='active') tr.classList.add('live-row');
+    if(m.status==='done')   tr.classList.add('finished-row');
+    const p1=playerLabel(m.p1), p2=playerLabel(m.p2);
     tr.innerHTML = `
-      <td class="match-no">${match.id}</td>
-      <td>${match.round}</td>
-      <td><div class="player-meta"><span>${p1.name}</span><small>${p1.club || "—"}</small></div></td>
-      <td class="score">${scoreText(match)}</td>
-      <td><div class="player-meta"><span>${p2.name}</span><small>${p2.club || "—"}</small></div></td>
-      <td><span class="status-pill ${statusClass(match.status)}">${statusText(match.status)}</span></td>
-      <td>
-        <button class="action-btn play" data-id="${match.id}" title="Správa zápasu">▶</button>
-      </td>`;
+      <td class="match-no">${m.label}${m.letter?` <small>${m.letter}</small>`:''}</td>
+      <td>${m.round}</td>
+      <td><div class="player-meta"><span>${esc(p1.name)}</span><small>${esc(p1.club)||'—'}</small></div></td>
+      <td class="score">${scoreText(m)}</td>
+      <td><div class="player-meta"><span>${esc(p2.name)}</span><small>${esc(p2.club)||'—'}</small></div></td>
+      <td><span class="status-pill ${statusClass(m.status)}">${statusText(m.status)}</span></td>
+      <td>${m.isLock?'':` <button class="action-btn play" data-id="${m.id}">▶</button>`}</td>`;
     el.matchesBody.appendChild(tr);
   });
-}
-function cardHTML(match){
-  const p1 = playerLabel(match.p1);
-  const p2 = playerLabel(match.p2);
-  return `
-    <div class="match-card ${match.status==="active"?"live-card":""} ${match.status==="done"?"finished-card":""}">
-      <div class="match-top">
-        <div>
-          <div class="match-id">${match.id}</div>
-          <div class="match-round">${match.round}</div>
-        </div>
-        <span class="status-pill ${statusClass(match.status)}">${statusText(match.status)}</span>
-      </div>
-      <div class="players">
-        <div class="player-line">
-          <div class="player-meta"><span>${p1.name}</span><small>${p1.club || "—"}</small></div>
-          <div class="player-score">${match.score1===""?"—":match.score1}</div>
-        </div>
-        <div class="player-line">
-          <div class="player-meta"><span>${p2.name}</span><small>${p2.club || "—"}</small></div>
-          <div class="player-score">${match.score2===""?"—":match.score2}</div>
-        </div>
-      </div>
-      <div class="tag-bar">
-        <span class="mini-tag">${match.round}</span>
-        <span class="mini-tag">${match.bracket==="winners"?"Víťazi":match.bracket==="losers"?"Porazení":match.bracket==="center"?"1. kolo":"Finále"}</span>
-      </div>
-      <div class="card-actions">
-        <button class="action-btn play" data-id="${match.id}" title="Správa zápasu">▶</button>
-      </div>
-    </div>`;
-}
-function renderBracket(){
-  const cols = {
-    B2b: document.getElementById("colB2b"),
-    B2a: document.getElementById("colB2a"),
-    B1: document.getElementById("colB1"),
-    A0: document.getElementById("colA0"),
-    A1: document.getElementById("colA1"),
-    A2: document.getElementById("colA2"),
-    FIN: document.getElementById("colFIN")
-  };
-  Object.values(cols).forEach(col=>{
-    const head = col.querySelector(".round-head");
-    col.innerHTML = "";
-    col.appendChild(head);
-  });
-  const divider = document.createElement("div");
-  divider.className = "stage-divider";
-  divider.textContent = "Prvé kolo";
-  cols.A0.appendChild(divider);
-
-  matches.filter(m=>m.round==="B2b").forEach(m=>cols.B2b.insertAdjacentHTML("beforeend", cardHTML(m)));
-  matches.filter(m=>m.round==="B2a").forEach(m=>cols.B2a.insertAdjacentHTML("beforeend", cardHTML(m)));
-  matches.filter(m=>m.round==="B1a" || m.round==="B1b").forEach(m=>cols.B1.insertAdjacentHTML("beforeend", cardHTML(m)));
-  matches.filter(m=>m.round==="A0").forEach(m=>cols.A0.insertAdjacentHTML("beforeend", cardHTML(m)));
-  matches.filter(m=>m.round==="A1").forEach(m=>cols.A1.insertAdjacentHTML("beforeend", cardHTML(m)));
-  matches.filter(m=>m.round==="A2" || m.round==="SF").forEach(m=>cols.A2.insertAdjacentHTML("beforeend", cardHTML(m)));
-  matches.filter(m=>m.round==="FIN" || m.round==="FI3").forEach(m=>cols.FIN.insertAdjacentHTML("beforeend", cardHTML(m)));
-
   bindCardButtons();
 }
-function bindCardButtons(){
-  document.querySelectorAll("[data-id]").forEach(btn=>{
-    btn.onclick = ()=>openModal(btn.dataset.id);
+
+// ═══════════════════════════════════════════
+// RENDER RR
+// ═══════════════════════════════════════════
+function renderRR(){
+  if(!RR || !el.matchesBody) return;
+  el.matchesBody.innerHTML = '';
+
+  // Zobraz skupiny ako tabuľky + zápasy
+  RR.groupData.forEach((g, gi) => {
+    // Tabuľka skupiny
+    const headerRow = document.createElement('tr');
+    headerRow.innerHTML = `<td colspan="7" style="padding:10px 8px 4px;font-weight:800;color:var(--gold);font-size:.85rem">${g.name}</td>`;
+    el.matchesBody.appendChild(headerRow);
+
+    // Standings riadky
+    g.standings.forEach((s, rank) => {
+      const tr = document.createElement('tr');
+      tr.style.background = rank < RR.advance ? 'rgba(30,200,106,.04)' : '';
+      tr.innerHTML = `
+        <td class="match-no">${rank+1}.</td>
+        <td colspan="2"><div class="player-meta"><span>${esc(s.player.name)}</span></div></td>
+        <td class="score">${s.pts} b</td>
+        <td><span style="color:var(--green)">${s.w}V</span> / <span style="color:#e05555">${s.l}P</span></td>
+        <td colspan="2" style="color:var(--muted2);font-size:.75rem">${s.scored}:${s.received}</td>`;
+      el.matchesBody.appendChild(tr);
+    });
+
+    // Zápasy skupiny
+    const sepRow = document.createElement('tr');
+    sepRow.innerHTML = `<td colspan="7" style="padding:4px 8px;font-size:.7rem;color:var(--muted2);text-transform:uppercase;letter-spacing:.08em">Zápasy</td>`;
+    el.matchesBody.appendChild(sepRow);
+
+    g.matches.forEach(m => {
+      const tr = document.createElement('tr');
+      if(m.status==='active') tr.classList.add('live-row');
+      if(m.status==='done')   tr.classList.add('finished-row');
+      const p1=playerLabel(m.p1), p2=playerLabel(m.p2);
+      tr.innerHTML = `
+        <td class="match-no">${m.label||m.id}</td>
+        <td>${g.name}</td>
+        <td><div class="player-meta"><span>${esc(p1.name)}</span></div></td>
+        <td class="score">${scoreText(m)}</td>
+        <td><div class="player-meta"><span>${esc(p2.name)}</span></div></td>
+        <td><span class="status-pill ${statusClass(m.status)}">${statusText(m.status)}</span></td>
+        <td>${m.status!=='lock'?`<button class="action-btn play" data-id="${m.id}" data-rr="1">▶</button>`:''}</td>`;
+      el.matchesBody.appendChild(tr);
+    });
   });
-}
-function openModal(id){
-  activeMatchId = id;
-  const match = matches.find(m=>m.id===id);
-  const p1 = playerLabel(match.p1);
-  const p2 = playerLabel(match.p2);
-  el.modalTitle.textContent = id;
-  el.modalSubtitle.textContent = `Kolo ${match.round}`;
-  el.modalPlayer1.textContent = p1.name;
-  el.modalPlayer2.textContent = p2.name;
-  el.modalClub1.textContent = p1.club || "—";
-  el.modalClub2.textContent = p2.club || "—";
-  el.score1.value = match.score1 === "" ? 0 : match.score1;
-  el.score2.value = match.score2 === "" ? 0 : match.score2;
-  el.modalError.style.display = "none";
-  pendingAction = null;
-  el.modal.classList.add("show");
-}
-function closeModal(){
-  el.modal.classList.remove("show");
-  activeMatchId = null;
-  pendingAction = null;
-  el.modalError.style.display = "none";
-}
-async function saveMatch(){
-  const match = matches.find(m=>m.id===activeMatchId);
-  if(!match) return;
-  match.score1 = Number(el.score1.value || 0);
-  match.score2 = Number(el.score2.value || 0);
-  if(pendingAction==="play") match.status = "active";
-  if(pendingAction==="pause") match.status = "paused";
-  if(pendingAction==="stop") match.status = "done";
-  if(pendingAction==="delete"){ match.status = "pending"; match.score1 = null; match.score2 = null; }
-
-  try{
-    if(!supabaseClient) throw new Error("Doplň SUPABASE_URL a SUPABASE_ANON_KEY.");
-    const updatePayload = {
-        score_p1: match.score1,
-        score_p2: match.score2,
-        status: match.status
-      };
-      if(match.status === "active" && !match.startedAt) {
-        updatePayload.started_at = new Date().toISOString();
-      }
-      if(match.status === "done") {
-        updatePayload.completed_at = new Date().toISOString();
-        if(match.score1 > match.score2) updatePayload.winner_id = match.p1;
-        else if(match.score2 > match.score1) updatePayload.winner_id = match.p2;
-      }
-      const { error } = await supabaseClient
-        .from("matches")
-        .update(updatePayload)
-        .eq("id", match.dbId);
-
-    if(error) throw error;
-
-    updateSummary();
-    renderTable();
-    renderBracket();
-    closeModal();
-    const notice = document.getElementById(document.querySelector(".view-panel.active").id==="listView" ? "listNotice" : "bracketNotice");
-    notice.textContent = `Zápas ${match.id} bol aktualizovaný.`;
-    notice.style.display = "block";
-    setTimeout(()=>notice.style.display="none", 2500);
-  }catch(err){
-    el.modalError.textContent = err.message || "Nepodarilo sa uložiť zápas.";
-    el.modalError.style.display = "block";
-  }
+  bindCardButtons();
+  updateSummary();
 }
 
-document.querySelectorAll(".switch-btn[data-view]").forEach(btn=>{
-  btn.addEventListener("click", ()=>{
-    document.querySelectorAll(".switch-btn[data-view]").forEach(x=>x.classList.remove("active"));
-    btn.classList.add("active");
-    document.querySelectorAll(".view-panel").forEach(v=>v.classList.remove("active"));
-    document.getElementById(btn.dataset.view==="list" ? "listView" : "bracketView").classList.add("active");
-  });
-});
-document.querySelectorAll(".filter-btn[data-bracket]").forEach(btn=>{
-  btn.addEventListener("click", ()=>{
-    document.querySelectorAll(".filter-btn[data-bracket]").forEach(x=>x.classList.remove("active"));
-    btn.classList.add("active");
-    const mode = btn.dataset.bracket;
-    document.querySelectorAll(".bracket-winners,.bracket-losers").forEach(col=>col.style.display="grid");
-    if(mode==="winners") document.querySelectorAll(".bracket-losers").forEach(col=>col.style.display="none");
-    if(mode==="losers") document.querySelectorAll(".bracket-winners").forEach(col=>col.style.display="none");
-  });
-});
-document.getElementById("closeModal").addEventListener("click", closeModal);
-document.getElementById("cancelModal").addEventListener("click", closeModal);
-document.getElementById("saveScore").addEventListener("click", saveMatch);
-document.querySelectorAll("[data-modal-action]").forEach(btn=>{
-  btn.addEventListener("click", ()=>{ pendingAction = btn.dataset.modalAction; });
-});
-el.searchInput.addEventListener("input", renderTable);
-el.roundFilter.addEventListener("change", renderTable);
-el.statusFilter.addEventListener("change", renderTable);
-
-// ── Realtime subscription ─────────────────────────────────
-function setupRealtime() {
-  const tournamentId = getTournamentIdFromUrl();
-  if(!tournamentId) return;
-
-  supabaseClient
-    .channel("matches-live")
-    .on("postgres_changes", {
-      event: "*",
-      schema: "public",
-      table: "matches",
-      filter: `tournament_id=eq.${tournamentId}`
-    }, payload => {
-      const changed = payload.new;
-      const idx = matches.findIndex(m => m.dbId === changed.id);
-      if(idx !== -1) {
-        matches[idx].score1 = changed.score_p1 ?? "";
-        matches[idx].score2 = changed.score_p2 ?? "";
-        matches[idx].status = changed.status;
-        matches[idx].tableId = changed.table_id;
-        matches[idx].startedAt = changed.started_at;
-        updateSummary();
-        renderTable();
-        renderBracket();
-        bindCardButtons();
-        // Notification when match becomes active
-        if(changed.status === "active") {
-          showMatchNotification(matches[idx]);
-        }
-      }
-    })
-    .subscribe();
-}
-
-// ── Match notification + countdown ────────────────────────
-const COUNTDOWN_SECONDS = 120; // 2 minúty na príchod
-let countdownInterval = null;
-
-function showMatchNotification(match) {
-  const p1 = playerLabel(match.p1);
-  const p2 = playerLabel(match.p2);
-  const existing = document.getElementById("matchNotification");
-  if(existing) existing.remove();
-  if(countdownInterval) clearInterval(countdownInterval);
-
-  const notif = document.createElement("div");
-  notif.id = "matchNotification";
-  notif.style.cssText = `
-    position:fixed;bottom:24px;right:24px;
-    background:linear-gradient(135deg,rgba(20,20,20,.98),rgba(10,10,10,.98));
-    border:1px solid rgba(34,211,107,.3);border-radius:20px;
-    padding:18px 22px;min-width:300px;max-width:360px;
-    box-shadow:0 20px 60px rgba(0,0,0,.6);z-index:1000;
-    animation:slideIn .3s ease;
-  `;
-  notif.innerHTML = `
-    <div style="font-size:.68rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:#9ed8b7;margin-bottom:8px;">⚡ Nový zápas pridelený</div>
-    <div style="font-weight:900;font-size:1rem;color:#f0f0f0;margin-bottom:4px;">${p1.name} vs ${p2.name}</div>
-    <div style="font-size:.82rem;color:#888;margin-bottom:12px;">Kolo ${match.round}</div>
-    <div style="display:flex;align-items:center;justify-content:space-between;">
-      <div>
-        <div style="font-size:.72rem;color:#888;margin-bottom:2px;">Odpočet na príchod</div>
-        <div id="notifCountdown" style="font-size:1.4rem;font-weight:900;color:#22d36b;font-family:monospace;">2:00</div>
-      </div>
-      <button onclick="document.getElementById('matchNotification').remove();clearInterval(countdownInterval);"
-        style="width:32px;height:32px;border-radius:10px;border:1px solid rgba(255,255,255,.1);
-               background:rgba(255,255,255,.04);color:#888;cursor:pointer;font-size:1rem;">✕</button>
+// ═══════════════════════════════════════════
+// BRACKET (DKO)
+// ═══════════════════════════════════════════
+function cardHTML(m){
+  const p1=playerLabel(m.p1),p2=playerLabel(m.p2);
+  return `<div class="match-card ${m.status==='active'?'live-card':''} ${m.status==='done'?'finished-card':''}">
+    <div class="match-top">
+      <div><div class="match-id">${m.label}${m.letter?` <small>${m.letter}</small>`:''}</div><div class="match-round">${m.round}</div></div>
+      <span class="status-pill ${statusClass(m.status)}">${statusText(m.status)}</span>
     </div>
-  `;
-  document.body.appendChild(notif);
-
-  let remaining = COUNTDOWN_SECONDS;
-  const el = notif.querySelector("#notifCountdown");
-  countdownInterval = setInterval(() => {
-    remaining--;
-    const m = Math.floor(remaining / 60);
-    const s = remaining % 60;
-    el.textContent = `${m}:${String(s).padStart(2,"0")}`;
-    if(remaining <= 30) el.style.color = "#d96a6a";
-    if(remaining <= 0) {
-      clearInterval(countdownInterval);
-      el.textContent = "Čas vypršal";
-      setTimeout(() => notif.remove(), 3000);
-    }
-  }, 1000);
+    <div class="players">
+      <div class="player-line"><div class="player-meta"><span>${esc(p1.name)}</span><small>${esc(p1.club)||'—'}</small></div><div class="player-score">${m.s1??'—'}</div></div>
+      <div class="player-line"><div class="player-meta"><span>${esc(p2.name)}</span><small>${esc(p2.club)||'—'}</small></div><div class="player-score">${m.s2??'—'}</div></div>
+    </div>
+    <div class="card-actions">${m.isLock?'<span style="font-size:.72rem;color:var(--gold)">⏭ Voľný postup</span>':`<button class="action-btn play" data-id="${m.id}">▶</button>`}</div>
+  </div>`;
 }
 
-// Inject slideIn animation
-const style = document.createElement("style");
-style.textContent = "@keyframes slideIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}";
-document.head.appendChild(style);
+function renderBracket(){
+  if(!E) return;
+  const cols = {
+    B3: document.getElementById('colB2b'),
+    B2: document.getElementById('colB2a'),
+    B1: document.getElementById('colB1'),
+    A0: document.getElementById('colA0'),
+    A1: document.getElementById('colA1'),
+    A2: document.getElementById('colA2'),
+    FIN:document.getElementById('colFIN'),
+  };
+  Object.entries(cols).forEach(([key,col])=>{
+    if(!col) return;
+    const head = col.querySelector('.round-head');
+    col.innerHTML = '';
+    if(head) col.appendChild(head);
+  });
+  const map = {'B3':'B3','B2':'B2','B1':'B1','A0':'A0','A1':'A1','A2':'A2','SF':'A2','LF':'B3','GF':'FIN','TP':'FIN'};
+  E.matches.forEach(m => {
+    const targetKey = map[m.round];
+    const col = targetKey ? cols[targetKey] : null;
+    if(col) col.insertAdjacentHTML('beforeend', cardHTML(m));
+  });
+  bindCardButtons();
+}
 
-(async function init(){
-  try{
-    await loadTournamentFromDb();
-    updateSummary();
-    buildRoundFilter();
-    renderTable();
-    renderBracket();
-    bindCardButtons();
-    setupRealtime();
-  }catch(err){
-    const notice = document.getElementById("listNotice");
-    notice.textContent = err.message || "Nepodarilo sa načítať turnaj z databázy.";
-    notice.style.display = "block";
+function renderBracketSKO(){
+  // Pre SKO zobraz len list view
+  const bracketView = document.getElementById('bracketView');
+  if(bracketView) bracketView.innerHTML = '<div style="padding:20px;color:var(--muted2)">Pavúk Single KO — zápasy sú v zozname.</div>';
+}
+
+function bindCardButtons(){
+  document.querySelectorAll('[data-id]').forEach(btn => {
+    btn.onclick = () => openModal(parseInt(btn.dataset.id), btn.dataset.rr === '1');
+  });
+}
+
+// ═══════════════════════════════════════════
+// MODAL
+// ═══════════════════════════════════════════
+let isRRMatch = false;
+
+function openModal(id, rrMatch=false){
+  isRRMatch = rrMatch;
+  activeMatchId = id;
+  const engine = rrMatch ? RR : E;
+  const m = rrMatch ? RR?.getMatch(id) : E?.byId(id);
+  if(!m) return;
+  const p1=playerLabel(m.p1), p2=playerLabel(m.p2);
+  el.modalTitle.textContent    = m.label || 'Zápas';
+  el.modalSubtitle.textContent = 'Kolo ' + m.round;
+  el.modalPlayer1.textContent  = p1.name;
+  el.modalPlayer2.textContent  = p2.name;
+  el.modalClub1.textContent    = p1.club||'—';
+  el.modalClub2.textContent    = p2.club||'—';
+  el.score1.value = m.s1 ?? RACE;
+  el.score2.value = m.s2 ?? 0;
+  el.modalError.style.display  = 'none';
+  pendingAction = null;
+  el.modal.classList.add('show');
+}
+
+function closeModal(){
+  el.modal.classList.remove('show');
+  activeMatchId = null; pendingAction = null;
+}
+
+function saveMatch(){
+  if(activeMatchId === null) return;
+  const s1 = Number(el.score1.value||0);
+  const s2 = Number(el.score2.value||0);
+  const m  = isRRMatch ? RR?.getMatch(activeMatchId) : E?.byId(activeMatchId);
+  if(!m) return;
+
+  if(pendingAction === 'play'){
+    if(isRRMatch){ m.status='active'; }
+    else { E?.setStatus(activeMatchId, 'active'); }
+  } else if(pendingAction === 'pause'){
+    if(isRRMatch){ m.status='ready'; }
+    else { E?.setStatus(activeMatchId, 'paused'); }
+  } else if(pendingAction === 'delete'){
+    m.s1=null; m.s2=null; m.status='ready'; m.winner=null; m.loser=null;
+  } else {
+    if(s1 === s2){ el.modalError.textContent='Remíza nie je povolená.'; el.modalError.style.display='block'; return; }
+    if(isRRMatch){ RR?.record(activeMatchId, s1, s2); }
+    else         { E?.record(activeMatchId, s1, s2); }
   }
-})();
+
+  if(isRRMatch) renderRR();
+  else { renderTable(); renderBracket(); }
+  updateSummary();
+  closeModal();
+}
+
+// ═══════════════════════════════════════════
+// EVENT LISTENERS
+// ═══════════════════════════════════════════
+document.querySelectorAll('.switch-btn[data-view]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.switch-btn[data-view]').forEach(x => x.classList.remove('active'));
+    btn.classList.add('active');
+    document.querySelectorAll('.view-panel').forEach(v => v.classList.remove('active'));
+    const target = document.getElementById(btn.dataset.view==='list'?'listView':'bracketView');
+    if(target) target.classList.add('active');
+  });
+});
+
+document.getElementById('closeModal')?.addEventListener('click', closeModal);
+document.getElementById('cancelModal')?.addEventListener('click', closeModal);
+document.getElementById('saveScore')?.addEventListener('click', saveMatch);
+document.querySelectorAll('[data-modal-action]').forEach(btn => {
+  btn.addEventListener('click', () => { pendingAction = btn.dataset.modalAction; });
+});
+el.searchInput?.addEventListener('input', () => { isRRMatch ? renderRR() : renderTable(); });
+el.roundFilter?.addEventListener('change', renderTable);
+el.statusFilter?.addEventListener('change', renderTable);
+
+function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+// ═══════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════
+loadTournament();
+
 </script>
-</body>
 </html>
