@@ -427,11 +427,11 @@ tbody tr:hover td{background:rgba(255,255,255,.015)}
   <!-- Identity -->
   <div class="hero-identity">
     <div class="avatar-ring">
-      <img src="a_digital_illustration_showcases_a_billiard_8_ball.png" alt="Avatar"/>
+      <img src="" alt="Avatar"/>
     </div>
     <div>
       <div class="plan-badge pb-ultra">⚡ Ultra</div>
-      <div style="font-size:.78rem;color:var(--muted2);font-weight:600">Kanianka · Slovensko</div>
+      <div style="font-size:.78rem;color:var(--muted2);font-weight:600"><span id="profileLocation"></span></div>
       <div style="margin-top:6px;display:flex;gap:6px;flex-wrap:wrap">
         <span class="hero-tag gold">🎱 Biliard</span>
         <span class="hero-tag">8-Ball</span>
@@ -442,9 +442,9 @@ tbody tr:hover td{background:rgba(255,255,255,.015)}
 
   <!-- Name + actions -->
   <div class="hero-center">
-    <h1 class="hero-name">Tomáš <span>Novák</span></h1>
+    <h1 class="hero-name" id="profileName">—</h1>
     <div style="font-size:.82rem;color:var(--muted2);margin-bottom:18px">
-      Moment Club · člen od marca 2024
+      <span id="profileSince">—</span>
     </div>
     <div class="hero-actions">
       <button class="btn btn-green">▶ Spustiť tréning</button>
@@ -460,47 +460,19 @@ tbody tr:hover td{background:rgba(255,255,255,.015)}
   <!-- Quick stats -->
   <div class="hero-stats">
     <div class="hs-item">
-      <span class="hs-label">Rebríček</span>
-      <span class="hs-val gold">#12</span>
-    </div>
-    <div class="hs-item">
-      <span class="hs-label">Body</span>
-      <span class="hs-val">1 248</span>
-    </div>
-    <div class="hs-item">
       <span class="hs-label">Turnaje</span>
-      <span class="hs-val">28</span>
+      <span class="hs-val" id="statTurnaje">—</span>
     </div>
     <div class="hs-item">
       <span class="hs-label">Výhry</span>
-      <span class="hs-val green">71 %</span>
+      <span class="hs-val green" id="statVyhry">—</span>
     </div>
     <div class="hs-item">
       <span class="hs-label">Tituly</span>
-      <span class="hs-val gold">4 ×</span>
+      <span class="hs-val gold" id="statTituly">—</span>
     </div>
   </div>
 
-  <!-- Form bar -->
-  <div class="hero-formbar">
-    <span class="hfb-label">Posledných 10</span>
-    <div class="form-pills">
-      <div class="fpill w">V</div>
-      <div class="fpill w">V</div>
-      <div class="fpill l">P</div>
-      <div class="fpill w">V</div>
-      <div class="fpill l">P</div>
-      <div class="fpill w">V</div>
-      <div class="fpill w">V</div>
-      <div class="fpill w">V</div>
-      <div class="fpill l">P</div>
-      <div class="fpill w">V</div>
-    </div>
-    <div class="hfb-divider"></div>
-    <div class="hfb-record"><b>71</b> výhier · <b>45</b> prehier</div>
-    <div class="hfb-divider"></div>
-    <div style="font-size:.75rem;color:var(--muted2)">Najlepší: <b style="color:var(--gold)">1. miesto</b></div>
-  </div>
 
 </section>
 
@@ -512,9 +484,6 @@ tbody tr:hover td{background:rgba(255,255,255,.015)}
 <!-- LEFT COLUMN -->
 <div class="left-col">
 
-  <!-- LIVE MATCH -->
-  <div class="card live-card fade-in" style="animation-delay:.05s">
-    <div class="live-pill"><span class="live-dot"></span> Live zápas</div>
     <div class="live-match-name">Kaniansky pohár Apríl</div>
     <div class="live-match-meta">Štvrťfinále · Stôl 3 · Double KO</div>
     <div class="live-vs">
@@ -536,30 +505,30 @@ tbody tr:hover td{background:rgba(255,255,255,.015)}
 
   <!-- STATS -->
   <div class="card fade-in" style="animation-delay:.1s">
-    <div class="card-title">Štatistiky <a href="#">Celý prehľad →</a></div>
+    <div class="card-title">Štatistiky</div>
     <div class="stats-grid">
       <div class="stat-box">
-        <div class="sb-val">28</div>
+        <div class="sb-val" id="st-turnaje">0</div>
         <div class="sb-label">Turnaje</div>
       </div>
       <div class="stat-box">
-        <div class="sb-val">116</div>
+        <div class="sb-val" id="st-zapasy">0</div>
         <div class="sb-label">Zápasy</div>
       </div>
       <div class="stat-box">
-        <div class="sb-val green">71</div>
+        <div class="sb-val green" id="st-vyhry">0</div>
         <div class="sb-label">Výhry</div>
       </div>
       <div class="stat-box">
-        <div class="sb-val">45</div>
+        <div class="sb-val" id="st-prehry">0</div>
         <div class="sb-label">Prehry</div>
       </div>
       <div class="stat-box">
-        <div class="sb-val gold">61 %</div>
+        <div class="sb-val gold" id="st-uspesnost">—</div>
         <div class="sb-label">Úspešnosť</div>
       </div>
       <div class="stat-box">
-        <div class="sb-val gold">4 ×</div>
+        <div class="sb-val gold" id="st-tituly">0</div>
         <div class="sb-label">Tituly</div>
       </div>
     </div>
@@ -676,17 +645,7 @@ tbody tr:hover td{background:rgba(255,255,255,.015)}
     </div>
   </div>
 
-  <!-- ACHIEVEMENTS -->
-  <div class="card fade-in" style="animation-delay:.12s">
-    <div class="card-title">Úspechy</div>
-    <div class="achiev-grid">
-      <div class="ach">
-        <div class="ach-icon">1</div>
-        <div>
-          <div class="ach-name">Prvý turnaj</div>
-          <div class="ach-desc">Prvé štartovanie v CSP</div>
-        </div>
-      </div>
+  
       <div class="ach">
         <div class="ach-icon">10</div>
         <div>
@@ -867,6 +826,88 @@ const _db = window.supabase ? window.supabase.createClient("https://gilzomwhuwcx
 
 // ── PLAN ──────────────────────────────────────────────────
 const USER_PLAN='ultra';
+</script>
+<script>
+const _db = window.supabase.createClient("https://gilzomwhuwcxpkegtlhj.supabase.co", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdpbHpvbXdodXdjeHBrZWd0bGhqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzcwMzMwMTgsImV4cCI6MjA5MjYwOTAxOH0.-KiLSdiB2mRWqUDB9GWyISfCu2o_ZBM80aGUEW9CcUg");
+
+(async function(){
+  const { data } = await _db.auth.getSession();
+  if(!data?.session){ window.location.href = '/login/'; return; }
+  const user = data.session.user;
+
+  // Načítaj profil
+  const { data: p } = await _db.from('profiles').select('*').eq('id', user.id).single();
+  if(p){
+    // Meno
+    const nameEl = document.getElementById('profileName');
+    if(nameEl) nameEl.innerHTML = p.full_name
+      ? p.full_name.split(' ').map((w,i) => i===0 ? w : `<span>${w}</span>`).join(' ')
+      : user.email;
+
+    // Username + od kedy
+    const sinceEl = document.getElementById('profileSince');
+    if(sinceEl){
+      const since = new Date(p.created_at).toLocaleDateString('sk-SK',{month:'long',year:'numeric'});
+      sinceEl.textContent = (p.username ? '@'+p.username+' · ' : '') + 'člen od ' + since;
+    }
+
+    // Avatar
+    const imgEl = document.querySelector('.avatar-ring img');
+    if(imgEl && p.avatar_url) imgEl.src = p.avatar_url;
+
+    // Email hero tag
+    const locEl = document.getElementById('profileLocation');
+    if(locEl) locEl.textContent = user.email;
+  }
+
+  // Načítaj udalosti organizátora
+  const { data: events } = await _db
+    .from('events')
+    .select('*')
+    .eq('organizer_id', user.id)
+    .order('created_at', {ascending: false})
+    .limit(5);
+
+  const listEl = document.getElementById('myEventsList');
+  if(listEl){
+    if(!events || !events.length){
+      listEl.innerHTML = '<span style="color:var(--muted)">Zatiaľ žiadne udalosti. <a href="/vytvorit-udalost/" style="color:var(--gold)">Vytvor prvú →</a></span>';
+    } else {
+      const sports = {billiard:'🎱',darts:'🎯',bowling:'🎳',tennis:'🎾',tabletennis:'🏓',foosball:'⚽',chess:'♟️',petanque:'🎳',badminton:'🏸'};
+      listEl.innerHTML = `<div class="table-wrap" style="overflow-x:auto"><table>
+        <thead><tr><th>Udalosť</th><th>Dátum</th><th>Šport</th><th>Stav</th><th></th></tr></thead>
+        <tbody>${events.map(e=>`
+          <tr>
+            <td style="font-weight:600">${e.nazov}</td>
+            <td style="color:var(--muted2)">${e.datum||'—'}</td>
+            <td>${sports[e.sport]||'🏆'} ${e.sport||''}</td>
+            <td><span style="color:var(--green);font-size:.75rem">${e.status==='open'?'Otvorená':'Uzavretá'}</span></td>
+            <td><a href="/udalost/?slug=${e.slug}" class="btn btn-dark btn-sm">Otvoriť</a></td>
+          </tr>`).join('')}
+        </tbody></table></div>`;
+    }
+  }
+
+  // Štatistiky — neskôr z DB, zatiaľ nuly
+  ['st-turnaje','st-zapasy','st-vyhry','st-prehry','st-tituly'].forEach(id => {
+    const el = document.getElementById(id);
+    if(el) el.textContent = '0';
+  });
+  const uspEl = document.getElementById('st-uspesnost');
+  if(uspEl) uspEl.textContent = '—';
+  const hsTurnaje = document.getElementById('statTurnaje');
+  if(hsTurnaje) hsTurnaje.textContent = '0';
+  const hsVyhry = document.getElementById('statVyhry');
+  if(hsVyhry) hsVyhry.textContent = '0';
+  const hsTituly = document.getElementById('statTituly');
+  if(hsTituly) hsTituly.textContent = '0';
+})();
+
+function confirmLogout(){
+  if(confirm('Odhlásiť sa?')){
+    _db.auth.signOut().then(() => window.location.href = '/login/');
+  }
+}
 </script>
 </body>
 </html>
