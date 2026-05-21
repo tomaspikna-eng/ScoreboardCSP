@@ -447,7 +447,7 @@ tbody tr:hover td{background:rgba(255,255,255,.015)}
       <span id="profileSince">—</span>
     </div>
     <div class="hero-actions">
-      <button class="btn btn-green">▶ Spustiť tréning</button>
+      <a href="/trening/" class="btn btn-green">▶ Spustiť tréning</a>
       <a href="/nastavenie-turnaja/" class="btn btn-dark">🏆 Vytvoriť turnaj</a>
       <a href="/vytvorit-udalost/" class="btn btn-dark">📅 Udalosť</a>
       <a href="/nastavenie-profilu/" class="btn btn-dark">⚙️</a>
@@ -484,24 +484,7 @@ tbody tr:hover td{background:rgba(255,255,255,.015)}
 <!-- LEFT COLUMN -->
 <div class="left-col">
 
-    <div class="live-match-name">Kaniansky pohár Apríl</div>
-    <div class="live-match-meta">Štvrťfinále · Stôl 3 · Double KO</div>
-    <div class="live-vs">
-      <div class="lv-player">
-        <div class="lv-name">Tomáš Pikna</div>
-        <div class="lv-score">4</div>
-      </div>
-      <div class="lv-vs">:</div>
-      <div class="lv-player">
-        <div class="lv-name">Peter Kováč</div>
-        <div class="lv-score">3</div>
-      </div>
-    </div>
-    <div class="live-actions">
-      <button class="btn btn-green">Otvoriť turnaj</button>
-      <button class="btn btn-dark">Pokračovať v zápase</button>
-    </div>
-  </div>
+
 
   <!-- STATS -->
   <div class="card fade-in" style="animation-delay:.1s">
@@ -753,7 +736,26 @@ document.getElementById("mcNext").addEventListener("click",()=>{MC.weekOffset++;
 mcRender();
 
 // ── LOGOUT ────────────────────────────────────────────────
-async function confirmLogout(){
+async async function changeStatus(id, status){
+  if(!_db) return;
+  const { error } = await _db.from('events').update({ status }).eq('id', id);
+  if(error){ alert('Chyba: ' + error.message); return; }
+  // Vizuálny feedback
+  const row = document.getElementById('erow-' + id);
+  if(row) row.style.opacity = '.6';
+  setTimeout(() => { if(row) row.style.opacity = '1'; }, 600);
+}
+
+async function deleteEvent(id, nazov){
+  if(!confirm('Zmazať udalosť "' + nazov + '"?')) return;
+  if(!_db) return;
+  const { error } = await _db.from('events').delete().eq('id', id);
+  if(error){ alert('Chyba: ' + error.message); return; }
+  const row = document.getElementById('erow-' + id);
+  if(row){ row.style.transition='opacity .3s'; row.style.opacity='0'; setTimeout(()=>row.remove(),300); }
+}
+
+function confirmLogout(){
   if(!confirm("Naozaj sa chceš odhlásiť?")) return;
   // Supabase signOut
   // Supabase init
@@ -825,17 +827,52 @@ const _db = window.supabase.createClient("https://gilzomwhuwcxpkegtlhj.supabase.
       listEl.innerHTML = `<div class="table-wrap" style="overflow-x:auto"><table>
         <thead><tr><th>Udalosť</th><th>Dátum</th><th>Šport</th><th>Stav</th><th></th></tr></thead>
         <tbody>${events.map(e=>`
-          <tr>
+          <tr id="erow-${e.id}">
             <td style="font-weight:600">${e.nazov}</td>
             <td style="color:var(--muted2)">${e.datum||'—'}</td>
             <td>${sports[e.sport]||'🏆'} ${e.sport||''}</td>
-            <td><span style="color:var(--green);font-size:.75rem">${e.status==='open'?'Otvorená':'Uzavretá'}</span></td>
-            <td><a href="/udalost/?slug=${e.slug}" class="btn btn-dark btn-sm">Otvoriť</a></td>
+            <td>
+              <select onchange="changeStatus('${e.id}',this.value)"
+                style="background:var(--bg3);border:1px solid var(--line);border-radius:6px;
+                color:var(--text);font-size:.72rem;padding:3px 6px;cursor:pointer">
+                <option value="open"  ${e.status==='open'  ?'selected':''}>Otvorená</option>
+                <option value="running" ${e.status==='running'?'selected':''}>Prebieha</option>
+                <option value="done" ${e.status==='done'  ?'selected':''}>Ukončená</option>
+                <option value="draft" ${e.status==='draft' ?'selected':''}>Draft</option>
+              </select>
+            </td>
+            <td style="display:flex;gap:5px;align-items:center">
+              <a href="/udalost/?slug=${e.slug}" class="btn btn-dark btn-sm">Otvoriť</a>
+              <button onclick="deleteEvent('${e.id}','${e.nazov}')"
+                style="padding:4px 8px;border-radius:6px;border:1px solid rgba(224,85,85,.3);
+                background:rgba(224,85,85,.08);color:#e05555;font-size:.72rem;cursor:pointer">
+                Zmazať
+              </button>
+            </td>
           </tr>`).join('')}
         </tbody></table></div>`;
     }
   }
 })();
+
+async function changeStatus(id, status){
+  if(!_db) return;
+  const { error } = await _db.from('events').update({ status }).eq('id', id);
+  if(error){ alert('Chyba: ' + error.message); return; }
+  // Vizuálny feedback
+  const row = document.getElementById('erow-' + id);
+  if(row) row.style.opacity = '.6';
+  setTimeout(() => { if(row) row.style.opacity = '1'; }, 600);
+}
+
+async function deleteEvent(id, nazov){
+  if(!confirm('Zmazať udalosť "' + nazov + '"?')) return;
+  if(!_db) return;
+  const { error } = await _db.from('events').delete().eq('id', id);
+  if(error){ alert('Chyba: ' + error.message); return; }
+  const row = document.getElementById('erow-' + id);
+  if(row){ row.style.transition='opacity .3s'; row.style.opacity='0'; setTimeout(()=>row.remove(),300); }
+}
 
 function confirmLogout(){
   if(confirm('Odhlásiť sa?')){
