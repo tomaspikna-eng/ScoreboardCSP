@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Kaniansky pohár – Máj 2026 · CSP</title>
+<title>Udalosť · CSP</title>
 <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;700;900&display=swap" rel="stylesheet">
 <style>
 :root{--bg:#050505;--bg2:#0b0b0b;--line:rgba(255,255,255,.08);--text:#f4f4f4;--muted:#a7a7a7;--gold:#d8b04b;--green:#22d36b;--shadow:0 20px 60px rgba(0,0,0,.4)}
@@ -104,10 +104,10 @@ body{min-height:100vh;font-family:"Barlow",sans-serif;color:var(--text);backgrou
     <div class="event-hero-left">
       <div class="event-sport-badge">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#d8b04b" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
-        Biliard · 8-Ball
+        <span id="sport-label">—</span>
       </div>
-      <h1 class="event-title">Kaniansky pohár<br>Máj 2026</h1>
-      <div class="event-organizer">Organizátor: <strong style="color:#ddd">Tomáš Pikna</strong> · Moment Club</div>
+      <h1 class="event-title" id="event-title">Načítavam...</h1>
+      <div class="event-organizer" id="event-organizer"></div>
 
       <div class="event-info-grid">
         <div class="event-info-item">
@@ -115,15 +115,15 @@ body{min-height:100vh;font-family:"Barlow",sans-serif;color:var(--text);backgrou
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#d8b04b" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
             Dátum
           </div>
-          <div class="event-info-value">18. 5. 2026</div>
-          <div class="event-info-sub">18:00</div>
+          <div class="event-info-value" id="datum-label">—</div>
+          <div class="event-info-sub" id="cas-label"></div>
         </div>
         <div class="event-info-item">
           <div class="event-info-label">
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#d8b04b" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
             Miesto
           </div>
-          <div class="event-info-value">Moment Club</div>
+          <div class="event-info-value"><span id="klub-label">—</span></div>
           <div class="event-info-sub">Kanianka · 97201 · SK</div>
         </div>
         <div class="event-info-item">
@@ -245,14 +245,25 @@ const _sb = window.supabase.createClient("https://gilzomwhuwcxpkegtlhj.supabase.
   if(!u) return;
 
   // Nastav titulok
-  const h1 = document.querySelector('h1');
+  const h1 = document.getElementById('event-title') || document.querySelector('h1');
   if(h1) h1.textContent = u.nazov || u.name || '';
+
+  // Organizátor
+  const orgEl = document.getElementById('event-organizer');
+  if(orgEl && u.klub) orgEl.innerHTML = 'Organizátor: <strong style="color:#ddd">' + (u.klub||'') + '</strong>';
+
+  // Čas
+  const casEl = document.getElementById('cas-label');
+  if(casEl) casEl.textContent = u.cas || '';
+
+  // Title tag
+  document.title = (u.nazov||'Udalosť') + ' · CSP';
 
   // Meta info
   const sportEl = document.getElementById('sport-label');
   if(sportEl) sportEl.textContent = (u.sport||'') + (u.disciplina?' – '+u.disciplina:'');
   const datumEl = document.getElementById('datum-label');
-  if(datumEl) datumEl.textContent = (u.datum||'') + (u.cas?' · '+u.cas:'');
+  if(datumEl) datumEl.textContent = u.datum||'—';
   const klubEl  = document.getElementById('klub-label');
   if(klubEl)  klubEl.textContent  = (u.klub||'') + (u.adresa?', '+u.adresa:'');
 
