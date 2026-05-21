@@ -578,6 +578,7 @@ button,input,select{font:inherit}
         <div>
           <h3>Kalendár turnajov</h3>
           <p>Vyhľadávanie má byť hlavný tromf tejto sekcie pre hráča aj klub.</p>
+          <div id="events-list" style="margin-top:16px;display:flex;flex-direction:column;gap:10px"></div>
         </div>
         <a href="./search/" class="btn btn-dark" style="display:inline-flex;align-items:center;">Zobraziť všetky turnaje</a>
       </div>
@@ -931,10 +932,17 @@ cityFilter.addEventListener("change", runSearch);
   const sports = {billiard:'🎱',darts:'🎯',bowling:'🎳',tennis:'🎾',tabletennis:'🏓',foosball:'⚽',chess:'♟️',petanque:'🎳',badminton:'🏸'};
   
   container.innerHTML = events.map(e => `
-    <a href="/udalost/?slug=${e.slug}" class="event-card">
-      <div class="event-sport">${sports[e.sport]||'🏆'} ${e.sport||''}</div>
-      <div class="event-name">${e.nazov}</div>
-      <div class="event-meta">${e.datum||''} · ${e.klub||''} · ${e.mesto||''}</div>
+    <a href="/udalost/?slug=${e.slug}" style="display:flex;align-items:center;gap:12px;
+      padding:12px 14px;border-radius:12px;border:1px solid rgba(255,255,255,.08);
+      background:rgba(255,255,255,.02);text-decoration:none;transition:.15s"
+      onmouseover="this.style.borderColor='rgba(216,176,75,.3)'"
+      onmouseout="this.style.borderColor='rgba(255,255,255,.08)'">
+      <div style="font-size:1.4rem">${sports[e.sport]||'🏆'}</div>
+      <div style="flex:1">
+        <div style="font-size:.9rem;font-weight:700;color:#eeeef2">${e.nazov}</div>
+        <div style="font-size:.75rem;color:rgba(255,255,255,.4);margin-top:2px">${e.datum||''} · ${e.klub||''}</div>
+      </div>
+      <div style="font-size:.72rem;color:#22d36b;font-weight:700">Otvoriť →</div>
     </a>
   `).join('');
 })();
