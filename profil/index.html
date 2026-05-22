@@ -1100,9 +1100,9 @@ async function uploadAvatar(input){
 
     // Obnov overlay
     wrap.classList.remove('avatar-uploading');
-    overlay.innerHTML = \`
+    overlay.innerHTML = `
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-      <span>Nahrať foto</span>\`;
+      <span>Nahrať foto</span>`;
 
     // Krátka zelená flash
     imgEl.style.outline = '2px solid var(--green)';
@@ -1110,9 +1110,9 @@ async function uploadAvatar(input){
 
   } catch(err){
     wrap.classList.remove('avatar-uploading');
-    overlay.innerHTML = \`
+    overlay.innerHTML = `
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-      <span>Nahrať foto</span>\`;
+      <span>Nahrať foto</span>`;
     console.error('Avatar upload error:', err);
     alert('Chyba pri nahrávaní: ' + (err.message || JSON.stringify(err)));
   }

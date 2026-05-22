@@ -1,4 +1,4 @@
-# CardScoresPro – cspboard.digital
+# ConnectScore Pro – cspboard.digital
 
 Turnajový systém pre biliard, šípky, bowling a snooker.
 
