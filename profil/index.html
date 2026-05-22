@@ -14,18 +14,15 @@
   --gold:#d4a843;--gold-dim:rgba(212,168,67,.09);--gold-b:rgba(212,168,67,.22);
   --green:#1ec86a;--green-dim:rgba(30,200,106,.08);--green-b:rgba(30,200,106,.2);
   --blue:#4a82cc;--blue-dim:rgba(74,130,204,.08);--blue-b:rgba(74,130,204,.2);
-  --red:#d94f4f;--red-dim:rgba(217,79,79,.08);
+  --red:#d94f4f;--red-dim:rgba(217,79,79,.08);--red-b:rgba(217,79,79,.22);
+  --orange:#e87d2a;--orange-dim:rgba(232,125,42,.08);
   --r:18px;--rs:11px;
   --font:'Syne',sans-serif;--mono:'JetBrains Mono',monospace;
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
-body{
-  font-family:var(--font);background:var(--bg);color:var(--text);
-  min-height:100vh;overflow-x:hidden;
-}
+body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;}
 
-/* ── BG ATMOSPHERE ── */
 body::before{
   content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
   background:
@@ -36,213 +33,61 @@ body::before{
 
 .page{position:relative;z-index:1;max-width:1340px;margin:0 auto;padding:0 20px 80px}
 
-/* ══════════════════════════════════════════
-   HERO
-══════════════════════════════════════════ */
-.hero{
-  display:grid;
-  grid-template-columns:auto 1fr auto;
-  gap:0;
-  padding:40px 0 0;
-  margin-bottom:32px;
-  align-items:end;
-}
-
-/* Avatar + identity */
-.hero-identity{
-  display:flex;flex-direction:column;align-items:center;
-  padding-right:32px;
-  padding-bottom:24px;
-  border-right:1px solid var(--line);
-}
-.avatar-ring{
-  width:120px;height:120px;border-radius:50%;
-  padding:3px;
-  background:linear-gradient(135deg,var(--gold),rgba(74,130,204,.6));
-  margin-bottom:16px;
-  position:relative;
-}
-.avatar-ring::after{
-  content:'';position:absolute;inset:-6px;border-radius:50%;
-  border:1px solid var(--gold-b);
-}
-.avatar-ring img{
-  width:100%;height:100%;border-radius:50%;
-  object-fit:cover;background:var(--bg3);display:block;
-}
-
-.plan-badge{
-  display:inline-flex;align-items:center;gap:5px;
-  padding:3px 12px;border-radius:999px;
-  font-size:.64rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;
-  margin-bottom:10px;
-}
+/* ── HERO ── */
+.hero{display:grid;grid-template-columns:auto 1fr auto;gap:0;padding:40px 0 0;margin-bottom:32px;align-items:end;}
+.hero-identity{display:flex;flex-direction:column;align-items:center;padding-right:32px;padding-bottom:24px;border-right:1px solid var(--line);}
+.avatar-ring{width:120px;height:120px;border-radius:50%;padding:3px;background:linear-gradient(135deg,var(--gold),rgba(74,130,204,.6));margin-bottom:16px;position:relative;}
+.avatar-ring::after{content:'';position:absolute;inset:-6px;border-radius:50%;border:1px solid var(--gold-b);}
+.avatar-ring img{width:100%;height:100%;border-radius:50%;object-fit:cover;background:var(--bg3);display:block;}
+.plan-badge{display:inline-flex;align-items:center;gap:5px;padding:3px 12px;border-radius:999px;font-size:.64rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;margin-bottom:10px;}
 .pb-ultra{background:rgba(212,168,67,.12);border:1px solid rgba(212,168,67,.28);color:var(--gold)}
-.pb-pro{background:rgba(30,200,106,.1);border:1px solid rgba(30,200,106,.25);color:var(--green)}
-.pb-free{background:rgba(255,255,255,.05);border:1px solid var(--line);color:var(--muted2)}
-
-/* Hero center — name + meta */
-.hero-center{
-  padding:0 32px 24px;
-  border-right:1px solid var(--line);
-}
-.hero-name{
-  font-family:'Bebas Neue',sans-serif;
-  font-size:clamp(2.4rem,5vw,4rem);
-  letter-spacing:.04em;line-height:.95;
-  color:var(--text);margin-bottom:10px;
-}
+.hero-center{padding:0 32px 24px;border-right:1px solid var(--line);}
+.hero-name{font-family:'Bebas Neue',sans-serif;font-size:clamp(2.4rem,5vw,4rem);letter-spacing:.04em;line-height:.95;color:var(--text);margin-bottom:10px;}
 .hero-name span{color:var(--gold)}
-.hero-meta{
-  display:flex;flex-wrap:wrap;gap:8px;
-  margin-bottom:18px;
-}
-.hero-tag{
-  display:inline-flex;align-items:center;gap:5px;
-  padding:4px 12px;border-radius:999px;
-  border:1px solid var(--line);background:rgba(255,255,255,.03);
-  font-size:.75rem;font-weight:600;color:var(--muted2);
-}
+.hero-meta{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:18px;}
+.hero-tag{display:inline-flex;align-items:center;gap:5px;padding:4px 12px;border-radius:999px;border:1px solid var(--line);background:rgba(255,255,255,.03);font-size:.75rem;font-weight:600;color:var(--muted2);}
 .hero-tag.gold{border-color:var(--gold-b);background:var(--gold-dim);color:var(--gold)}
 .hero-tag.green{border-color:var(--green-b);background:var(--green-dim);color:var(--green)}
-
 .hero-actions{display:flex;gap:8px;flex-wrap:wrap}
-
-/* Hero right — quick stats */
-.hero-stats{
-  display:flex;flex-direction:column;gap:0;
-  padding-left:32px;padding-bottom:24px;
-  min-width:220px;
-}
-.hs-item{
-  display:flex;justify-content:space-between;align-items:center;
-  padding:10px 0;border-bottom:1px solid var(--line2);gap:24px;
-}
+.hero-stats{display:flex;flex-direction:column;gap:0;padding-left:32px;padding-bottom:24px;min-width:220px;}
+.hs-item{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--line2);gap:24px;}
 .hs-item:last-child{border-bottom:none}
 .hs-label{font-size:.68rem;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);font-weight:600}
 .hs-val{font-family:var(--mono);font-size:.95rem;font-weight:600;color:var(--text)}
 .hs-val.gold{color:var(--gold)}
 .hs-val.green{color:var(--green)}
-
-/* Hero bottom bar — form pills */
-.hero-formbar{
-  grid-column:1/-1;
-  display:flex;align-items:center;gap:12px;
-  padding:16px 0;
-  border-top:1px solid var(--line);
-  overflow-x:auto;scrollbar-width:none;
-}
+.hero-formbar{grid-column:1/-1;display:flex;align-items:center;gap:12px;padding:16px 0;border-top:1px solid var(--line);overflow-x:auto;scrollbar-width:none;}
 .hero-formbar::-webkit-scrollbar{display:none}
-.hfb-label{font-size:.66rem;text-transform:uppercase;letter-spacing:.12em;color:var(--muted);font-weight:700;white-space:nowrap}
-.form-pills{display:flex;gap:6px}
-.fpill{
-  width:38px;height:38px;border-radius:10px;
-  display:flex;align-items:center;justify-content:center;
-  font-size:.8rem;font-weight:800;border:1px solid var(--line);
-}
-.fpill.w{background:rgba(30,200,106,.12);border-color:rgba(30,200,106,.25);color:var(--green)}
-.fpill.l{background:rgba(217,79,79,.1);border-color:rgba(217,79,79,.2);color:var(--red)}
-.hfb-divider{width:1px;height:24px;background:var(--line);flex:0 0 auto}
-.hfb-record{font-size:.82rem;font-weight:600;color:var(--muted2)}
-.hfb-record b{color:var(--text)}
 
-/* ══════════════════════════════════════════
-   LAYOUT GRID
-══════════════════════════════════════════ */
-.main-grid{
-  display:grid;
-  grid-template-columns:1fr 320px;
-  gap:16px;
-  align-items:start;
-}
+/* ── LAYOUT ── */
+.main-grid{display:grid;grid-template-columns:1fr 340px;gap:16px;align-items:start;}
 .left-col{display:flex;flex-direction:column;gap:16px}
 .right-col{display:flex;flex-direction:column;gap:16px}
 
-/* ══════════════════════════════════════════
-   SHARED CARD STYLES
-══════════════════════════════════════════ */
-.card{
-  background:var(--bg2);border:1px solid var(--line);
-  border-radius:var(--r);padding:20px;
-}
-.card-title{
-  font-family:'Bebas Neue',sans-serif;
-  font-size:.95rem;letter-spacing:.1em;
-  color:var(--muted2);text-transform:uppercase;
-  margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;
-}
-.card-title a,.card-title button{
-  font-family:var(--font);font-size:.7rem;font-weight:700;
-  text-transform:uppercase;letter-spacing:.06em;
-  color:var(--muted);background:none;border:none;cursor:pointer;
-  text-decoration:none;padding:3px 8px;border-radius:6px;
-  border:1px solid var(--line);transition:.15s;
-}
+/* ── CARDS ── */
+.card{background:var(--bg2);border:1px solid var(--line);border-radius:var(--r);padding:20px;}
+.card-title{font-family:'Bebas Neue',sans-serif;font-size:.95rem;letter-spacing:.1em;color:var(--muted2);text-transform:uppercase;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;}
+.card-title a,.card-title button{font-family:var(--font);font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);background:none;border:none;cursor:pointer;text-decoration:none;padding:3px 8px;border-radius:6px;border:1px solid var(--line);transition:.15s;}
 .card-title a:hover,.card-title button:hover{color:var(--text);background:rgba(255,255,255,.04)}
 
-/* ══════════════════════════════════════════
-   LIVE MATCH CARD
-══════════════════════════════════════════ */
-.live-card{
-  background:linear-gradient(135deg,rgba(30,200,106,.07),rgba(30,200,106,.02));
-  border-color:var(--green-b);
-}
-.live-pill{
-  display:inline-flex;align-items:center;gap=5px;
-  padding:2px 10px;border-radius:999px;
-  background:rgba(30,200,106,.12);border:1px solid var(--green-b);
-  font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--green);
-  margin-bottom:14px;
-}
-.live-dot{width:6px;height:6px;border-radius:50%;background:var(--green);animation:lp 1.4s ease-in-out infinite;display:inline-block;margin-right:5px}
-@keyframes lp{0%,100%{opacity:1}50%{opacity:.3}}
-.live-match-name{font-size:1rem;font-weight:700;color:var(--text);margin-bottom:4px}
-.live-match-meta{font-size:.78rem;color:var(--muted2);margin-bottom:14px}
-.live-vs{
-  display:grid;grid-template-columns:1fr auto 1fr;
-  gap:10px;align-items:center;margin-bottom:14px;
-}
-.lv-player{text-align:center}
-.lv-name{font-size:.82rem;font-weight:700;color:var(--text)}
-.lv-score{font-family:var(--mono);font-size:1.8rem;font-weight:600;color:var(--gold);line-height:1}
-.lv-vs{font-size:.8rem;color:var(--muted);font-weight:600}
-.live-actions{display:flex;gap:8px}
-
-/* ══════════════════════════════════════════
-   STATS GRID
-══════════════════════════════════════════ */
+/* ── STATS ── */
 .stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
-.stat-box{
-  background:var(--bg3);border:1px solid var(--line2);border-radius:var(--rs);
-  padding:12px 14px;
-}
+.stat-box{background:var(--bg3);border:1px solid var(--line2);border-radius:var(--rs);padding:12px 14px;}
 .sb-val{font-family:var(--mono);font-size:1.3rem;font-weight:600;color:var(--text);line-height:1}
 .sb-label{font-size:.62rem;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);font-weight:700;margin-top:4px}
 .sb-val.gold{color:var(--gold)}
 .sb-val.green{color:var(--green)}
 
-/* ══════════════════════════════════════════
-   ORGANIZER TOOLS
-══════════════════════════════════════════ */
+/* ── ORGANIZER TOOLS ── */
 .tools-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.tool-card{
-  border:1px solid var(--line);border-radius:var(--rs);
-  padding:16px;background:rgba(255,255,255,.02);
-  display:flex;flex-direction:column;gap:8px;transition:.15s;
-}
+.tool-card{border:1px solid var(--line);border-radius:var(--rs);padding:16px;background:rgba(255,255,255,.02);display:flex;flex-direction:column;gap:8px;transition:.15s;}
 .tool-card:hover{background:rgba(255,255,255,.035)}
 .tool-card.gold-card{border-color:var(--gold-b);background:var(--gold-dim)}
 .tool-card.blue-card{border-color:var(--blue-b);background:var(--blue-dim)}
 .tc-icon{font-size:1.2rem;margin-bottom:2px}
 .tc-name{font-size:.88rem;font-weight:700;color:var(--text)}
 .tc-desc{font-size:.73rem;color:var(--muted2);line-height:1.4}
-.tool-link{
-  display:inline-flex;align-items:center;gap:5px;
-  margin-top:4px;font-size:.75rem;font-weight:700;
-  padding:5px 12px;border-radius:8px;border:none;
-  cursor:pointer;font-family:var(--font);text-decoration:none;
-  transition:.15s;
-}
+.tool-link{display:inline-flex;align-items:center;gap:5px;margin-top:4px;font-size:.75rem;font-weight:700;padding:5px 12px;border-radius:8px;border:none;cursor:pointer;font-family:var(--font);text-decoration:none;transition:.15s;}
 .tl-green{background:var(--green);color:#06230f}
 .tl-green:hover{background:#1adf72}
 .tl-blue{background:var(--blue-dim);border:1px solid var(--blue-b);color:#c5d9f5}
@@ -250,131 +95,137 @@ body::before{
 .tl-dark{background:rgba(255,255,255,.05);border:1px solid var(--line);color:var(--muted2)}
 .tl-dark:hover{background:rgba(255,255,255,.09);color:var(--text)}
 
-/* ══════════════════════════════════════════
-   HISTORY TABLE
-══════════════════════════════════════════ */
+/* ── TABLE ── */
 .table-wrap{border-radius:var(--rs);overflow:hidden;border:1px solid var(--line)}
-table{width:100%;border-collapse:collapse;min-width:600px}
-thead th{
-  padding:10px 14px;font-size:.63rem;text-transform:uppercase;
-  letter-spacing:.12em;color:var(--muted);font-weight:700;
-  background:rgba(0,0,0,.3);border-bottom:1px solid var(--line);text-align:left;
-}
-tbody td{
-  padding:11px 14px;border-bottom:1px solid var(--line2);
-  font-size:.84rem;vertical-align:middle;
-}
+table{width:100%;border-collapse:collapse;min-width:500px}
+thead th{padding:10px 14px;font-size:.63rem;text-transform:uppercase;letter-spacing:.12em;color:var(--muted);font-weight:700;background:rgba(0,0,0,.3);border-bottom:1px solid var(--line);text-align:left;}
+tbody td{padding:11px 14px;border-bottom:1px solid var(--line2);font-size:.84rem;vertical-align:middle;}
 tbody tr:last-child td{border-bottom:none}
 tbody tr:hover td{background:rgba(255,255,255,.015)}
-.td-place{font-family:var(--mono);font-weight:700}
-.td-place.p1{color:var(--gold)}
-.td-place.p2{color:#c0c0c0}
-.td-place.p3{color:#cd7f32}
-.td-place.other{color:var(--muted2)}
 
-/* ══════════════════════════════════════════
-   ACHIEVEMENTS
-══════════════════════════════════════════ */
-.achiev-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
-.ach{
-  display:flex;align-items:center;gap:10px;
-  padding:10px 12px;border-radius:var(--rs);
-  border:1px solid var(--line2);background:rgba(255,255,255,.015);
-}
-.ach-icon{
-  width:36px;height:36px;border-radius:9px;flex:0 0 36px;
-  display:flex;align-items:center;justify-content:center;
-  font-size:.85rem;font-weight:800;
-  background:var(--gold-dim);border:1px solid var(--gold-b);color:var(--gold);
-}
-.ach-name{font-size:.8rem;font-weight:700;color:var(--text)}
-.ach-desc{font-size:.68rem;color:var(--muted);margin-top:1px}
+/* ── EVENTS & TOURNAMENTS SECTION ── */
+.ev-tabs{display:flex;gap:0;margin-bottom:16px;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:rgba(0,0,0,.2);}
+.ev-tab{flex:1;padding:8px 12px;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);cursor:pointer;text-align:center;transition:.15s;border:none;background:none;font-family:var(--font);}
+.ev-tab.active{background:rgba(255,255,255,.06);color:var(--text);}
+.ev-tab .ev-count{display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;border-radius:5px;font-size:.58rem;margin-left:5px;background:rgba(255,255,255,.08);color:var(--muted2);}
+.ev-tab.active .ev-count{background:var(--gold-dim);color:var(--gold);}
 
-/* ══════════════════════════════════════════
-   MINI REZERVAČNÝ KALENDÁR (sidebar)
-══════════════════════════════════════════ */
-.mini-cal-card{padding:0;overflow:hidden}
-.mc-head{
-  padding:14px 16px;border-bottom:1px solid var(--line);
-  display:flex;align-items:center;justify-content:space-between;
+/* Event row cards */
+.ev-list{display:flex;flex-direction:column;gap:8px}
+.ev-row{
+  background:var(--bg3);border:1px solid var(--line);border-radius:12px;
+  padding:12px 14px;display:grid;
+  grid-template-columns:auto 1fr auto auto;
+  gap:10px;align-items:center;transition:.15s;
 }
-.mc-head-title{font-size:.62rem;text-transform:uppercase;letter-spacing:.12em;color:var(--muted);font-weight:700;margin-bottom:2px}
-.mc-venue{font-size:.88rem;font-weight:700;color:var(--gold)}
-.mc-nav{display:flex;gap:4px}
-.mc-nav-btn{
-  width:24px;height:24px;border-radius:6px;border:1px solid var(--line);
-  background:rgba(255,255,255,.03);color:var(--muted2);
-  display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:.75rem;
-  transition:.15s;
+.ev-row:hover{border-color:rgba(255,255,255,.12);background:var(--bg4)}
+.ev-icon{width:38px;height:38px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:1rem;flex:0 0 38px;}
+.ev-icon.gold{background:var(--gold-dim);border:1px solid var(--gold-b)}
+.ev-icon.green{background:var(--green-dim);border:1px solid var(--green-b)}
+.ev-icon.blue{background:var(--blue-dim);border:1px solid var(--blue-b)}
+.ev-icon.red{background:var(--red-dim);border:1px solid var(--red-b)}
+.ev-name{font-size:.88rem;font-weight:700;color:var(--text);margin-bottom:2px}
+.ev-meta{font-size:.7rem;color:var(--muted2)}
+.ev-status{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:999px;font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;white-space:nowrap;}
+.ev-status.running{background:rgba(30,200,106,.12);border:1px solid var(--green-b);color:var(--green);}
+.ev-status.running::before{content:'';display:inline-block;width:5px;height:5px;border-radius:50%;background:var(--green);animation:lp 1.4s ease infinite;}
+.ev-status.open{background:var(--blue-dim);border:1px solid var(--blue-b);color:#c5d9f5}
+.ev-status.done{background:rgba(255,255,255,.04);border:1px solid var(--line);color:var(--muted)}
+.ev-status.draft{background:var(--orange-dim);border:1px solid rgba(232,125,42,.25);color:var(--orange)}
+.ev-actions{display:flex;gap:5px;align-items:center;flex:0 0 auto;}
+
+/* Status select */
+.status-select{background:var(--bg3);border:1px solid var(--line);border-radius:6px;color:var(--text);font-size:.72rem;padding:3px 6px;cursor:pointer;font-family:var(--font);}
+
+/* ── REZERVAČNÝ SYSTÉM (hlavný) ── */
+.res-system{background:var(--bg2);border:1px solid var(--line);border-radius:var(--r);overflow:hidden;}
+
+/* Res header */
+.res-header{
+  padding:16px 20px;border-bottom:1px solid var(--line);
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+  background:rgba(0,0,0,.15);
 }
-.mc-nav-btn:hover{color:var(--text);background:rgba(255,255,255,.07)}
-.mc-dates{display:flex;gap:4px;padding:10px 12px;overflow-x:auto;scrollbar-width:none;border-bottom:1px solid var(--line)}
-.mc-dates::-webkit-scrollbar{display:none}
-.mc-dpill{
-  flex:0 0 auto;padding:5px 8px;border-radius:7px;
-  border:1px solid var(--line);background:transparent;
-  cursor:pointer;text-align:center;transition:.15s;
-}
+.res-venue{font-size:.88rem;font-weight:700;color:var(--gold)}
+.res-header-right{display:flex;gap:8px;align-items:center;}
+
+/* Admin / verejný toggle */
+.view-toggle{display:flex;gap:0;border:1px solid var(--line);border-radius:8px;overflow:hidden;}
+.vt-btn{padding:5px 12px;font-size:.67rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;cursor:pointer;border:none;background:transparent;color:var(--muted);font-family:var(--font);transition:.12s;}
+.vt-btn.active{background:rgba(212,168,67,.12);color:var(--gold);}
+
+/* Res dates */
+.res-dates{display:flex;gap:4px;padding:10px 14px;overflow-x:auto;scrollbar-width:none;border-bottom:1px solid var(--line);}
+.res-dates::-webkit-scrollbar{display:none}
+.mc-dpill{flex:0 0 auto;padding:5px 8px;border-radius:7px;border:1px solid var(--line);background:transparent;cursor:pointer;text-align:center;transition:.15s;}
 .mc-dpill:hover{border-color:var(--gold-b)}
 .mc-dpill.sel{background:var(--gold-dim);border-color:var(--gold-b)}
 .dp-d{font-size:.52rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:700}
 .dp-n{font-size:.85rem;font-weight:700;color:var(--text);line-height:1.1}
 .mc-dpill.sel .dp-n{color:var(--gold)}
-.mc-sport-tabs{display:flex;border-bottom:1px solid var(--line)}
-.mc-stab{
-  flex:1;padding:6px 4px;font-size:.6rem;font-weight:700;
-  text-transform:uppercase;letter-spacing:.06em;color:var(--muted);
-  cursor:pointer;text-align:center;border-bottom:2px solid transparent;transition:.15s;
-}
-.mc-stab.sel{color:var(--gold);border-bottom-color:var(--gold)}
-.mc-timeline-wrap{overflow-x:auto;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,.05) transparent}
-.mc-timeline{min-width:460px}
-.mc-time-hdr{display:flex;padding-left:56px;border-bottom:1px solid var(--line2)}
-.mc-tcell{width:56px;flex:0 0 56px;font-size:.5rem;font-family:var(--mono);color:#444;padding:3px 2px}
-.mc-row{display:flex;align-items:center;border-bottom:1px solid var(--line2);min-height:34px}
-.mc-rlabel{width:56px;flex:0 0 56px;font-size:.62rem;font-weight:700;color:var(--muted2);padding:0 6px;white-space:nowrap}
-.mc-rline{
-  flex:1;position:relative;height:34px;
-  background:repeating-linear-gradient(90deg,transparent,transparent 55px,rgba(255,255,255,.025) 55px,rgba(255,255,255,.025) 56px);
-}
-.mc-blk{position:absolute;top:4px;bottom:4px;border-radius:4px;display:flex;align-items:center;padding:0 5px}
-.mc-blk.free{cursor:pointer;border:1px dashed rgba(212,168,67,.2)}
-.mc-blk.free:hover{background:rgba(212,168,67,.07)}
-.mc-blk.taken{background:rgba(30,200,106,.1);border:1px solid rgba(30,200,106,.18)}
-.mc-blk.blocked{background:repeating-linear-gradient(45deg,rgba(217,79,79,.06),rgba(217,79,79,.06) 3px,rgba(217,79,79,.12) 3px,rgba(217,79,79,.12) 6px);border:1px solid rgba(217,79,79,.15)}
-.mc-blk-txt{font-size:.54rem;font-weight:700;color:var(--muted);white-space:nowrap;overflow:hidden}
-.mc-blk.taken .mc-blk-txt{color:rgba(30,200,106,.7)}
-.mc-book-wrap{padding:10px 12px}
-.mc-book-btn{
-  width:100%;padding:8px;border-radius:9px;border:none;
-  background:var(--gold);color:#1a1000;
-  font-family:var(--font);font-size:.78rem;font-weight:700;cursor:pointer;
-  transition:.15s;
-}
-.mc-book-btn:hover{background:#e8b94f}
 
-/* ══════════════════════════════════════════
-   SETTINGS CARD
-══════════════════════════════════════════ */
-.settings-list{display:flex;flex-direction:column;gap:10px}
-.sl-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:8px 0;border-bottom:1px solid var(--line2)}
-.sl-row:last-child{border-bottom:none}
-.sl-label{font-size:.75rem;font-weight:600;color:var(--muted2)}
-.sl-select{
-  background:var(--bg3);border:1px solid var(--line);border-radius:7px;
-  color:var(--text);font-family:var(--font);font-size:.75rem;
-  padding:4px 8px;outline:none;cursor:pointer;
-}
+/* Res sport tabs */
+.res-sport-tabs{display:flex;border-bottom:1px solid var(--line);}
+.res-stab{flex:1;padding:7px 4px;font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);cursor:pointer;text-align:center;border-bottom:2px solid transparent;transition:.15s;}
+.res-stab.sel{color:var(--gold);border-bottom-color:var(--gold)}
 
-/* ══════════════════════════════════════════
-   BUTTONS
-══════════════════════════════════════════ */
-.btn{
-  display:inline-flex;align-items:center;gap:6px;
-  min-height:40px;padding:0 16px;border:none;border-radius:10px;
-  font:700 .82rem/1 var(--font);cursor:pointer;text-decoration:none;
-  white-space:nowrap;transition:.15s;
-}
+/* Res timeline */
+.res-timeline-wrap{overflow-x:auto;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,.05) transparent;padding:0 0 4px;}
+.res-timeline{min-width:560px;}
+.res-time-hdr{display:flex;padding-left:100px;border-bottom:1px solid var(--line2);}
+.res-tcell{width:60px;flex:0 0 60px;font-size:.5rem;font-family:var(--mono);color:#444;padding:4px 2px;}
+.res-row{display:flex;align-items:center;border-bottom:1px solid var(--line2);min-height:40px;}
+.res-rlabel{width:100px;flex:0 0 100px;font-size:.65rem;font-weight:700;color:var(--muted2);padding:0 8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.res-rline{flex:1;position:relative;height:40px;background:repeating-linear-gradient(90deg,transparent,transparent 59px,rgba(255,255,255,.025) 59px,rgba(255,255,255,.025) 60px);}
+.res-blk{position:absolute;top:5px;bottom:5px;border-radius:5px;display:flex;align-items:center;padding:0 6px;cursor:pointer;transition:.1s;}
+.res-blk.free{border:1px dashed rgba(212,168,67,.2);}
+.res-blk.free:hover{background:rgba(212,168,67,.07);border-color:rgba(212,168,67,.4);}
+.res-blk.taken{background:rgba(30,200,106,.1);border:1px solid rgba(30,200,106,.2);}
+.res-blk.taken:hover{background:rgba(30,200,106,.16);}
+.res-blk.blocked{background:repeating-linear-gradient(45deg,rgba(217,79,79,.06),rgba(217,79,79,.06) 3px,rgba(217,79,79,.12) 3px,rgba(217,79,79,.12) 6px);border:1px solid rgba(217,79,79,.18);}
+.res-blk-txt{font-size:.56rem;font-weight:700;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;}
+.res-blk.taken .res-blk-txt{color:rgba(30,200,106,.8);}
+.res-blk.admin-info .res-blk-txt{color:rgba(30,200,106,.95);font-size:.6rem;}
+.now-line{position:absolute;top:0;bottom:0;width:1px;background:var(--green);opacity:.5;pointer-events:none;z-index:5;}
+
+/* Res footer actions */
+.res-footer{padding:12px 16px;border-top:1px solid var(--line);display:flex;gap:8px;align-items:center;justify-content:space-between;background:rgba(0,0,0,.1);}
+.res-footer-left{font-size:.72rem;color:var(--muted2)}
+.res-footer-left b{color:var(--text)}
+
+/* ── NASTAVENIA SPORTOVISK modal ── */
+.modal-overlay{position:fixed;inset:0;z-index:1000;background:rgba(0,0,0,.7);backdrop-filter:blur(4px);display:none;align-items:center;justify-content:center;padding:20px;}
+.modal-overlay.open{display:flex;}
+.modal{background:var(--bg2);border:1px solid var(--line);border-radius:var(--r);width:100%;max-width:560px;max-height:90vh;overflow-y:auto;display:flex;flex-direction:column;}
+.modal-head{padding:20px 24px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;}
+.modal-title{font-family:'Bebas Neue',sans-serif;font-size:1.1rem;letter-spacing:.08em;color:var(--text)}
+.modal-close{width:30px;height:30px;border-radius:8px;border:1px solid var(--line);background:transparent;color:var(--muted2);cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center;transition:.15s;}
+.modal-close:hover{background:rgba(255,255,255,.06);color:var(--text)}
+.modal-body{padding:20px 24px;display:flex;flex-direction:column;gap:16px;}
+.modal-footer{padding:16px 24px;border-top:1px solid var(--line);display:flex;gap:8px;justify-content:flex-end;}
+
+/* resource config rows */
+.sport-section{display:flex;flex-direction:column;gap:8px}
+.sport-sec-head{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted2);padding:4px 0;border-bottom:1px solid var(--line2);margin-bottom:4px;display:flex;align-items:center;justify-content:space-between;}
+.res-cfg-row{display:grid;grid-template-columns:1fr 1fr auto;gap:8px;align-items:center;}
+.res-cfg-inp{background:var(--bg3);border:1px solid var(--line);border-radius:8px;color:var(--text);font-family:var(--font);font-size:.78rem;padding:7px 10px;outline:none;transition:.12s;width:100%;}
+.res-cfg-inp:focus{border-color:var(--gold-b);background:var(--bg4);}
+.cfg-del-btn{width:28px;height:28px;border-radius:7px;border:1px solid var(--red-b);background:var(--red-dim);color:var(--red);cursor:pointer;font-size:.85rem;display:flex;align-items:center;justify-content:center;transition:.15s;flex:0 0 28px;}
+.cfg-del-btn:hover{background:rgba(217,79,79,.18);}
+.cfg-add-btn{font-size:.72rem;font-weight:700;color:var(--muted2);background:rgba(255,255,255,.03);border:1px dashed var(--line);border-radius:8px;padding:6px 12px;cursor:pointer;width:100%;text-align:left;transition:.15s;font-family:var(--font);}
+.cfg-add-btn:hover{color:var(--text);border-color:rgba(255,255,255,.15);}
+
+/* Rezervácia edit modal */
+.res-edit-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.form-group{display:flex;flex-direction:column;gap:5px;}
+.form-label{font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--muted2);}
+.form-inp{background:var(--bg3);border:1px solid var(--line);border-radius:8px;color:var(--text);font-family:var(--font);font-size:.82rem;padding:8px 10px;outline:none;transition:.12s;width:100%;}
+.form-inp:focus{border-color:var(--gold-b);}
+select.form-inp{cursor:pointer;}
+.form-group.full{grid-column:1/-1;}
+
+/* ── BUTTONS ── */
+.btn{display:inline-flex;align-items:center;gap:6px;min-height:38px;padding:0 16px;border:none;border-radius:10px;font:700 .82rem/1 var(--font);cursor:pointer;text-decoration:none;white-space:nowrap;transition:.15s;}
 .btn-green{background:var(--green);color:#06230f}
 .btn-green:hover{background:#1adf72}
 .btn-gold{background:var(--gold);color:#1a1000}
@@ -383,52 +234,68 @@ tbody tr:hover td{background:rgba(255,255,255,.015)}
 .btn-dark:hover{background:rgba(255,255,255,.09)}
 .btn-blue{background:var(--blue-dim);color:#c5d9f5;border:1px solid var(--blue-b)}
 .btn-blue:hover{background:rgba(74,130,204,.15)}
-.btn-sm{min-height:32px;padding:0 12px;font-size:.75rem;border-radius:8px}
+.btn-red{background:var(--red-dim);color:var(--red);border:1px solid var(--red-b)}
+.btn-red:hover{background:rgba(217,79,79,.15)}
+.btn-sm{min-height:30px;padding:0 10px;font-size:.72rem;border-radius:8px}
 
-/* ══════════════════════════════════════════
-   RESPONSIVE
-══════════════════════════════════════════ */
-@media(max-width:1100px){
-  .main-grid{grid-template-columns:1fr}
-  .right-col{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+/* ── SETTINGS ── */
+.settings-list{display:flex;flex-direction:column;gap:10px}
+.sl-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:8px 0;border-bottom:1px solid var(--line2)}
+.sl-row:last-child{border-bottom:none}
+.sl-label{font-size:.75rem;font-weight:600;color:var(--muted2)}
+.sl-select{background:var(--bg3);border:1px solid var(--line);border-radius:7px;color:var(--text);font-family:var(--font);font-size:.75rem;padding:4px 8px;outline:none;cursor:pointer;}
+
+/* ── ACHIEVEMENTS ── */
+.achiev-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+.ach{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:var(--rs);border:1px solid var(--line2);background:rgba(255,255,255,.015);}
+.ach-icon{width:36px;height:36px;border-radius:9px;flex:0 0 36px;display:flex;align-items:center;justify-content:center;font-size:.85rem;font-weight:800;background:var(--gold-dim);border:1px solid var(--gold-b);color:var(--gold);}
+.ach-name{font-size:.8rem;font-weight:700;color:var(--text)}
+.ach-desc{font-size:.68rem;color:var(--muted);margin-top:1px}
+
+/* ── AVATAR UPLOAD ── */
+.avatar-wrap{position:relative;cursor:pointer;display:inline-block;margin-bottom:16px;}
+.avatar-wrap:hover .avatar-overlay{opacity:1;}
+.avatar-overlay{
+  position:absolute;inset:3px;border-radius:50%;
+  background:rgba(0,0,0,.55);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  opacity:0;transition:.2s;z-index:2;gap:3px;
 }
-@media(max-width:900px){
-  .hero{grid-template-columns:1fr;grid-template-rows:auto}
-  .hero-identity{border-right:none;border-bottom:1px solid var(--line);padding:0 0 24px;flex-direction:row;gap:20px;align-items:center}
-  .hero-center{border-right:none;padding:20px 0}
-  .hero-stats{padding-left:0;border-top:1px solid var(--line);padding-top:20px;min-width:0}
-  .hero-stats .hs-item{padding:8px 0}
-}
-@media(max-width:680px){
-  .hero-identity{flex-direction:column;align-items:flex-start}
-  .stats-grid{grid-template-columns:repeat(2,1fr)}
-  .tools-grid{grid-template-columns:1fr}
-  .right-col{grid-template-columns:1fr}
-  .achiev-grid{grid-template-columns:1fr}
-}
-@media(max-width:480px){
-  .hero-name{font-size:2.2rem}
-  .stats-grid{grid-template-columns:repeat(2,1fr)}
-}
+.avatar-overlay span{font-size:.58rem;font-weight:700;color:#fff;text-transform:uppercase;letter-spacing:.06em;}
+.avatar-overlay svg{width:20px;height:20px;stroke:#fff;opacity:.9;}
+.avatar-uploading .avatar-overlay{opacity:1;background:rgba(0,0,0,.7);}
+.avatar-spin{width:22px;height:22px;border:2px solid rgba(255,255,255,.2);border-top-color:var(--gold);border-radius:50%;animation:spin .7s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ── RESPONSIVE ── */
+@media(max-width:1100px){.main-grid{grid-template-columns:1fr}.right-col{display:grid;grid-template-columns:1fr 1fr;gap:16px}}
+@media(max-width:900px){.hero{grid-template-columns:1fr;grid-template-rows:auto}.hero-identity{border-right:none;border-bottom:1px solid var(--line);padding:0 0 24px;flex-direction:row;gap:20px;align-items:center}.hero-center{border-right:none;padding:20px 0}.hero-stats{padding-left:0;border-top:1px solid var(--line);padding-top:20px;min-width:0}}
+@media(max-width:680px){.hero-identity{flex-direction:column;align-items:flex-start}.stats-grid{grid-template-columns:repeat(2,1fr)}.tools-grid{grid-template-columns:1fr}.right-col{grid-template-columns:1fr}.achiev-grid{grid-template-columns:1fr}.res-edit-grid{grid-template-columns:1fr}}
+@media(max-width:480px){.hero-name{font-size:2.2rem}.stats-grid{grid-template-columns:repeat(2,1fr)}.ev-row{grid-template-columns:auto 1fr;grid-template-rows:auto auto}.ev-actions{grid-column:2}}
 
 @keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
 .fade-in{animation:fadeUp .4s ease both}
+@keyframes lp{0%,100%{opacity:1}50%{opacity:.3}}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
 <div class="page">
 
-<!-- ═══════════════════════════════════════
-     HERO
-═══════════════════════════════════════ -->
+<!-- HERO -->
 <section class="hero fade-in">
-
-  <!-- Identity -->
   <div class="hero-identity">
-    <div class="avatar-ring">
-      <img src="" alt="Avatar"/>
+    <!-- Avatar upload -->
+    <div class="avatar-wrap" id="avatarWrap" onclick="document.getElementById('avatarInput').click()" title="Zmeniť profilový obrázok">
+      <div class="avatar-ring">
+        <img src="" alt="Avatar" id="avatarImg"/>
+      </div>
+      <div class="avatar-overlay" id="avatarOverlay">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+        <span>Nahrať foto</span>
+      </div>
     </div>
+    <input type="file" id="avatarInput" accept="image/*" style="display:none" onchange="uploadAvatar(this)"/>
     <div>
       <div class="plan-badge pb-ultra">⚡ Ultra</div>
       <div style="font-size:.78rem;color:var(--muted2);font-weight:600"><span id="profileLocation"></span></div>
@@ -439,95 +306,53 @@ tbody tr:hover td{background:rgba(255,255,255,.015)}
       </div>
     </div>
   </div>
-
-  <!-- Name + actions -->
   <div class="hero-center">
     <h1 class="hero-name" id="profileName">—</h1>
-    <div style="font-size:.82rem;color:var(--muted2);margin-bottom:18px">
-      <span id="profileSince">—</span>
-    </div>
+    <div style="font-size:.82rem;color:var(--muted2);margin-bottom:18px"><span id="profileSince">—</span></div>
     <div class="hero-actions">
       <a href="/trening/" class="btn btn-green">▶ Spustiť tréning</a>
-      <a href="/nastavenie-turnaja/" class="btn btn-dark">🏆 Vytvoriť turnaj</a>
+      <a href="/nastavenie-turnaja/" class="btn btn-dark">🏆 Turnaj</a>
       <a href="/vytvorit-udalost/" class="btn btn-dark">📅 Udalosť</a>
       <a href="/nastavenie-profilu/" class="btn btn-dark">⚙️</a>
       <button class="btn btn-dark" onclick="confirmLogout()" title="Odhlásiť sa">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
       </button>
     </div>
   </div>
-
-  <!-- Quick stats -->
   <div class="hero-stats">
-    <div class="hs-item">
-      <span class="hs-label">Turnaje</span>
-      <span class="hs-val" id="statTurnaje">—</span>
-    </div>
-    <div class="hs-item">
-      <span class="hs-label">Výhry</span>
-      <span class="hs-val green" id="statVyhry">—</span>
-    </div>
-    <div class="hs-item">
-      <span class="hs-label">Tituly</span>
-      <span class="hs-val gold" id="statTituly">—</span>
-    </div>
+    <div class="hs-item"><span class="hs-label">Turnaje</span><span class="hs-val" id="statTurnaje">—</span></div>
+    <div class="hs-item"><span class="hs-label">Výhry</span><span class="hs-val green" id="statVyhry">—</span></div>
+    <div class="hs-item"><span class="hs-label">Tituly</span><span class="hs-val gold" id="statTituly">—</span></div>
   </div>
-
-
 </section>
 
-<!-- ═══════════════════════════════════════
-     MAIN GRID
-═══════════════════════════════════════ -->
+<!-- MAIN GRID -->
 <div class="main-grid">
 
-<!-- LEFT COLUMN -->
+<!-- ═══ LEFT COLUMN ═══ -->
 <div class="left-col">
-
-
 
   <!-- STATS -->
   <div class="card fade-in" style="animation-delay:.1s">
     <div class="card-title">Štatistiky</div>
     <div class="stats-grid">
-      <div class="stat-box">
-        <div class="sb-val" id="st-turnaje">0</div>
-        <div class="sb-label">Turnaje</div>
-      </div>
-      <div class="stat-box">
-        <div class="sb-val" id="st-zapasy">0</div>
-        <div class="sb-label">Zápasy</div>
-      </div>
-      <div class="stat-box">
-        <div class="sb-val green" id="st-vyhry">0</div>
-        <div class="sb-label">Výhry</div>
-      </div>
-      <div class="stat-box">
-        <div class="sb-val" id="st-prehry">0</div>
-        <div class="sb-label">Prehry</div>
-      </div>
-      <div class="stat-box">
-        <div class="sb-val gold" id="st-uspesnost">—</div>
-        <div class="sb-label">Úspešnosť</div>
-      </div>
-      <div class="stat-box">
-        <div class="sb-val gold" id="st-tituly">0</div>
-        <div class="sb-label">Tituly</div>
-      </div>
+      <div class="stat-box"><div class="sb-val" id="st-turnaje">0</div><div class="sb-label">Turnaje</div></div>
+      <div class="stat-box"><div class="sb-val" id="st-zapasy">0</div><div class="sb-label">Zápasy</div></div>
+      <div class="stat-box"><div class="sb-val green" id="st-vyhry">0</div><div class="sb-label">Výhry</div></div>
+      <div class="stat-box"><div class="sb-val" id="st-prehry">0</div><div class="sb-label">Prehry</div></div>
+      <div class="stat-box"><div class="sb-val gold" id="st-uspesnost">—</div><div class="sb-label">Úspešnosť</div></div>
+      <div class="stat-box"><div class="sb-val gold" id="st-tituly">0</div><div class="sb-label">Tituly</div></div>
     </div>
   </div>
 
   <!-- ORGANIZER TOOLS -->
   <div class="card fade-in" style="animation-delay:.15s">
-    <div class="card-title">
-      Organizátorské nástroje
-      <span style="font-size:.7rem;color:var(--gold);font-weight:700">Ultra · ∞ akcií</span>
-    </div>
+    <div class="card-title">Organizátorské nástroje <span style="font-size:.7rem;color:var(--gold);font-weight:700">Ultra · ∞ akcií</span></div>
     <div class="tools-grid">
       <div class="tool-card gold-card">
         <div class="tc-icon">📅</div>
         <div class="tc-name">Vytvoriť udalosť</div>
-        <div class="tc-desc">Pridaj podujatie do kalendára CSP. Hráči sa prihlásia cez odkaz.</div>
+        <div class="tc-desc">Pridaj podujatie do kalendára CSP.</div>
         <a href="/vytvorit-udalost/" class="tool-link tl-green">Vytvoriť →</a>
       </div>
       <div class="tool-card blue-card">
@@ -546,86 +371,94 @@ tbody tr:hover td{background:rgba(255,255,255,.015)}
     </div>
   </div>
 
-  <!-- AKTUALNE UDALOSTI -->
-  <div class="card fade-in" style="animation-delay:.2s">
-    <div class="card-title">Moje udalosti <a href="/vytvorit-udalost/" style="font-size:.75rem">+ Vytvoriť novú</a></div>
-    <div id="myEventsList" style="color:var(--muted);font-size:.82rem;padding:8px 0">Načítavam...</div>
+  <!-- MOJE UDALOSTI + TURNAJE (tabbed) -->
+  <div class="card fade-in" style="animation-delay:.2s;padding-bottom:16px">
+    <div class="card-title" style="margin-bottom:12px">
+      Moje aktivity
+      <a href="/vytvorit-udalost/">+ Nová udalosť</a>
+    </div>
+
+    <!-- Tabs -->
+    <div class="ev-tabs">
+      <button class="ev-tab active" onclick="evTabSwitch('events',this)">
+        📅 Udalosti <span class="ev-count" id="evCount">0</span>
+      </button>
+      <button class="ev-tab" onclick="evTabSwitch('tournaments',this)">
+        🏆 Turnaje <span class="ev-count" id="tnCount">0</span>
+      </button>
+    </div>
+
+    <!-- Events panel -->
+    <div id="panelEvents">
+      <div id="myEventsList" class="ev-list" style="color:var(--muted);font-size:.82rem;padding:8px 0">Načítavam...</div>
+    </div>
+
+    <!-- Tournaments panel (hidden) -->
+    <div id="panelTournaments" style="display:none">
+      <div id="myTournamentsList" class="ev-list" style="color:var(--muted);font-size:.82rem;padding:8px 0">Načítavam...</div>
+    </div>
   </div>
 
 </div><!-- /left-col -->
 
-<!-- RIGHT COLUMN -->
+<!-- ═══ RIGHT COLUMN ═══ -->
 <div class="right-col">
 
-  <!-- MINI REZERVAČNÝ KALENDÁR -->
-  <div class="card mini-cal-card fade-in" style="animation-delay:.08s">
-    <div class="mc-head">
+  <!-- REZERVAČNÝ SYSTÉM -->
+  <div class="res-system card fade-in" style="padding:0;animation-delay:.08s">
+    <div class="res-header">
       <div>
-        <div class="mc-head-title">Rezervácia</div>
-        <div class="mc-venue">Moment Club</div>
+        <div style="font-size:.58rem;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);font-weight:700">Rezervácia</div>
+        <div class="res-venue">Moment Club</div>
       </div>
-      <div class="mc-nav">
-        <div class="mc-nav-btn" id="mcPrev">‹</div>
-        <div class="mc-nav-btn" id="mcNext">›</div>
+      <div class="res-header-right">
+        <!-- Admin / Verejný toggle -->
+        <div class="view-toggle" title="Prepínač admin / verejného pohľadu">
+          <button class="vt-btn active" onclick="setViewMode('admin',this)">Admin</button>
+          <button class="vt-btn" onclick="setViewMode('public',this)">Verejný</button>
+        </div>
+        <!-- Nav -->
+        <div style="display:flex;gap:4px">
+          <button class="btn btn-dark btn-sm" id="resPrev" style="min-height:28px;padding:0 8px">‹</button>
+          <button class="btn btn-dark btn-sm" id="resNext" style="min-height:28px;padding:0 8px">›</button>
+        </div>
+        <!-- Nastavenia sportovisk -->
+        <button class="btn btn-dark btn-sm" onclick="openCfgModal()" title="Nastaviť športoviská" style="min-height:28px;padding:0 8px">⚙️</button>
       </div>
     </div>
-    <div class="mc-dates" id="mcDates"></div>
-    <div class="mc-sport-tabs" id="mcTabs"></div>
-    <div class="mc-timeline-wrap">
-      <div class="mc-timeline" id="mcTimeline"></div>
+
+    <div class="res-dates" id="resDates"></div>
+    <div class="res-sport-tabs" id="resSportTabs"></div>
+    <div class="res-timeline-wrap">
+      <div class="res-timeline" id="resTimeline"></div>
     </div>
-    <div class="mc-book-wrap">
-      <button class="mc-book-btn" onclick="window.location.href='/rezervacia/moment-club/?date='+MC.sel+'&sport='+MC.sport">
-        + Rezervovať termín
-      </button>
+    <div class="res-footer">
+      <span class="res-footer-left">
+        <b id="resFreeCount">—</b> voľných termínov dnes
+      </span>
+      <button class="btn btn-gold btn-sm" onclick="openNewResModal()">+ Rezervovať</button>
     </div>
   </div>
 
-  
-      <div class="ach">
-        <div class="ach-icon">10</div>
-        <div>
-          <div class="ach-name">10 turnajov</div>
-          <div class="ach-desc">Aktívny hráč</div>
-        </div>
-      </div>
-      <div class="ach">
-        <div class="ach-icon">F</div>
-        <div>
-          <div class="ach-name">Finalista</div>
-          <div class="ach-desc">Aspoň jedno finále</div>
-        </div>
-      </div>
-      <div class="ach">
-        <div class="ach-icon" style="background:rgba(212,168,67,.15);border-color:rgba(212,168,67,.3)">🏆</div>
-        <div>
-          <div class="ach-name">Víťaz</div>
-          <div class="ach-desc">Turnajové prvenstvo</div>
-        </div>
-      </div>
+  <!-- ACHIEVEMENTS -->
+  <div class="card fade-in" style="animation-delay:.12s">
+    <div class="card-title">Achievements</div>
+    <div class="achiev-grid">
+      <div class="ach"><div class="ach-icon">10</div><div><div class="ach-name">10 turnajov</div><div class="ach-desc">Aktívny hráč</div></div></div>
+      <div class="ach"><div class="ach-icon">F</div><div><div class="ach-name">Finalista</div><div class="ach-desc">Aspoň jedno finále</div></div></div>
+      <div class="ach"><div class="ach-icon" style="background:rgba(212,168,67,.15);border-color:rgba(212,168,67,.3)">🏆</div><div><div class="ach-name">Víťaz</div><div class="ach-desc">Turnajové prvenstvo</div></div></div>
+      <div class="ach"><div class="ach-icon" style="background:rgba(74,130,204,.12);border-color:rgba(74,130,204,.28);color:var(--blue)">★</div><div><div class="ach-name">Organizátor</div><div class="ach-desc">Vytvoril 5+ udalostí</div></div></div>
     </div>
   </div>
 
-  <!-- SETTINGS -->
+  <!-- NASTAVENIA -->
   <div class="card fade-in" style="animation-delay:.16s">
     <div class="card-title">Nastavenia <a href="/nastavenie-profilu/">Všetky →</a></div>
     <div class="settings-list">
-      <div class="sl-row">
-        <span class="sl-label">Jazyk</span>
-        <select class="sl-select"><option>Slovenčina</option><option>Čeština</option><option>English</option></select>
-      </div>
-      <div class="sl-row">
-        <span class="sl-label">Šport</span>
-        <select class="sl-select"><option>Biliard</option><option>Šípky</option><option>Bowling</option></select>
-      </div>
-      <div class="sl-row">
-        <span class="sl-label">Notifikácie</span>
-        <select class="sl-select"><option>Všetky</option><option>Len turnaje</option><option>Vypnuté</option></select>
-      </div>
-      <div class="sl-row">
-        <span class="sl-label">Súkromie</span>
-        <select class="sl-select"><option>Verejný</option><option>Len registrovaní</option><option>Súkromný</option></select>
-      </div>
+      <div class="sl-row"><span class="sl-label">Jazyk</span><select class="sl-select"><option>Slovenčina</option><option>Čeština</option><option>English</option></select></div>
+      <div class="sl-row"><span class="sl-label">Šport</span><select class="sl-select"><option>Biliard</option><option>Šípky</option><option>Bowling</option></select></div>
+      <div class="sl-row"><span class="sl-label">Notifikácie</span><select class="sl-select"><option>Všetky</option><option>Len turnaje</option><option>Vypnuté</option></select></div>
+      <div class="sl-row"><span class="sl-label">Súkromie</span><select class="sl-select"><option>Verejný</option><option>Len registrovaní</option><option>Súkromný</option></select></div>
     </div>
   </div>
 
@@ -633,252 +466,650 @@ tbody tr:hover td{background:rgba(255,255,255,.015)}
 </div><!-- /main-grid -->
 </div><!-- /page -->
 
+<!-- ════════════════════════════════════
+     MODAL: NASTAVENIE ŠPORTOVÍSK
+════════════════════════════════════ -->
+<div class="modal-overlay" id="cfgModal">
+  <div class="modal">
+    <div class="modal-head">
+      <div class="modal-title">⚙️ Nastavenie Športovísk</div>
+      <button class="modal-close" onclick="closeCfgModal()">✕</button>
+    </div>
+    <div class="modal-body" id="cfgBody">
+      <!-- vygenerované JS -->
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-dark" onclick="closeCfgModal()">Zrušiť</button>
+      <button class="btn btn-gold" onclick="saveCfg()">💾 Uložiť</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════
+     MODAL: EDIT / NOVÁ REZERVÁCIA
+════════════════════════════════════ -->
+<div class="modal-overlay" id="resEditModal">
+  <div class="modal">
+    <div class="modal-head">
+      <div class="modal-title" id="resEditTitle">Nová rezervácia</div>
+      <button class="modal-close" onclick="closeResEditModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="res-edit-grid">
+        <div class="form-group full">
+          <label class="form-label">Zákazník / Meno</label>
+          <input class="form-inp" id="resCustName" placeholder="Meno zákazníka" type="text"/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Športovisko</label>
+          <select class="form-inp" id="resResource"></select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Šport</label>
+          <select class="form-inp" id="resSport">
+            <option value="billiard">🎱 Biliard</option>
+            <option value="darts">🎯 Šípky</option>
+            <option value="bowling">🎳 Bowling</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Od</label>
+          <input class="form-inp" id="resFrom" type="time" value="15:00"/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Do</label>
+          <input class="form-inp" id="resTo" type="time" value="17:00"/>
+        </div>
+        <div class="form-group full">
+          <label class="form-label">Stav</label>
+          <select class="form-inp" id="resStatus">
+            <option value="taken">Obsadené (rezervácia)</option>
+            <option value="blocked">Blokované (nedostupné)</option>
+          </select>
+        </div>
+        <div class="form-group full">
+          <label class="form-label">Poznámka (neviditeľná pre zákazníkov)</label>
+          <input class="form-inp" id="resNote" placeholder="Interná poznámka..." type="text"/>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-red btn-sm" id="resDelBtn" onclick="deleteCurrentRes()" style="display:none;margin-right:auto">🗑 Zmazať</button>
+      <button class="btn btn-dark" onclick="closeResEditModal()">Zrušiť</button>
+      <button class="btn btn-gold" onclick="saveRes()">💾 Uložiť</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════
+     JS
+════════════════════════════════════ -->
 <script>
-// ── MINI KALENDÁR ──────────────────────────────────────────
-const MC = {
-  openFrom:15,openTo:23,hourW:56,
-  sports:[
-    {key:"billiard",label:"🎱 Biliard",singular:"Stôl"},
-    {key:"darts",   label:"🎯 Šípky",  singular:"Terč"},
-    {key:"bowling", label:"🎳 Bowling", singular:"Dráha"},
-  ],
-  resources:[
-    {id:"b1",sport:"billiard",number:1,label:"Stôl 1"},
-    {id:"b2",sport:"billiard",number:2,label:"Stôl 2"},
-    {id:"b3",sport:"billiard",number:3,label:"Stôl 3"},
-    {id:"d1",sport:"darts",   number:1,label:"Terč 1"},
-    {id:"d2",sport:"darts",   number:2,label:"Terč 2"},
-    {id:"w1",sport:"bowling", number:1,label:"Dráha 1"},
-  ],
-  reservations:[
-    {resourceId:"b1",from:16,to:18,status:"taken"},
-    {resourceId:"b1",from:20,to:22,status:"taken"},
-    {resourceId:"b2",from:15,to:16.5,status:"taken"},
-    {resourceId:"b3",from:17,to:19,status:"blocked"},
-    {resourceId:"d1",from:19,to:21,status:"taken"},
-    {resourceId:"w1",from:17,to:20,status:"taken"},
-  ],
-  sel: new Date().toISOString().split("T")[0],
-  sport:"billiard",
-  weekOffset:0,
-};
-const SK_D=["Ne","Po","Ut","St","Št","Pi","So"];
-const today=new Date();
+// ══════════════════════════════════════
+//  SUPABASE
+// ══════════════════════════════════════
+const _db = window.supabase.createClient(
+  "https://gilzomwhuwcxpkegtlhj.supabase.co",
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdpbHpvbXdodXdjeHBrZWd0bGhqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzcwMzMwMTgsImV4cCI6MjA5MjYwOTAxOH0.-KiLSdiB2mRWqUDB9GWyISfCu2o_ZBM80aGUEW9CcUg"
+);
 
-function hToX(h){return (h-MC.openFrom)*MC.hourW;}
-function hToTime(h){return String(Math.floor(h)).padStart(2,"0")+":"+String(Math.round((h%1)*60)).padStart(2,"0");}
-
-function mcRenderDates(){
-  const el=document.getElementById("mcDates");
-  const base=new Date(today);base.setDate(today.getDate()+MC.weekOffset*7);
-  let h="";
-  for(let i=0;i<7;i++){
-    const d=new Date(base);d.setDate(base.getDate()+i);
-    const iso=d.toISOString().split("T")[0];
-    h+=`<div class="mc-dpill${MC.sel===iso?" sel":""}" onclick="mcSelDate('${iso}')">
-      <div class="dp-d">${SK_D[d.getDay()]}</div>
-      <div class="dp-n">${d.getDate()}</div>
-    </div>`;
-  }
-  el.innerHTML=h;
-}
-
-function mcRenderTabs(){
-  document.getElementById("mcTabs").innerHTML=MC.sports.map(s=>
-    `<div class="mc-stab${MC.sport===s.key?" sel":""}" onclick="mcSelSport('${s.key}')">${s.label}</div>`
-  ).join("");
-}
-
-function mcRenderTimeline(){
-  const tl=document.getElementById("mcTimeline");
-  const res=MC.resources.filter(r=>r.sport===MC.sport);
-  const hours=Array.from({length:MC.openTo-MC.openFrom},(_,i)=>MC.openFrom+i);
-  const totalW=MC.hourW*(MC.openTo-MC.openFrom);
-  const isToday=MC.sel===today.toISOString().split("T")[0];
-  const nowH=today.getHours()+today.getMinutes()/60;
-
-  let h=`<div class="mc-time-hdr">${hours.map(hr=>`<div class="mc-tcell">${String(hr).padStart(2,"0")}:00</div>`).join("")}</div>`;
-
-  res.forEach(r=>{
-    const rr=MC.reservations.filter(x=>x.resourceId===r.id);
-    let blocks="";
-    if(isToday&&nowH>=MC.openFrom&&nowH<=MC.openTo){
-      const x=(nowH-MC.openFrom)*MC.hourW;
-      blocks+=`<div style="position:absolute;top:0;bottom:0;left:${x}px;width:1px;background:#1ec86a;opacity:.6;pointer-events:none"></div>`;
-    }
-    const occ=rr.map(x=>({from:x.from,to:x.to})).sort((a,b)=>a.from-b.from);
-    let cur=MC.openFrom;
-    occ.forEach(o=>{
-      if(o.from>cur){
-        const x=hToX(cur),w=(o.from-cur)*MC.hourW;
-        blocks+=`<div class="mc-blk free" style="left:${x}px;width:${w}px" onclick="window.location.href='/rezervacia/moment-club/?res=${r.id}&date=${MC.sel}&from=${hToTime(cur)}&to=${hToTime(o.from)}'"></div>`;
-      }
-      cur=Math.max(cur,o.to);
-    });
-    if(cur<MC.openTo){
-      const x=hToX(cur),w=(MC.openTo-cur)*MC.hourW;
-      blocks+=`<div class="mc-blk free" style="left:${x}px;width:${w}px" onclick="window.location.href='/rezervacia/moment-club/?res=${r.id}&date=${MC.sel}&from=${hToTime(cur)}&to=${hToTime(MC.openTo)}'"></div>`;
-    }
-    rr.forEach(x=>{
-      const px=hToX(x.from),pw=(x.to-x.from)*MC.hourW;
-      blocks+=`<div class="mc-blk ${x.status}" style="left:${px+1}px;width:${pw-2}px"><div class="mc-blk-txt">${x.status==="taken"?"Obsadené":"🚫"}</div></div>`;
-    });
-    h+=`<div class="mc-row"><div class="mc-rlabel">${r.label}</div><div class="mc-rline" style="width:${totalW}px;min-width:${totalW}px">${blocks}</div></div>`;
-  });
-  tl.innerHTML=h;
-}
-
-function mcRender(){mcRenderDates();mcRenderTabs();mcRenderTimeline();}
-window.mcSelDate=function(iso){MC.sel=iso;mcRender();}
-window.mcSelSport=function(k){MC.sport=k;mcRender();}
-document.getElementById("mcPrev").addEventListener("click",()=>{MC.weekOffset--;mcRender();});
-document.getElementById("mcNext").addEventListener("click",()=>{MC.weekOffset++;mcRender();});
-mcRender();
-
-// ── LOGOUT ────────────────────────────────────────────────
-async async function changeStatus(id, status){
-  if(!_db) return;
-  const { error } = await _db.from('events').update({ status }).eq('id', id);
-  if(error){ alert('Chyba: ' + error.message); return; }
-  // Vizuálny feedback
-  const row = document.getElementById('erow-' + id);
-  if(row) row.style.opacity = '.6';
-  setTimeout(() => { if(row) row.style.opacity = '1'; }, 600);
-}
-
-async function deleteEvent(id, nazov){
-  if(!confirm('Zmazať udalosť "' + nazov + '"?')) return;
-  if(!_db) return;
-  const { error } = await _db.from('events').delete().eq('id', id);
-  if(error){ alert('Chyba: ' + error.message); return; }
-  const row = document.getElementById('erow-' + id);
-  if(row){ row.style.transition='opacity .3s'; row.style.opacity='0'; setTimeout(()=>row.remove(),300); }
-}
-
-function confirmLogout(){
-  if(!confirm("Naozaj sa chceš odhlásiť?")) return;
-  // Supabase signOut
-  // Supabase init
-const _db = window.supabase ? window.supabase.createClient("https://gilzomwhuwcxpkegtlhj.supabase.co", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdpbHpvbXdodXdjeHBrZWd0bGhqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzcwMzMwMTgsImV4cCI6MjA5MjYwOTAxOH0.-KiLSdiB2mRWqUDB9GWyISfCu2o_ZBM80aGUEW9CcUg") : null;
-(async function(){
-  if(!_db){ window.location.href = '/login/'; return; }
-  const { data } = await _db.auth.getSession();
-  if(!data?.session){ window.location.href = '/login/'; return; }
-  const user = data.session.user;
-  // Načítaj profil
-  const { data: p } = await _db.from('profiles').select('*').eq('id', user.id).single();
-  if(p){
-    const nameEl = document.getElementById('profileName');
-    const nickEl = document.getElementById('profileUsername');
-    const imgEl  = document.querySelector('.avatar-ring img');
-    if(nameEl) nameEl.textContent = p.full_name || user.email;
-    if(nickEl) nickEl.textContent = '@' + (p.username || '');
-    if(imgEl && p.avatar_url) imgEl.src = p.avatar_url;
-  }
-})();
-  window.location.href = "/login/";
-}
-
-// ── PLAN ──────────────────────────────────────────────────
-const USER_PLAN='ultra';
-</script>
-<script>
-const _db = window.supabase.createClient("https://gilzomwhuwcxpkegtlhj.supabase.co", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdpbHpvbXdodXdjeHBrZWd0bGhqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzcwMzMwMTgsImV4cCI6MjA5MjYwOTAxOH0.-KiLSdiB2mRWqUDB9GWyISfCu2o_ZBM80aGUEW9CcUg");
-
+// ══════════════════════════════════════
+//  INIT — session + profil + dáta
+// ══════════════════════════════════════
 (async function(){
   const { data } = await _db.auth.getSession();
-  if(!data?.session){ window.location.href = '/login/'; return; }
+  if(!data?.session){ window.location.href='/login/'; return; }
   const user = data.session.user;
 
   const { data: p } = await _db.from('profiles').select('*').eq('id', user.id).single();
   if(p){
     const nameEl = document.getElementById('profileName');
     if(nameEl) nameEl.innerHTML = p.full_name
-      ? p.full_name.split(' ').map((w,i) => i===0 ? w : `<span>${w}</span>`).join(' ')
+      ? p.full_name.split(' ').map((w,i)=>i===0?w:`<span>${w}</span>`).join(' ')
       : user.email;
-
     const sinceEl = document.getElementById('profileSince');
     if(sinceEl){
       const since = new Date(p.created_at).toLocaleDateString('sk-SK',{month:'long',year:'numeric'});
-      sinceEl.textContent = (p.username ? '@'+p.username+' · ' : '') + 'člen od ' + since;
+      sinceEl.textContent=(p.username?'@'+p.username+' · ':'')+' člen od '+since;
     }
-
-    const imgEl = document.querySelector('.avatar-ring img');
+    const imgEl = document.getElementById('avatarImg');
     if(imgEl && p.avatar_url) imgEl.src = p.avatar_url;
-
-    const locEl = document.getElementById('profileLocation');
-    if(locEl) locEl.textContent = '';
   }
 
   // Moje udalosti
   const { data: events } = await _db
-    .from('events')
-    .select('*')
+    .from('events').select('*')
     .eq('organizer_id', user.id)
-    .order('created_at', {ascending: false})
-    .limit(10);
+    .order('created_at',{ascending:false}).limit(20);
 
-  const listEl = document.getElementById('myEventsList');
-  if(listEl){
-    if(!events || !events.length){
-      listEl.innerHTML = '<span style="color:var(--muted)">Zatiaľ žiadne udalosti. <a href="/vytvorit-udalost/" style="color:var(--gold)">Vytvor prvú →</a></span>';
-    } else {
-      const sports = {billiard:'🎱',darts:'🎯',bowling:'🎳',tennis:'🎾',tabletennis:'🏓',foosball:'⚽',chess:'♟️',petanque:'🎳',badminton:'🏸'};
-      listEl.innerHTML = `<div class="table-wrap" style="overflow-x:auto"><table>
-        <thead><tr><th>Udalosť</th><th>Dátum</th><th>Šport</th><th>Stav</th><th></th></tr></thead>
-        <tbody>${events.map(e=>`
-          <tr id="erow-${e.id}">
-            <td style="font-weight:600">${e.nazov}</td>
-            <td style="color:var(--muted2)">${e.datum||'—'}</td>
-            <td>${sports[e.sport]||'🏆'} ${e.sport||''}</td>
-            <td>
-              <select onchange="changeStatus('${e.id}',this.value)"
-                style="background:var(--bg3);border:1px solid var(--line);border-radius:6px;
-                color:var(--text);font-size:.72rem;padding:3px 6px;cursor:pointer">
-                <option value="open"  ${e.status==='open'  ?'selected':''}>Otvorená</option>
-                <option value="running" ${e.status==='running'?'selected':''}>Prebieha</option>
-                <option value="done" ${e.status==='done'  ?'selected':''}>Ukončená</option>
-                <option value="draft" ${e.status==='draft' ?'selected':''}>Draft</option>
-              </select>
-            </td>
-            <td style="display:flex;gap:5px;align-items:center">
-              <a href="/udalost/?slug=${e.slug}" class="btn btn-dark btn-sm">Otvoriť</a>
-              <button onclick="deleteEvent('${e.id}','${e.nazov}')"
-                style="padding:4px 8px;border-radius:6px;border:1px solid rgba(224,85,85,.3);
-                background:rgba(224,85,85,.08);color:#e05555;font-size:.72rem;cursor:pointer">
-                Zmazať
-              </button>
-            </td>
-          </tr>`).join('')}
-        </tbody></table></div>`;
-    }
-  }
+  renderEventsList(events || []);
+
+  // Moje turnaje (predpokladáme tabuľku "tournaments")
+  const { data: tournaments } = await _db
+    .from('tournaments').select('*')
+    .eq('organizer_id', user.id)
+    .order('created_at',{ascending:false}).limit(20)
+    .then(r=>r).catch(()=>({data:[]}));
+
+  renderTournamentsList(tournaments || []);
 })();
 
-async function changeStatus(id, status){
-  if(!_db) return;
-  const { error } = await _db.from('events').update({ status }).eq('id', id);
-  if(error){ alert('Chyba: ' + error.message); return; }
-  // Vizuálny feedback
-  const row = document.getElementById('erow-' + id);
-  if(row) row.style.opacity = '.6';
-  setTimeout(() => { if(row) row.style.opacity = '1'; }, 600);
+// ══════════════════════════════════════
+//  EVENTS & TOURNAMENTS — render
+// ══════════════════════════════════════
+const SPORT_ICONS = {billiard:'🎱',darts:'🎯',bowling:'🎳',tennis:'🎾',tabletennis:'🏓',foosball:'⚽',chess:'♟️',petanque:'🎳',badminton:'🏸'};
+const STATUS_COLOR = {running:'green',open:'blue',done:'',draft:'orange'};
+const STATUS_LABEL = {running:'Prebieha',open:'Otvorená',done:'Ukončená',draft:'Draft'};
+
+function statusBadge(s){
+  return `<span class="ev-status ${s||'open'}">${STATUS_LABEL[s]||s||'—'}</span>`;
+}
+
+function renderEventsList(events){
+  const el = document.getElementById('myEventsList');
+  const cnt = document.getElementById('evCount');
+  if(cnt) cnt.textContent = events.length;
+
+  if(!events.length){
+    el.innerHTML=`<span style="color:var(--muted)">Zatiaľ žiadne udalosti. <a href="/vytvorit-udalost/" style="color:var(--gold)">Vytvor prvú →</a></span>`;
+    return;
+  }
+
+  el.innerHTML = events.map(e=>`
+    <div class="ev-row" id="erow-${e.id}">
+      <div class="ev-icon ${STATUS_COLOR[e.status]||'gold'}">${SPORT_ICONS[e.sport]||'📅'}</div>
+      <div>
+        <div class="ev-name">${e.nazov||'—'}</div>
+        <div class="ev-meta">${e.datum||'—'} · ${e.sport||''}</div>
+      </div>
+      ${statusBadge(e.status)}
+      <div class="ev-actions">
+        <select class="status-select" onchange="changeStatus('${e.id}',this.value,'event')">
+          <option value="open"    ${e.status==='open'    ?'selected':''}>Otvorená</option>
+          <option value="running" ${e.status==='running' ?'selected':''}>Prebieha</option>
+          <option value="done"    ${e.status==='done'    ?'selected':''}>Ukončená</option>
+          <option value="draft"   ${e.status==='draft'   ?'selected':''}>Draft</option>
+        </select>
+        <a href="/udalost/?slug=${e.slug}" class="btn btn-dark btn-sm">Otvoriť</a>
+        <a href="/vytvorit-udalost/?edit=${e.id}" class="btn btn-blue btn-sm">✏️</a>
+        <button onclick="deleteEvent('${e.id}','${e.nazov}')" class="btn btn-red btn-sm">🗑</button>
+      </div>
+    </div>`).join('');
+}
+
+function renderTournamentsList(tournaments){
+  const el = document.getElementById('myTournamentsList');
+  const cnt = document.getElementById('tnCount');
+  if(cnt) cnt.textContent = tournaments.length;
+
+  if(!tournaments.length){
+    el.innerHTML=`<span style="color:var(--muted)">Zatiaľ žiadne turnaje. <a href="/nastavenie-turnaja/" style="color:var(--gold)">Vytvor prvý →</a></span>`;
+    return;
+  }
+
+  el.innerHTML = tournaments.map(t=>`
+    <div class="ev-row" id="trow-${t.id}">
+      <div class="ev-icon blue">🏆</div>
+      <div>
+        <div class="ev-name">${t.nazov||t.name||'—'}</div>
+        <div class="ev-meta">${t.datum||t.date||'—'} · ${t.sport||''} · ${t.player_count||0} hráčov</div>
+      </div>
+      ${statusBadge(t.status)}
+      <div class="ev-actions">
+        <select class="status-select" onchange="changeStatus('${t.id}',this.value,'tournament')">
+          <option value="open"    ${t.status==='open'    ?'selected':''}>Otvorený</option>
+          <option value="running" ${t.status==='running' ?'selected':''}>Prebieha</option>
+          <option value="done"    ${t.status==='done'    ?'selected':''}>Ukončený</option>
+          <option value="draft"   ${t.status==='draft'   ?'selected':''}>Draft</option>
+        </select>
+        <a href="/turnaj/?id=${t.id}" class="btn btn-dark btn-sm">Otvoriť</a>
+        <a href="/nastavenie-turnaja/?edit=${t.id}" class="btn btn-blue btn-sm">✏️</a>
+        <button onclick="deleteTournament('${t.id}','${t.nazov||t.name}')" class="btn btn-red btn-sm">🗑</button>
+      </div>
+    </div>`).join('');
+}
+
+// Tab switch
+function evTabSwitch(panel, btn){
+  document.querySelectorAll('.ev-tab').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('panelEvents').style.display     = panel==='events' ? '' : 'none';
+  document.getElementById('panelTournaments').style.display = panel==='tournaments' ? '' : 'none';
+}
+
+// Status zmena
+async function changeStatus(id, status, type='event'){
+  const table = type==='tournament' ? 'tournaments' : 'events';
+  const { error } = await _db.from(table).update({status}).eq('id',id);
+  if(error){ alert('Chyba: '+error.message); return; }
+  const row = document.getElementById((type==='tournament'?'trow-':'erow-')+id);
+  if(row){ row.style.opacity='.5'; setTimeout(()=>row.style.opacity='1',500); }
 }
 
 async function deleteEvent(id, nazov){
-  if(!confirm('Zmazať udalosť "' + nazov + '"?')) return;
-  if(!_db) return;
-  const { error } = await _db.from('events').delete().eq('id', id);
-  if(error){ alert('Chyba: ' + error.message); return; }
-  const row = document.getElementById('erow-' + id);
+  if(!confirm('Zmazať udalosť "'+nazov+'"?')) return;
+  const { error } = await _db.from('events').delete().eq('id',id);
+  if(error){ alert('Chyba: '+error.message); return; }
+  const row = document.getElementById('erow-'+id);
   if(row){ row.style.transition='opacity .3s'; row.style.opacity='0'; setTimeout(()=>row.remove(),300); }
 }
 
+async function deleteTournament(id, nazov){
+  if(!confirm('Zmazať turnaj "'+nazov+'"?')) return;
+  const { error } = await _db.from('tournaments').delete().eq('id',id);
+  if(error){ alert('Chyba: '+error.message); return; }
+  const row = document.getElementById('trow-'+id);
+  if(row){ row.style.transition='opacity .3s'; row.style.opacity='0'; setTimeout(()=>row.remove(),300); }
+}
+
+// ══════════════════════════════════════
+//  REZERVAČNÝ SYSTÉM
+// ══════════════════════════════════════
+const RES = {
+  openFrom: 15, openTo: 23,
+  hourW: 60,
+  viewMode: 'admin',   // 'admin' | 'public'
+  weekOffset: 0,
+  sel: new Date().toISOString().split('T')[0],
+  sport: 'billiard',
+  editingResId: null,
+
+  sports: [
+    {key:'billiard', label:'🎱 Biliard'},
+    {key:'darts',    label:'🎯 Šípky'},
+    {key:'bowling',  label:'🎳 Bowling'},
+  ],
+
+  // Konfigurovateľné zdroje — admin ich môže meniť
+  resources: [
+    {id:'b1',sport:'billiard',label:'Stôl 1'},
+    {id:'b2',sport:'billiard',label:'Stôl 2'},
+    {id:'b3',sport:'billiard',label:'Stôl 3'},
+    {id:'d1',sport:'darts',   label:'Terč 1'},
+    {id:'d2',sport:'darts',   label:'Terč 2'},
+    {id:'w1',sport:'bowling', label:'Dráha 1'},
+  ],
+
+  // Ukážkové rezervácie s menami zákazníkov
+  reservations: [
+    {id:'r1',resourceId:'b1',from:16,to:18,  status:'taken',  customer:'Ján Novák',   note:'platba vopred'},
+    {id:'r2',resourceId:'b1',from:20,to:22,  status:'taken',  customer:'Peter Kováč', note:''},
+    {id:'r3',resourceId:'b2',from:15,to:16.5,status:'taken',  customer:'Mária Horáková',note:''},
+    {id:'r4',resourceId:'b3',from:17,to:19,  status:'blocked',customer:'',            note:'Údržba stolov'},
+    {id:'r5',resourceId:'d1',from:19,to:21,  status:'taken',  customer:'Tomáš Blaho', note:''},
+    {id:'r6',resourceId:'w1',from:17,to:20,  status:'taken',  customer:'Klub Bowling',note:'firemný event'},
+  ],
+};
+
+const SK_D = ['Ne','Po','Ut','St','Št','Pi','So'];
+const today = new Date();
+
+function hToX(h){ return (h - RES.openFrom) * RES.hourW; }
+function hToTime(h){ return String(Math.floor(h)).padStart(2,'0')+':'+String(Math.round((h%1)*60)).padStart(2,'0'); }
+function timeToH(t){ const [hh,mm]=t.split(':').map(Number); return hh+mm/60; }
+
+// --- render dátumy
+function resRenderDates(){
+  const el = document.getElementById('resDates');
+  const base = new Date(today);
+  base.setDate(today.getDate() + RES.weekOffset * 7);
+  let h='';
+  for(let i=0;i<7;i++){
+    const d = new Date(base); d.setDate(base.getDate()+i);
+    const iso = d.toISOString().split('T')[0];
+    h+=`<div class="mc-dpill${RES.sel===iso?' sel':''}" onclick="resSel('${iso}')">
+      <div class="dp-d">${SK_D[d.getDay()]}</div>
+      <div class="dp-n">${d.getDate()}</div>
+    </div>`;
+  }
+  el.innerHTML=h;
+}
+window.resSel=function(iso){RES.sel=iso;resRender();}
+
+// --- render sport tabs
+function resRenderTabs(){
+  document.getElementById('resSportTabs').innerHTML = RES.sports.map(s=>
+    `<div class="res-stab${RES.sport===s.key?' sel':''}" onclick="resSelSport('${s.key}')">${s.label}</div>`
+  ).join('');
+}
+window.resSelSport=function(k){RES.sport=k;resRender();}
+
+// --- render timeline
+function resRenderTimeline(){
+  const tl = document.getElementById('resTimeline');
+  const resources = RES.resources.filter(r=>r.sport===RES.sport);
+  const hours = Array.from({length:RES.openTo-RES.openFrom},(_,i)=>RES.openFrom+i);
+  const totalW = RES.hourW * (RES.openTo - RES.openFrom);
+  const isToday = RES.sel === today.toISOString().split('T')[0];
+  const nowH = today.getHours() + today.getMinutes()/60;
+  const isAdmin = RES.viewMode === 'admin';
+
+  let h = `<div class="res-time-hdr">
+    ${hours.map(hr=>`<div class="res-tcell">${String(hr).padStart(2,'0')}:00</div>`).join('')}
+  </div>`;
+
+  let freeSlots = 0;
+
+  resources.forEach(r=>{
+    const rr = RES.reservations.filter(x=>x.resourceId===r.id);
+    let blocks = '';
+
+    // now-line
+    if(isToday && nowH >= RES.openFrom && nowH <= RES.openTo){
+      const x = hToX(nowH);
+      blocks += `<div class="now-line" style="left:${x}px"></div>`;
+    }
+
+    // voľné bloky
+    const occ = rr.map(x=>({from:x.from,to:x.to})).sort((a,b)=>a.from-b.from);
+    let cur = RES.openFrom;
+    occ.forEach(o=>{
+      if(o.from > cur){
+        freeSlots++;
+        const x=hToX(cur), w=(o.from-cur)*RES.hourW;
+        blocks+=`<div class="res-blk free" style="left:${x}px;width:${w}px"
+          onclick="openNewResModalAt('${r.id}','${hToTime(cur)}','${hToTime(o.from)}')"
+          title="Voľné ${hToTime(cur)}–${hToTime(o.from)}"></div>`;
+      }
+      cur = Math.max(cur, o.to);
+    });
+    if(cur < RES.openTo){
+      freeSlots++;
+      const x=hToX(cur), w=(RES.openTo-cur)*RES.hourW;
+      blocks+=`<div class="res-blk free" style="left:${x}px;width:${w}px"
+        onclick="openNewResModalAt('${r.id}','${hToTime(cur)}','${hToTime(RES.openTo)}')"
+        title="Voľné ${hToTime(cur)}–${hToTime(RES.openTo)}"></div>`;
+    }
+
+    // obsadené/blokované bloky
+    rr.forEach(res=>{
+      const px=hToX(res.from), pw=(res.to-res.from)*RES.hourW;
+      if(res.status==='taken'){
+        const label = isAdmin
+          ? (res.customer || 'Rezervované')
+          : 'Obsadené';
+        const cls = isAdmin ? 'taken admin-info' : 'taken';
+        blocks+=`<div class="res-blk ${cls}" style="left:${px+1}px;width:${pw-2}px"
+          onclick="${isAdmin ? `openEditResModal('${res.id}')` : ''}"
+          ${isAdmin ? `title="${res.customer}${res.note?' · '+res.note:''} · ${hToTime(res.from)}–${hToTime(res.to)}"` : ''}>
+          <div class="res-blk-txt">${label}</div>
+        </div>`;
+      } else {
+        const label = isAdmin ? (res.note||'Blokované') : '🚫';
+        blocks+=`<div class="res-blk blocked" style="left:${px+1}px;width:${pw-2}px"
+          onclick="${isAdmin ? `openEditResModal('${res.id}')` : ''}"
+          title="${isAdmin?(res.note||'Blokované'):'Nedostupné'}">
+          <div class="res-blk-txt">${label}</div>
+        </div>`;
+      }
+    });
+
+    h+=`<div class="res-row">
+      <div class="res-rlabel" title="${r.label}">${r.label}</div>
+      <div class="res-rline" style="width:${totalW}px;min-width:${totalW}px">${blocks}</div>
+    </div>`;
+  });
+
+  tl.innerHTML=h;
+
+  const fc = document.getElementById('resFreeCount');
+  if(fc) fc.textContent = freeSlots;
+}
+
+function resRender(){ resRenderDates(); resRenderTabs(); resRenderTimeline(); }
+
+// Nav
+document.getElementById('resPrev').addEventListener('click',()=>{RES.weekOffset--;resRender();});
+document.getElementById('resNext').addEventListener('click',()=>{RES.weekOffset++;resRender();});
+
+// View mode
+function setViewMode(mode, btn){
+  RES.viewMode = mode;
+  document.querySelectorAll('.vt-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  resRenderTimeline();
+}
+
+// ══════════════════════════════════════
+//  MODAL: NASTAVENIA ŠPORTOVÍSK
+// ══════════════════════════════════════
+function openCfgModal(){
+  renderCfgBody();
+  document.getElementById('cfgModal').classList.add('open');
+}
+function closeCfgModal(){
+  document.getElementById('cfgModal').classList.remove('open');
+}
+
+function renderCfgBody(){
+  const body = document.getElementById('cfgBody');
+  let html='';
+  RES.sports.forEach(sp=>{
+    const resList = RES.resources.filter(r=>r.sport===sp.key);
+    html+=`<div class="sport-section">
+      <div class="sport-sec-head">
+        <span>${sp.label}</span>
+        <button class="cfg-add-btn" style="width:auto;padding:4px 10px;font-size:.65rem" onclick="cfgAddResource('${sp.key}')">+ Pridať</button>
+      </div>
+      <div id="cfg-${sp.key}">
+        ${resList.map((r,i)=>`
+          <div class="res-cfg-row" id="cfgrow-${r.id}">
+            <input class="res-cfg-inp" placeholder="Názov" value="${r.label}" id="cfgname-${r.id}"/>
+            <input class="res-cfg-inp" placeholder="Skratka" value="${r.id}" id="cfgid-${r.id}" readonly style="color:var(--muted);font-size:.68rem"/>
+            <button class="cfg-del-btn" onclick="cfgDeleteResource('${r.id}')">🗑</button>
+          </div>`).join('')}
+      </div>
+    </div>`;
+  });
+  body.innerHTML = html;
+}
+
+function cfgAddResource(sport){
+  const id = sport[0] + Date.now();
+  const num = RES.resources.filter(r=>r.sport===sport).length + 1;
+  const sportObj = RES.sports.find(s=>s.key===sport);
+  const singular = sport==='billiard'?'Stôl':sport==='darts'?'Terč':'Dráha';
+  RES.resources.push({id, sport, label:`${singular} ${num}`});
+  renderCfgBody();
+}
+
+function cfgDeleteResource(id){
+  if(!confirm('Odstrániť toto športovisko?')) return;
+  RES.resources = RES.resources.filter(r=>r.id!==id);
+  renderCfgBody();
+}
+
+function saveCfg(){
+  // Aplikovať zmenené názvy
+  RES.resources.forEach(r=>{
+    const inp = document.getElementById('cfgname-'+r.id);
+    if(inp) r.label = inp.value || r.label;
+  });
+  closeCfgModal();
+  resRender();
+}
+
+// ══════════════════════════════════════
+//  MODAL: EDIT / NOVÁ REZERVÁCIA
+// ══════════════════════════════════════
+function populateResourceSelect(sport, selectedId){
+  const sel = document.getElementById('resResource');
+  const rs = RES.resources.filter(r=>r.sport===sport);
+  sel.innerHTML = rs.map(r=>`<option value="${r.id}" ${r.id===selectedId?'selected':''}>${r.label}</option>`).join('');
+}
+
+function openNewResModal(){
+  RES.editingResId = null;
+  document.getElementById('resEditTitle').textContent='Nová rezervácia';
+  document.getElementById('resCustName').value='';
+  document.getElementById('resSport').value=RES.sport;
+  populateResourceSelect(RES.sport, null);
+  document.getElementById('resFrom').value='15:00';
+  document.getElementById('resTo').value='17:00';
+  document.getElementById('resStatus').value='taken';
+  document.getElementById('resNote').value='';
+  document.getElementById('resDelBtn').style.display='none';
+  document.getElementById('resEditModal').classList.add('open');
+}
+
+window.openNewResModalAt = function(resourceId, from, to){
+  openNewResModal();
+  document.getElementById('resFrom').value=from;
+  document.getElementById('resTo').value=to;
+  populateResourceSelect(RES.sport, resourceId);
+};
+
+window.openEditResModal = function(resId){
+  const res = RES.reservations.find(r=>r.id===resId);
+  if(!res) return;
+  RES.editingResId = resId;
+  const resource = RES.resources.find(r=>r.id===res.resourceId);
+  document.getElementById('resEditTitle').textContent='Upraviť rezerváciu';
+  document.getElementById('resCustName').value=res.customer||'';
+  document.getElementById('resSport').value=resource?.sport||RES.sport;
+  populateResourceSelect(resource?.sport||RES.sport, res.resourceId);
+  document.getElementById('resFrom').value=hToTime(res.from);
+  document.getElementById('resTo').value=hToTime(res.to);
+  document.getElementById('resStatus').value=res.status||'taken';
+  document.getElementById('resNote').value=res.note||'';
+  document.getElementById('resDelBtn').style.display='';
+  document.getElementById('resEditModal').classList.add('open');
+};
+
+function closeResEditModal(){
+  document.getElementById('resEditModal').classList.remove('open');
+  RES.editingResId = null;
+}
+
+function saveRes(){
+  const customer = document.getElementById('resCustName').value.trim();
+  const resourceId= document.getElementById('resResource').value;
+  const from = timeToH(document.getElementById('resFrom').value);
+  const to   = timeToH(document.getElementById('resTo').value);
+  const status = document.getElementById('resStatus').value;
+  const note = document.getElementById('resNote').value.trim();
+
+  if(!customer && status==='taken'){ alert('Zadaj meno zákazníka.'); return; }
+  if(from >= to){ alert('Čas "od" musí byť pred "do".'); return; }
+
+  if(RES.editingResId){
+    const idx = RES.reservations.findIndex(r=>r.id===RES.editingResId);
+    if(idx>=0) RES.reservations[idx] = {id:RES.editingResId, resourceId, from, to, status, customer, note};
+  } else {
+    RES.reservations.push({id:'r'+Date.now(), resourceId, from, to, status, customer, note});
+  }
+
+  closeResEditModal();
+  resRenderTimeline();
+}
+
+function deleteCurrentRes(){
+  if(!RES.editingResId) return;
+  if(!confirm('Zmazať túto rezerváciu?')) return;
+  RES.reservations = RES.reservations.filter(r=>r.id!==RES.editingResId);
+  closeResEditModal();
+  resRenderTimeline();
+}
+
+// Zatvoriť modaly klávesou Escape
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'){
+    closeCfgModal();
+    closeResEditModal();
+  }
+});
+
+// Zatvoriť kliknutím mimo modal
+document.querySelectorAll('.modal-overlay').forEach(el=>{
+  el.addEventListener('click',e=>{ if(e.target===el){ el.classList.remove('open'); } });
+});
+
+// ══════════════════════════════════════
+//  LOGOUT
+// ══════════════════════════════════════
 function confirmLogout(){
   if(confirm('Odhlásiť sa?')){
-    _db.auth.signOut().then(() => window.location.href = '/login/');
+    _db.auth.signOut().then(()=>window.location.href='/login/');
   }
 }
+
+
+// ══════════════════════════════════════
+//  AVATAR UPLOAD
+// ══════════════════════════════════════
+async function uploadAvatar(input){
+  const file = input.files[0];
+  if(!file) return;
+
+  // Validácia
+  if(file.size > 5 * 1024 * 1024){ alert('Maximálna veľkosť obrázka je 5 MB.'); return; }
+  if(!file.type.startsWith('image/')){ alert('Vyber obrázok (JPG, PNG, WebP...).'); return; }
+
+  // Načítaj session
+  const { data: sessionData } = await _db.auth.getSession();
+  if(!sessionData?.session){ alert('Nie si prihlásený.'); return; }
+  const userId = sessionData.session.user.id;
+
+  // UI — loading stav
+  const wrap = document.getElementById('avatarWrap');
+  const overlay = document.getElementById('avatarOverlay');
+  wrap.classList.add('avatar-uploading');
+  overlay.innerHTML = '<div class="avatar-spin"></div><span style="color:#fff;font-size:.55rem;margin-top:4px">Nahrávam...</span>';
+
+  try {
+    // Prípona súboru
+    const ext = file.name.split('.').pop().toLowerCase() || 'jpg';
+    const path = `avatars/${userId}/avatar.${ext}`;
+
+    // Upload do Supabase Storage (bucket "avatars")
+    const { error: upErr } = await _db.storage
+      .from('avatars')
+      .upload(path, file, { upsert: true, contentType: file.type });
+
+    if(upErr) throw upErr;
+
+    // Získaj verejnú URL
+    const { data: urlData } = _db.storage.from('avatars').getPublicUrl(path);
+    const publicUrl = urlData.publicUrl + '?t=' + Date.now(); // cache-bust
+
+    // Update profilu v DB
+    const { error: dbErr } = await _db.from('profiles')
+      .update({ avatar_url: urlData.publicUrl })
+      .eq('id', userId);
+
+    if(dbErr) throw dbErr;
+
+    // Aktualizuj obrázok v UI
+    const imgEl = document.getElementById('avatarImg');
+    if(imgEl) imgEl.src = publicUrl;
+
+    // Obnov overlay
+    wrap.classList.remove('avatar-uploading');
+    overlay.innerHTML = \`
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+      <span>Nahrať foto</span>\`;
+
+    // Krátka zelená flash
+    imgEl.style.outline = '2px solid var(--green)';
+    setTimeout(()=>{ imgEl.style.outline=''; }, 1800);
+
+  } catch(err){
+    wrap.classList.remove('avatar-uploading');
+    overlay.innerHTML = \`
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+      <span>Nahrať foto</span>\`;
+    console.error('Avatar upload error:', err);
+    alert('Chyba pri nahrávaní: ' + (err.message || JSON.stringify(err)));
+  }
+
+  // Reset input (aby sa dalo nahrať ten istý súbor znova)
+  input.value='';
+}
+
+// ══════════════════════════════════════
+//  INIT RENDER
+// ══════════════════════════════════════
+resRender();
 </script>
 </body>
 </html>

@@ -557,13 +557,13 @@
 
       <div class="hero-side">
         <div class="result-card">
-          <h3 class="section-title">Čo je dorobené</h3>
-          <p>Vyhľadávanie, filtre, poradie výsledkov, zvýraznené udalosti, CTA pre kluby, detail udalosti, footer a responzívne rozloženie.</p>
+          <h3 class="section-title">Ako to funguje</h3>
+          <p>Vyhľadaj udalosť podľa názvu, mesta alebo organizátora. Výsledky sú zoradené podľa relevancie a dátumu.</p>
         </div>
 
         <div class="result-card">
-          <h3 class="section-title">Pripravené na DB</h3>
-          <p>Každá udalosť má pripravené polia ako id, šport, disciplína, mesto, miesto, dátum, čas, organizátor, kontakt, popis, promo a priorita.</p>
+          <h3 class="section-title">Pre organizátorov</h3>
+          <p>Registruj klub, pridaj udalosť a získaj viditeľnosť medzi hráčmi v tvojom regióne.</p>
         </div>
       </div>
     </section>
@@ -572,7 +572,7 @@
       <div class="section-head">
         <div>
           <h2 class="section-title">Search engine udalostí</h2>
-          <p>Frontend prototyp pripravený na prepojenie s databázou.</p>
+          <p>Zadaj názov turnaja, mesto, klub alebo disciplínu a nájdi najbližšiu udalosť.</p>
         </div>
       </div>
 
@@ -585,24 +585,10 @@
 
           <select id="cityFilter" class="search-select">
             <option value="all">Všetky mestá</option>
-            <option value="kanianka">Kanianka</option>
-            <option value="prievidza">Prievidza</option>
-            <option value="topolcany">Topoľčany</option>
-            <option value="zilina">Žilina</option>
-            <option value="trencin">Trenčín</option>
-            <option value="bojnice">Bojnice</option>
           </select>
 
           <select id="dateFilter" class="search-select">
             <option value="all">Všetky dátumy</option>
-            <option value="2026-05-18">18. 05. 2026</option>
-            <option value="2026-05-19">19. 05. 2026</option>
-            <option value="2026-05-20">20. 05. 2026</option>
-            <option value="2026-05-22">22. 05. 2026</option>
-            <option value="2026-05-24">24. 05. 2026</option>
-            <option value="2026-05-25">25. 05. 2026</option>
-            <option value="2026-05-27">27. 05. 2026</option>
-            <option value="2026-05-29">29. 05. 2026</option>
           </select>
 
           <div class="sport-tabs">
@@ -632,7 +618,7 @@
           <div class="results-head">
             <div>
               <h3 class="section-title">Výsledky</h3>
-              <p>Poradie je pripravené na relevanciu, dátum a zvýraznené udalosti.</p>
+              <p>Zoradené podľa relevantnosti a dátumu konania.</p>
             </div>
             <div class="result-count" id="resultCount">Počet výsledkov: 0</div>
           </div>
@@ -710,16 +696,8 @@
   </div>
 
   <script>
-    const events = [
-      {id:"evt001",title:"Moment Darts Open",sport:"sipky",sportLabel:"Šípky",discipline:"501",city:"kanianka",cityLabel:"Kanianka",venue:"Moment Club",date:"2026-05-18",dateLabel:"18. 05. 2026 • 18:00",organizer:"Moment Club",contact:"kontakt@cardscorespro.sk",fee:"8 €",capacity:"32 hráčov",description:"Večerný turnaj v šípkach určený pre rekreačných aj pravidelných hráčov. Prihlásenie vopred odporúčané.",promo:true,priority:2,highlight:true,partner:false,search:"moment darts open kanianka moment club sipky darts 501"},
-      {id:"evt002",title:"Večerná 501 Liga",sport:"sipky",sportLabel:"Šípky",discipline:"501",city:"prievidza",cityLabel:"Prievidza",venue:"Klub Darts",date:"2026-05-22",dateLabel:"22. 05. 2026 • 19:00",organizer:"Klub Darts",contact:"kontakt@cardscorespro.sk",fee:"6 €",capacity:"24 hráčov",description:"Pravidelná večerná liga so stabilným hráčskym poľom a prehľadným rozpisom zápasov.",promo:false,priority:0,highlight:false,partner:false,search:"vecerna 501 liga prievidza klub darts sipky"},
-      {id:"evt003",title:"Tour de Pool",sport:"biliard",sportLabel:"Biliard",discipline:"8-Ball",city:"kanianka",cityLabel:"Kanianka",venue:"Moment Club",date:"2026-05-20",dateLabel:"20. 05. 2026 • 17:00",organizer:"Moment Club",contact:"kontakt@cardscorespro.sk",fee:"10 €",capacity:"16 hráčov",description:"Biliardový turnaj v disciplíne 8-Ball s dôrazom na pohodlný priebeh a klubovú atmosféru.",promo:false,priority:1,highlight:false,partner:true,search:"tour de pool kanianka moment club biliard 8-ball"},
-      {id:"evt004",title:"9-Ball Night",sport:"biliard",sportLabel:"Biliard",discipline:"9-Ball",city:"topolcany",cityLabel:"Topoľčany",venue:"Pool House",date:"2026-05-25",dateLabel:"25. 05. 2026 • 18:30",organizer:"Pool House",contact:"kontakt@cardscorespro.sk",fee:"9 €",capacity:"16 hráčov",description:"Večerný turnaj v disciplíne 9-Ball vhodný aj pre hráčov, ktorí chcú otestovať formu pred ligou.",promo:false,priority:0,highlight:false,partner:false,search:"9-ball night topolcany biliard 9-ball pool house"},
-      {id:"evt005",title:"Bowling Friday Cup",sport:"bowling",sportLabel:"Bowling",discipline:"Jednotlivci",city:"zilina",cityLabel:"Žilina",venue:"Bowling Hall",date:"2026-05-24",dateLabel:"24. 05. 2026 • 18:00",organizer:"Bowling Hall",contact:"kontakt@cardscorespro.sk",fee:"12 €",capacity:"40 hráčov",description:"Otvorený bowlingový turnaj pre jednotlivcov s jednoduchým formátom a rýchlym priebehom.",promo:true,priority:1,highlight:true,partner:false,search:"bowling friday cup zilina bowling hall"},
-      {id:"evt006",title:"Nočná séria",sport:"bowling",sportLabel:"Bowling",discipline:"Jednotlivci",city:"trencin",cityLabel:"Trenčín",venue:"Arena Bowling",date:"2026-05-29",dateLabel:"29. 05. 2026 • 20:00",organizer:"Arena Bowling",contact:"kontakt@cardscorespro.sk",fee:"11 €",capacity:"36 hráčov",description:"Nočný bowlingový turnaj s priebežným zoraďovaním výsledkov a dôrazom na rýchlu organizáciu.",promo:false,priority:0,highlight:false,partner:false,search:"nocna seria trencin arena bowling"},
-      {id:"evt007",title:"Žolíkový večer",sport:"karty",sportLabel:"Karty",discipline:"Žolíky",city:"bojnice",cityLabel:"Bojnice",venue:"Klub kariet",date:"2026-05-19",dateLabel:"19. 05. 2026 • 17:30",organizer:"Klub kariet",contact:"kontakt@cardscorespro.sk",fee:"5 €",capacity:"28 hráčov",description:"Pokojný kartový večer pre pravidelných hráčov aj nových záujemcov. Jednoduché prihlásenie a prehľadný priebeh.",promo:false,priority:0,highlight:false,partner:false,search:"zolikovy vecer bojnice klub kariet karty zoliky"},
-      {id:"evt008",title:"Mariáš Open",sport:"karty",sportLabel:"Karty",discipline:"Mariáš",city:"prievidza",cityLabel:"Prievidza",venue:"Lokálny podnik",date:"2026-05-27",dateLabel:"27. 05. 2026 • 18:00",organizer:"Lokálny podnik",contact:"kontakt@cardscorespro.sk",fee:"7 €",capacity:"20 hráčov",description:"Turnaj v mariáši so zameraním na komunitné stretnutie a plynulý priebeh bez zbytočného čakania.",promo:false,priority:0,highlight:false,partner:true,search:"marias open prievidza lokalny podnik karty marias"}
-    ];
+    // TODO: nahradiť načítaním z databázy (Supabase)
+    const events = [];
 
     const searchInput = document.getElementById("searchInput");
     const cityFilter = document.getElementById("cityFilter");
@@ -775,7 +753,7 @@
       if(eventItem.highlight) score += 8;
       if(eventItem.partner) score += 6;
 
-      const nowBase = new Date("2026-05-15");
+      const nowBase = new Date();
       const eventDate = new Date(eventItem.date);
       const diff = Math.abs(eventDate - nowBase) / (1000 * 60 * 60 * 24);
       score += Math.max(0, 20 - diff);
