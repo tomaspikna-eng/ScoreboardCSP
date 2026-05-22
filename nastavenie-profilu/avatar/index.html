@@ -25,7 +25,7 @@ p{color:#a7a7a7;margin-bottom:20px}
 <body>
 <h1>Vybrať avatar</h1>
 <p>Klikni na avatara ktorý chceš použiť. Uloží sa automaticky do tvojho profilu.</p>
-<a href="../../profil/" class="btn-all" style="display:inline-block;text-decoration:none;text-align:center;margin-bottom:8px">← Späť na profil</a>
+<a href="../../klub/" class="btn-all" style="display:inline-block;text-decoration:none;text-align:center;margin-bottom:8px">← Späť na profil</a>
 <div id="saveAvatarBtn" onclick="saveAvatar()" style="display:none;width:100%;padding:14px;border-radius:14px;border:0;background:#22d36b;color:#06230f;font-size:1rem;font-weight:900;cursor:pointer;text-align:center;margin-bottom:8px">💾 Uložiť avatar: <span id="selectedName"></span></div>
 
 <div class="cat">🎱 Biliard</div>
@@ -251,7 +251,7 @@ async function saveAvatar() {
       if(error) { alert('Chyba: ' + error.message); btn.textContent = '💾 Uložiť avatar'; btn.disabled = false; return; }
       const { data } = SB.storage.from('avatars').getPublicUrl(path);
       await SB.from('profiles').update({avatar_url: data.publicUrl + '?t=' + Date.now()}).eq('id', session.user.id);
-      window.location.href = '../../profil/';
+      window.location.href = '../../klub/';
     }, 'image/png');
   };
   img.src = url;

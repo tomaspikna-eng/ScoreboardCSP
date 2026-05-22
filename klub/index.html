@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>CSP – Point Klub</title>
+<title>ConnectScore Pro – Profil klubu</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Syne:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet"/>
 <style>
@@ -414,6 +414,7 @@ tbody tr:hover td{background:rgba(255,255,255,.015)}
 @keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
 .fade-in{animation:fadeUp .4s ease both}
 </style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
 <div class="page">
@@ -430,7 +431,7 @@ tbody tr:hover td{background:rgba(255,255,255,.015)}
     </div>
     <div>
       <div class="plan-badge pb-ultra">🏢 Klub</div>
-      <div style="font-size:.78rem;color:var(--muted2);font-weight:600">Kanianka · Slovensko</div>
+      <div style="font-size:.78rem;color:var(--muted2);font-weight:600" id="profileLocation"></div>
       <div style="margin-top:6px;display:flex;gap:6px;flex-wrap:wrap">
         <span class="hero-tag gold">🎱 Biliard</span>
         <span class="hero-tag gold">🎯 Šípky</span>
@@ -443,7 +444,7 @@ tbody tr:hover td{background:rgba(255,255,255,.015)}
   <div class="hero-center">
     <h1 class="hero-name">Point <span>Klub</span></h1>
     <div style="font-size:.82rem;color:var(--muted2);margin-bottom:18px">
-      Dolný Kubín · Slovensko · člen CSP od januára 2025
+      
     </div>
     <div class="hero-actions">
       <a href="../rezervacia/moment-club/" class="btn btn-green">📅 Rezervovať</a>
@@ -489,9 +490,9 @@ tbody tr:hover td{background:rgba(255,255,255,.015)}
       <span style="display:inline-flex;align-items:center;gap:6px;padding:4px 12px;border-radius:8px;background:rgba(255,255,255,.03);border:1px solid var(--line);font-size:.75rem;font-weight:700;color:var(--muted2)">🎳 2× Dráhy</span>
     </div>
     <div class="hfb-divider"></div>
-    <div style="font-size:.75rem;color:var(--muted2)">📍 Nábrežná 12, Dolný Kubín</div>
+    <div style="font-size:.75rem;color:var(--muted2)" id="klubAdresa"></div>
     <div class="hfb-divider"></div>
-    <div style="font-size:.75rem;color:var(--green);font-weight:700">● Dnes otvorené 15:00–23:00</div>
+    <div style="font-size:.75rem;color:var(--green);font-weight:700" id="klubHodiny"></div>
   </div>
 
 </section>
@@ -504,48 +505,35 @@ tbody tr:hover td{background:rgba(255,255,255,.015)}
 <!-- LEFT COLUMN -->
 <div class="left-col">
 
-  <!-- UPCOMING EVENT -->
-  <div class="card fade-in" style="animation-delay:.05s;border-color:var(--gold-b);background:var(--gold-dim)">
-    <div style="display:inline-flex;align-items:center;gap:5px;padding:2px 10px;border-radius:999px;background:rgba(212,168,67,.12);border:1px solid var(--gold-b);font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--gold);margin-bottom:12px">
-      📅 Najbližšia udalosť
-    </div>
-    <div style="font-size:1rem;font-weight:700;color:var(--text);margin-bottom:4px">Point Klub Open · Máj 2026</div>
-    <div style="font-size:.78rem;color:var(--muted2);margin-bottom:14px">8-Ball · Double KO · 16 hráčov · 10. 5. 2026</div>
-    <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-top:1px solid var(--line)">
-      <div style="font-size:.78rem;color:var(--muted2)">Prihlásených: <b style="color:var(--text)">11 / 16</b></div>
-      <div style="display:flex;gap:8px">
-        <button class="btn btn-gold btn-sm">Otvoriť →</button>
-        <button class="btn btn-dark btn-sm">Zdieľať</button>
-      </div>
-    </div>
-  </div>
+  <!-- UPCOMING EVENT - načíta sa z DB -->
+  <div id="upcomingEvent"></div>
 
   <!-- CLUB STATS -->
   <div class="card fade-in" style="animation-delay:.1s">
     <div class="card-title">Prehľad klubu</div>
     <div class="stats-grid">
       <div class="stat-box">
-        <div class="sb-val gold">34</div>
+        <div class="sb-val gold" id="st-turnaje">—</div>
         <div class="sb-label">Turnaje</div>
       </div>
       <div class="stat-box">
-        <div class="sb-val">148</div>
+        <div class="sb-val" id="st-clenovia">—</div>
         <div class="sb-label">Členovia</div>
       </div>
       <div class="stat-box">
-        <div class="sb-val green">9</div>
+        <div class="sb-val green" id="st-stoly">—</div>
         <div class="sb-label">Stoly</div>
       </div>
       <div class="stat-box">
-        <div class="sb-val">12</div>
+        <div class="sb-val" id="st-terce">—</div>
         <div class="sb-label">Terče</div>
       </div>
       <div class="stat-box">
-        <div class="sb-val gold">4.8 ★</div>
+        <div class="sb-val gold" id="st-hodnotenie">—</div>
         <div class="sb-label">Hodnotenie</div>
       </div>
       <div class="stat-box">
-        <div class="sb-val">8 r.</div>
+        <div class="sb-val" id="st-roky">—</div>
         <div class="sb-label">Funguje</div>
       </div>
     </div>
@@ -555,7 +543,7 @@ tbody tr:hover td{background:rgba(255,255,255,.015)}
   <div class="card fade-in" style="animation-delay:.15s">
     <div class="card-title">
       Organizátorské nástroje
-      <span style="font-size:.7rem;color:var(--gold);font-weight:700">Ultra · ∞ akcií</span>
+      
     </div>
     <div class="tools-grid">
       <div class="tool-card gold-card">
@@ -583,54 +571,7 @@ tbody tr:hover td{background:rgba(255,255,255,.015)}
   <!-- COMPLETED EVENTS -->
   <div class="card fade-in" style="animation-delay:.2s">
     <div class="card-title">Ukončené udalosti <a href="#">Všetky →</a></div>
-    <div class="table-wrap" style="overflow-x:auto">
-      <table>
-        <thead>
-          <tr>
-            <th>Udalosť</th>
-            <th>Dátum</th>
-            <th>Šport</th>
-            <th>Účastníci</th>
-            <th>Víťaz</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td style="font-weight:600">Point Klub Open – Apríl</td>
-            <td style="color:var(--muted2)">16. 04. 2026</td>
-            <td>🎱 8-Ball</td>
-            <td style="color:var(--muted2)">16</td>
-            <td><span class="td-place p1">T. Novák</span></td>
-            <td><button class="btn btn-dark btn-sm">Detail</button></td>
-          </tr>
-          <tr>
-            <td style="font-weight:600">Šípkový večer #12</td>
-            <td style="color:var(--muted2)">02. 04. 2026</td>
-            <td>🎯 501</td>
-            <td style="color:var(--muted2)">8</td>
-            <td><span class="td-place p1">P. Kováč</span></td>
-            <td><button class="btn btn-dark btn-sm">Detail</button></td>
-          </tr>
-          <tr>
-            <td style="font-weight:600">Night League – 9-Ball</td>
-            <td style="color:var(--muted2)">24. 03. 2026</td>
-            <td>🎱 9-Ball</td>
-            <td style="color:var(--muted2)">12</td>
-            <td><span class="td-place p1">M. Bartoš</span></td>
-            <td><button class="btn btn-dark btn-sm">Detail</button></td>
-          </tr>
-          <tr>
-            <td style="font-weight:600">Point Klub Open – Marec</td>
-            <td style="color:var(--muted2)">10. 03. 2026</td>
-            <td>🎱 8-Ball</td>
-            <td style="color:var(--muted2)">16</td>
-            <td><span class="td-place p1">S. Tóth</span></td>
-            <td><button class="btn btn-dark btn-sm">Detail</button></td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
+    <div id="completedEvents" style="color:var(--muted);font-size:.82rem;padding:8px 0">Načítavam...</div>
   </div>
 
 </div><!-- /left-col -->
@@ -643,7 +584,7 @@ tbody tr:hover td{background:rgba(255,255,255,.015)}
     <div class="mc-head">
       <div>
         <div class="mc-head-title">Rezervácia</div>
-        <div class="mc-venue">Point Klub</div>
+        <div class="mc-venue" id="mcVenueName">—</div>
       </div>
       <div class="mc-nav">
         <div class="mc-nav-btn" id="mcPrev">‹</div>
@@ -656,7 +597,7 @@ tbody tr:hover td{background:rgba(255,255,255,.015)}
       <div class="mc-timeline" id="mcTimeline"></div>
     </div>
     <div class="mc-book-wrap">
-      <button class="mc-book-btn" onclick="window.location.href='/rezervacia/point-klub/?date='+MC.sel+'&sport='+MC.sport">
+      <button class="mc-book-btn" onclick="window.location.href='/rezervacia/moment-club/?date='+MC.sel+'&sport='+MC.sport">
         + Rezervovať termín
       </button>
     </div>
@@ -725,6 +666,37 @@ tbody tr:hover td{background:rgba(255,255,255,.015)}
 </div><!-- /page -->
 
 <script>
+// ── SUPABASE INIT ─────────────────────────────────────────
+const _db = window.supabase.createClient(
+  "https://gilzomwhuwcxpkegtlhj.supabase.co",
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdpbHpvbXdodXdjeHBrZWd0bGhqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzcwMzMwMTgsImV4cCI6MjA5MjYwOTAxOH0.-KiLSdiB2mRWqUDB9GWyISfCu2o_ZBM80aGUEW9CcUg"
+);
+
+// ── SESSION CHECK ──────────────────────────────────────────
+_db.auth.onAuthStateChange(async (event, session) => {
+  if(event === 'SIGNED_OUT' || !session){
+    window.location.href = '../login/';
+    return;
+  }
+  if(event === 'SIGNED_IN' || event === 'INITIAL_SESSION'){
+    const user = session.user;
+    const { data: p } = await _db.from('profiles').select('*').eq('id', user.id).single();
+    if(p){
+      const nameEl = document.getElementById('profileName');
+      if(nameEl) nameEl.textContent = p.full_name || user.email;
+      const imgEl = document.querySelector('.avatar-ring img');
+      if(imgEl && p.avatar_url) imgEl.src = p.avatar_url + '?t=' + Date.now();
+    }
+  }
+});
+
+// ── HASH CLEANUP po OAuth redirecte
+(function(){
+  if(window.location.hash && window.location.hash.includes('access_token')){
+    history.replaceState(null, '', window.location.pathname);
+  }
+})();
+
 // ── MINI KALENDÁR ──────────────────────────────────────────
 const MC = {
   openFrom:15,openTo:23,hourW:56,
@@ -802,13 +774,13 @@ function mcRenderTimeline(){
     occ.forEach(o=>{
       if(o.from>cur){
         const x=hToX(cur),w=(o.from-cur)*MC.hourW;
-        blocks+=`<div class="mc-blk free" style="left:${x}px;width:${w}px" onclick="window.location.href='/rezervacia/point-klub/?res=${r.id}&date=${MC.sel}&from=${hToTime(cur)}&to=${hToTime(o.from)}'"></div>`;
+        blocks+=`<div class="mc-blk free" style="left:${x}px;width:${w}px" onclick="window.location.href='/rezervacia/moment-club/?res=${r.id}&date=${MC.sel}&from=${hToTime(cur)}&to=${hToTime(o.from)}'"></div>`;
       }
       cur=Math.max(cur,o.to);
     });
     if(cur<MC.openTo){
       const x=hToX(cur),w=(MC.openTo-cur)*MC.hourW;
-      blocks+=`<div class="mc-blk free" style="left:${x}px;width:${w}px" onclick="window.location.href='/rezervacia/point-klub/?res=${r.id}&date=${MC.sel}&from=${hToTime(cur)}&to=${hToTime(MC.openTo)}'"></div>`;
+      blocks+=`<div class="mc-blk free" style="left:${x}px;width:${w}px" onclick="window.location.href='/rezervacia/moment-club/?res=${r.id}&date=${MC.sel}&from=${hToTime(cur)}&to=${hToTime(MC.openTo)}'"></div>`;
     }
     rr.forEach(x=>{
       const px=hToX(x.from),pw=(x.to-x.from)*MC.hourW;

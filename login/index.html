@@ -206,7 +206,7 @@ const SUPABASE_ANON = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFz
 const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
 
 // Relatívna cesta po prihlásení
-const REDIRECT = 'https://cspboard.digital/profil/';
+const REDIRECT = 'https://cspboard.digital/klub/';
 
 // ── Tabs ──────────────────────────────────────────────────
 function showTab(tab) {
@@ -306,7 +306,7 @@ document.getElementById('btnRegEmail').addEventListener('click', async () => {
 // ── Session check – ak už je prihlásený, presmeruj ────────
 (async () => {
   const { data } = await db.auth.getSession();
-  if(data?.session) window.location.href = 'https://cspboard.digital/profil/';
+  if(data?.session) window.location.href = 'https://cspboard.digital/klub/';
 })();
 </script>
 </body>

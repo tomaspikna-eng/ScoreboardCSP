@@ -138,7 +138,7 @@ body{
   <!-- BRAND -->
   <div class="brand fade-in">
     <div class="brand-name"><span>ConnectScore</span>Pro</div>
-    <a href="/profil/" class="back">← Späť na profil</a>
+    <a href="/klub/" class="back">← Späť na profil</a>
   </div>
 
   <!-- HEADING -->
@@ -376,7 +376,7 @@ body{
     <div class="msg" id="saveMsg"></div>
 
     <div class="actions">
-      <a href="/profil/" class="btn btn-dark">Preskočiť</a>
+      <a href="/klub/" class="btn btn-dark">Preskočiť</a>
       <button class="btn btn-gold" onclick="saveProfile()">💾 Uložiť profil</button>
     </div>
   </div>
@@ -542,7 +542,7 @@ async function saveProfile(){
     return;
   }
   showMsg('✓ Profil uložený!', 'ok');
-  setTimeout(() => window.location.href = '/profil/', 1200);
+  setTimeout(() => window.location.href = '/klub/', 1200);
 }
 
 function showMsg(text, type){
