@@ -546,6 +546,16 @@ select.form-inp{cursor:pointer;}
 ════════════════════════════════════ -->
 <script>
 // ══════════════════════════════════════
+//  HASH CLEANUP — odstráň tokeny z URL po OAuth redirecte
+// ══════════════════════════════════════
+(function(){
+  if(window.location.hash && window.location.hash.includes('access_token')){
+    // Supabase si token prečíta sám z hash, my ho len vyčistíme z URL
+    history.replaceState(null, '', window.location.pathname);
+  }
+})();
+
+// ══════════════════════════════════════
 //  SUPABASE
 // ══════════════════════════════════════
 const _db = window.supabase.createClient(
@@ -556,11 +566,7 @@ const _db = window.supabase.createClient(
 // ══════════════════════════════════════
 //  INIT — session + profil + dáta
 // ══════════════════════════════════════
-(async function(){
-  const { data } = await _db.auth.getSession();
-  if(!data?.session){ window.location.href='/login/'; return; }
-  const user = data.session.user;
-
+async function initProfile(user){
   const { data: p } = await _db.from('profiles').select('*').eq('id', user.id).single();
   if(p){
     const nameEl = document.getElementById('profileName');
@@ -581,18 +587,27 @@ const _db = window.supabase.createClient(
     .from('events').select('*')
     .eq('organizer_id', user.id)
     .order('created_at',{ascending:false}).limit(20);
-
   renderEventsList(events || []);
 
-  // Moje turnaje (predpokladáme tabuľku "tournaments")
+  // Moje turnaje
   const { data: tournaments } = await _db
     .from('tournaments').select('*')
     .eq('organizer_id', user.id)
     .order('created_at',{ascending:false}).limit(20)
     .then(r=>r).catch(()=>({data:[]}));
-
   renderTournamentsList(tournaments || []);
-})();
+}
+
+// Počkaj na auth stav — funguje aj po OAuth redirecte kde hash ešte nie je spracovaný
+_db.auth.onAuthStateChange(async (event, session) => {
+  if(event === 'SIGNED_OUT' || !session){
+    window.location.href = '/login/';
+    return;
+  }
+  if(event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED' || event === 'INITIAL_SESSION'){
+    await initProfile(session.user);
+  }
+});
 
 // ══════════════════════════════════════
 //  EVENTS & TOURNAMENTS — render
