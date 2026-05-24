@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>ConnectScore Pro – Profil organizácie</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Syne:wght@400;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --bg:#060608;--bg2:#0d0d11;--bg3:#131318;--bg4:#18181f;
+  --line:rgba(255,255,255,.07);--line2:rgba(255,255,255,.04);
+  --text:#eeeef2;--muted:#55556a;--muted2:#80809a;
+  --gold:#d4a843;--gold-dim:rgba(212,168,67,.09);--gold-b:rgba(212,168,67,.22);
+  --green:#1ec86a;--green-dim:rgba(30,200,106,.08);--green-b:rgba(30,200,106,.2);
+  --blue:#4a82cc;--blue-dim:rgba(74,130,204,.08);--blue-b:rgba(74,130,204,.2);
+  --purple:#a843d4;--purple-dim:rgba(168,67,212,.09);--purple-b:rgba(168,67,212,.22);
+  --red:#d94f4f;
+  --font:'Syne',sans-serif;--mono:'JetBrains Mono',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh;
+  background:radial-gradient(ellipse 100% 40% at 50% 0%,rgba(168,67,212,.06),transparent 55%),var(--bg);
+}
+.page{max-width:1200px;margin:0 auto;padding:28px 20px 80px}
+
+/* TOPBAR */
+.topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:28px}
+.brand{font-size:1.1rem;font-weight:800;letter-spacing:-.03em}
+.brand span{color:var(--gold)}
+.topbar-right{display:flex;gap:8px;align-items:center}
+
+/* HERO */
+.hero{display:grid;grid-template-columns:auto 1fr;gap:20px;align-items:center;
+  padding:22px;background:var(--bg2);border:1px solid var(--line);border-radius:20px;margin-bottom:16px}
+.avatar-wrap{position:relative;cursor:pointer;flex:0 0 auto}
+.avatar-ring{width:88px;height:88px;border-radius:50%;padding:3px;
+  background:linear-gradient(135deg,var(--purple),var(--gold))}
+.avatar-ring img{width:100%;height:100%;border-radius:50%;object-fit:cover;background:var(--bg3);display:block}
+.avatar-overlay{position:absolute;inset:3px;border-radius:50%;background:rgba(0,0,0,.6);
+  display:flex;align-items:center;justify-content:center;font-size:1.1rem;opacity:0;transition:.2s}
+.avatar-wrap:hover .avatar-overlay{opacity:1}
+.hero-name{font-family:'Bebas Neue',sans-serif;font-size:clamp(1.8rem,4vw,2.8rem);
+  letter-spacing:.04em;line-height:1;margin-bottom:8px}
+.hero-name span{color:var(--purple)}
+.hero-meta{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+.tag{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:999px;
+  font-size:.72rem;font-weight:700;border:1px solid var(--line);background:rgba(255,255,255,.03);color:var(--muted2)}
+.tag.purple{border-color:var(--purple-b);background:var(--purple-dim);color:#c8a0f5}
+.tag.gold{border-color:var(--gold-b);background:var(--gold-dim);color:var(--gold)}
+.tag.green{border-color:var(--green-b);background:var(--green-dim);color:var(--green)}
+.hero-actions{display:flex;gap:8px;flex-wrap:wrap}
+
+/* PLAN BADGE */
+.plan-badge{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:999px;
+  font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em}
+.plan-free{background:rgba(255,255,255,.05);border:1px solid var(--line);color:var(--muted2)}
+.plan-pro{background:var(--blue-dim);border:1px solid var(--blue-b);color:#c5d9f5}
+.plan-ultra{background:var(--purple-dim);border:1px solid var(--purple-b);color:#c8a0f5}
+
+/* GRID */
+.grid{display:grid;grid-template-columns:1fr 320px;gap:14px;align-items:start}
+.left{display:flex;flex-direction:column;gap:14px}
+.right{display:flex;flex-direction:column;gap:14px}
+
+/* CARD */
+.card{background:var(--bg2);border:1px solid var(--line);border-radius:16px;padding:18px}
+.card-title{font-size:.62rem;text-transform:uppercase;letter-spacing:.12em;
+  color:var(--muted2);font-weight:700;margin-bottom:14px;
+  display:flex;align-items:center;justify-content:space-between}
+.card-title a,.card-title button{font-size:.68rem;color:var(--muted);text-decoration:none;
+  padding:2px 8px;border-radius:6px;border:1px solid var(--line);background:none;
+  cursor:pointer;font-family:var(--font);transition:.15s}
+.card-title a:hover,.card-title button:hover{color:var(--text)}
+
+/* STATS */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.stat{background:var(--bg3);border:1px solid var(--line2);border-radius:10px;padding:12px 14px}
+.stat-val{font-family:var(--mono);font-size:1.4rem;font-weight:600;line-height:1}
+.stat-val.gold{color:var(--gold)}
+.stat-val.green{color:var(--green)}
+.stat-val.purple{color:#c8a0f5}
+.stat-label{font-size:.58rem;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);font-weight:700;margin-top:3px}
+
+/* TOOLS */
+.tools{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.tool{border:1px solid var(--line);border-radius:12px;padding:14px;
+  background:rgba(255,255,255,.02);text-decoration:none;display:block;transition:.15s;position:relative}
+.tool:hover{background:rgba(255,255,255,.04);border-color:rgba(255,255,255,.12)}
+.tool.gold{border-color:var(--gold-b);background:var(--gold-dim)}
+.tool.blue{border-color:var(--blue-b);background:var(--blue-dim)}
+.tool.green{border-color:var(--green-b);background:var(--green-dim)}
+.tool.purple{border-color:var(--purple-b);background:var(--purple-dim)}
+.tool.locked{opacity:.5;cursor:not-allowed}
+.tool-icon{font-size:1.2rem;margin-bottom:6px}
+.tool-name{font-size:.84rem;font-weight:700;color:var(--text)}
+.tool-desc{font-size:.68rem;color:var(--muted2);margin-top:2px;line-height:1.4}
+.lock-badge{position:absolute;top:8px;right:8px;font-size:.58rem;font-weight:700;
+  padding:2px 6px;border-radius:5px;background:rgba(255,255,255,.06);color:var(--muted);border:1px solid var(--line)}
+.lock-badge.ultra{background:var(--purple-dim);color:#c8a0f5;border-color:var(--purple-b)}
+
+/* AKTIVITY */
+.activity-list{display:flex;flex-direction:column;gap:8px}
+.activity-row{display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center;
+  padding:10px 12px;background:var(--bg3);border:1px solid var(--line2);border-radius:10px;transition:.15s}
+.activity-row:hover{border-color:rgba(255,255,255,.1)}
+.act-icon{width:34px;height:34px;border-radius:8px;display:flex;align-items:center;
+  justify-content:center;font-size:.9rem;flex:0 0 34px}
+.act-icon.gold{background:var(--gold-dim);border:1px solid var(--gold-b)}
+.act-icon.blue{background:var(--blue-dim);border:1px solid var(--blue-b)}
+.act-icon.purple{background:var(--purple-dim);border:1px solid var(--purple-b)}
+.act-name{font-size:.84rem;font-weight:700;margin-bottom:2px}
+.act-meta{font-size:.68rem;color:var(--muted2)}
+.act-status{font-size:.62rem;font-weight:700;padding:3px 8px;border-radius:999px;white-space:nowrap}
+.st-running{background:rgba(30,200,106,.12);border:1px solid var(--green-b);color:var(--green)}
+.st-open{background:var(--blue-dim);border:1px solid var(--blue-b);color:#c5d9f5}
+.st-done{background:rgba(255,255,255,.04);border:1px solid var(--line);color:var(--muted)}
+
+/* KALENDÁR */
+.cal-mini{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-top:8px}
+.cal-day{aspect-ratio:1;border-radius:6px;background:var(--bg3);border:1px solid var(--line2);
+  display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:700;color:var(--muted2);position:relative;cursor:pointer;transition:.15s}
+.cal-day:hover{border-color:rgba(255,255,255,.15)}
+.cal-day.has-event::after{content:'';position:absolute;bottom:4px;left:50%;transform:translateX(-50%);
+  width:5px;height:5px;border-radius:50%;background:var(--gold)}
+.cal-day.today{background:var(--gold-dim);border-color:var(--gold-b);color:var(--gold)}
+.cal-day.other{opacity:.3}
+
+/* REBRÍČEK */
+.ranking-list{display:flex;flex-direction:column;gap:5px}
+.rank-row{display:grid;grid-template-columns:32px 1fr auto;gap:10px;align-items:center;
+  padding:8px 12px;background:var(--bg3);border:1px solid var(--line2);border-radius:9px}
+.rank-num{font-family:var(--mono);font-size:.85rem;font-weight:700;color:var(--muted2);text-align:center}
+.rank-num.gold{color:var(--gold);font-size:1rem}
+.rank-num.silver{color:#c0c0c0}
+.rank-num.bronze{color:#cd7f32}
+.rank-name{font-size:.82rem;font-weight:700}
+.rank-pts{font-family:var(--mono);font-size:.78rem;color:var(--gold);font-weight:600}
+
+/* AKTUALITY */
+.news-list{display:flex;flex-direction:column;gap:8px}
+.news-item{padding:12px;background:var(--bg3);border:1px solid var(--line2);border-radius:10px;cursor:pointer;transition:.15s}
+.news-item:hover{border-color:rgba(255,255,255,.12)}
+.news-date{font-size:.62rem;color:var(--muted);font-weight:700;margin-bottom:4px;text-transform:uppercase;letter-spacing:.08em}
+.news-title{font-size:.85rem;font-weight:700;line-height:1.4;margin-bottom:4px}
+.news-text{font-size:.72rem;color:var(--muted2);line-height:1.5}
+
+/* INFO LIST */
+.info-list{display:flex;flex-direction:column;gap:0}
+.info-row{display:flex;justify-content:space-between;align-items:center;
+  padding:8px 0;border-bottom:1px solid var(--line2);gap:12px}
+.info-row:last-child{border-bottom:none}
+.info-label{font-size:.72rem;color:var(--muted2)}
+.info-val{font-size:.78rem;font-weight:700;color:var(--text);text-align:right}
+
+/* UPGRADE */
+.upgrade{border:1px solid var(--purple-b);border-radius:14px;padding:16px;
+  background:var(--purple-dim);text-align:center}
+.upgrade h3{font-size:.9rem;font-weight:800;color:#c8a0f5;margin-bottom:6px}
+.upgrade p{font-size:.75rem;color:var(--muted2);margin-bottom:12px;line-height:1.5}
+
+/* EMPTY */
+.empty{color:var(--muted);font-size:.82rem;padding:8px 0;text-align:center;line-height:1.6}
+.empty a{color:var(--gold);text-decoration:none;font-weight:700}
+
+/* BTN */
+.btn{display:inline-flex;align-items:center;gap:6px;padding:0 16px;min-height:36px;
+  border-radius:10px;font:700 .82rem/1 var(--font);cursor:pointer;border:none;
+  text-decoration:none;transition:.15s;white-space:nowrap}
+.btn-gold{background:var(--gold);color:#1a1000}.btn-gold:hover{background:#e8b94f}
+.btn-green{background:var(--green);color:#06230f}.btn-green:hover{background:#1adf72}
+.btn-purple{background:var(--purple-dim);color:#c8a0f5;border:1px solid var(--purple-b)}.btn-purple:hover{background:rgba(168,67,212,.15)}
+.btn-dark{background:rgba(255,255,255,.05);color:var(--text);border:1px solid var(--line)}.btn-dark:hover{background:rgba(255,255,255,.09)}
+.btn-sm{min-height:28px;padding:0 10px;font-size:.72rem;border-radius:7px}
+
+@media(max-width:960px){.grid{grid-template-columns:1fr}.stats{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:600px){.hero{grid-template-columns:1fr}.tools{grid-template-columns:1fr}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.fade{animation:fadeUp .3s ease both}
+</style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+<div class="page">
+
+  <!-- TOPBAR -->
+  <div class="topbar fade">
+    <div class="brand"><span>ConnectScore</span>Pro</div>
+    <div class="topbar-right">
+      <a href="/nastavenie-profilu/" class="btn btn-dark btn-sm">⚙️ Nastavenia</a>
+      <button class="btn btn-dark btn-sm" onclick="doLogout()">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+          <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- HERO -->
+  <div class="hero fade" style="animation-delay:.05s">
+    <div class="avatar-wrap" onclick="document.getElementById('avatarInput').click()">
+      <div class="avatar-ring"><img id="avatarImg" src="" alt=""/></div>
+      <div class="avatar-overlay">📷</div>
+    </div>
+    <input type="file" id="avatarInput" accept="image/*" style="display:none" onchange="uploadAvatar(this)"/>
+    <div>
+      <div class="hero-name" id="profileName">—</div>
+      <div class="hero-meta">
+        <span class="tag" id="locationTag" style="display:none"></span>
+        <span class="tag" id="sportTag" style="display:none"></span>
+        <span class="tag purple">🏆 Organizácia</span>
+        <span class="plan-badge plan-free" id="planBadge">Free</span>
+      </div>
+      <div class="hero-actions" id="heroActions"></div>
+    </div>
+  </div>
+
+  <!-- GRID -->
+  <div class="grid">
+  <div class="left">
+
+    <!-- ŠTATISTIKY -->
+    <div class="card fade" style="animation-delay:.08s">
+      <div class="card-title">Prehľad organizácie</div>
+      <div class="stats">
+        <div class="stat"><div class="stat-val" id="stTurnaje">—</div><div class="stat-label">Turnaje</div></div>
+        <div class="stat"><div class="stat-val green" id="stUdalosti">—</div><div class="stat-label">Udalosti</div></div>
+        <div class="stat"><div class="stat-val purple" id="stHraci">—</div><div class="stat-label">Hráči</div></div>
+        <div class="stat"><div class="stat-val gold" id="stLigy">—</div><div class="stat-label">Ligy</div></div>
+      </div>
+    </div>
+
+    <!-- KALENDÁR UDALOSTÍ -->
+    <div class="card fade" style="animation-delay:.1s">
+      <div class="card-title">
+        <span>Kalendár udalostí — <span id="calMonthLabel">—</span></span>
+        <a href="/vytvorit-udalost/">+ Pridať</a>
+      </div>
+      <div class="cal-mini" id="calMini"></div>
+    </div>
+
+    <!-- NÁSTROJE -->
+    <div class="card fade" style="animation-delay:.12s">
+      <div class="card-title">Nástroje organizácie</div>
+      <div class="tools" id="toolsGrid"></div>
+    </div>
+
+    <!-- AKTIVITY -->
+    <div class="card fade" style="animation-delay:.14s">
+      <div class="card-title">
+        Turnaje a udalosti
+        <a href="/nastavenie-turnaja/">+ Nový turnaj</a>
+      </div>
+      <div id="aktivityList" class="empty">Načítavam...</div>
+    </div>
+
+  </div><!-- /left -->
+
+  <div class="right">
+
+    <!-- REBRÍČKY HRÁČOV -->
+    <div class="card fade" style="animation-delay:.08s">
+      <div class="card-title">
+        Rebríček hráčov
+        <a href="#" id="rankingLink">Všetky</a>
+      </div>
+      <div id="rankingList" class="empty">—</div>
+    </div>
+
+    <!-- AKTUALITY -->
+    <div class="card fade" style="animation-delay:.1s">
+      <div class="card-title">
+        Aktuality
+        <a href="#" id="newsAddLink">+ Pridať</a>
+      </div>
+      <div id="newsList" class="empty">—</div>
+    </div>
+
+    <!-- INFO -->
+    <div class="card fade" style="animation-delay:.12s">
+      <div class="card-title">Info <a href="/nastavenie-profilu/">Upraviť</a></div>
+      <div class="info-list">
+        <div class="info-row"><span class="info-label">Plán</span><span class="info-val" id="infoPlán">—</span></div>
+        <div class="info-row"><span class="info-label">Štát</span><span class="info-val" id="infoStat">—</span></div>
+        <div class="info-row"><span class="info-label">Šport</span><span class="info-val" id="infoSport">—</span></div>
+        <div class="info-row"><span class="info-label">Kontakt</span><span class="info-val" id="infoKontakt">—</span></div>
+        <div class="info-row"><span class="info-label">Člen od</span><span class="info-val" id="infoClen">—</span></div>
+      </div>
+    </div>
+
+    <!-- UPGRADE -->
+    <div class="upgrade fade" id="upgradeBox" style="display:none;animation-delay:.14s">
+      <h3>🚀 Organizácia Pro / Ultra</h3>
+      <p>Multi-klubové ligy, aktuality, rebríčky a pokročilá analytika.</p>
+      <a href="/nastavenie-profilu/" class="btn btn-purple btn-sm" style="width:100%;justify-content:center">Vybrať plán</a>
+    </div>
+
+  </div><!-- /right -->
+  </div><!-- /grid -->
+</div><!-- /page -->
+
+<script>
+(function(){
+  if(window.location.hash&&window.location.hash.includes('access_token'))
+    history.replaceState(null,'',window.location.pathname);
+})();
+
+const SB = window.supabase.createClient(
+  'https://gilzomwhuwcxpkegtlhj.supabase.co',
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdpbHpvbXdodXdjeHBrZWd0bGhqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzcwMzMwMTgsImV4cCI6MjA5MjYwOTAxOH0.-KiLSdiB2mRWqUDB9GWyISfCu2o_ZBM80aGUEW9CcUg'
+);
+
+const PLAN_MAP  = {free:'Free',pro:'Pro',ultra:'Ultra'};
+const SPORT_MAP = {billiard:'🎱 Biliard',darts:'🎯 Šípky',bowling:'🎳 Bowling',cards:'🃏 Karty',multi:'🏅 Multi-šport'};
+
+SB.auth.onAuthStateChange(async (event,session)=>{
+  if(!session){ window.location.href='/login/'; return; }
+  if(event==='SIGNED_IN'||event==='INITIAL_SESSION') await init(session.user);
+});
+
+async function init(user){
+  const {data:p} = await SB.from('profiles').select('*').eq('id',user.id).single();
+
+  if(!p?.role){ window.location.href='/nastavenie-profilu/'; return; }
+  if(p.role==='hrac'){ window.location.href='/hrac/'; return; }
+  if(p.role==='klub'){ window.location.href='/klub/'; return; }
+
+  const plan = p.plan||'free';
+
+  // Meno
+  const name = p.full_name||user.email?.split('@')[0]||'—';
+  const parts = name.trim().split(' ');
+  document.getElementById('profileName').innerHTML =
+    parts.length>1 ? parts[0]+' <span>'+parts.slice(1).join(' ')+'</span>' : name;
+
+  // Avatar
+  const img = document.getElementById('avatarImg');
+  img.src = p.avatar_url ? p.avatar_url+'?t='+Date.now() : (user.user_metadata?.avatar_url||'');
+
+  // Tagy
+  if(p.city){
+    const lt=document.getElementById('locationTag');
+    lt.textContent='🌍 '+p.city; lt.style.display='';
+  }
+  if(p.sport){
+    const st=document.getElementById('sportTag');
+    st.textContent=SPORT_MAP[p.sport]||p.sport; st.style.display='';
+  }
+
+  // Plan
+  const badge=document.getElementById('planBadge');
+  badge.textContent=PLAN_MAP[plan]||'Free';
+  badge.className='plan-badge plan-'+plan;
+
+  // Hero akcie
+  document.getElementById('heroActions').innerHTML = heroActions(plan);
+
+  // Info sidebar
+  document.getElementById('infoPlán').textContent    = PLAN_MAP[plan]||'Free';
+  document.getElementById('infoStat').textContent    = p.city||'—';
+  document.getElementById('infoSport').textContent   = SPORT_MAP[p.sport]||'—';
+  document.getElementById('infoKontakt').textContent = p.contact_email||'—';
+  if(p.created_at)
+    document.getElementById('infoClen').textContent =
+      new Date(p.created_at).toLocaleDateString('sk-SK',{month:'long',year:'numeric'});
+
+  // Upgrade
+  if(plan==='free') document.getElementById('upgradeBox').style.display='';
+
+  // Nástroje
+  document.getElementById('toolsGrid').innerHTML = toolsHTML(plan);
+
+  // Štatistiky + aktivity + kalendár + rebríček + aktuality
+  await loadStats(user.id);
+  const events = await loadAktivity(user.id);
+  renderCalendar(events);
+  await loadRanking(user.id, plan);
+  await loadNews(user.id, plan);
+}
+
+function heroActions(plan){
+  return `
+    <a href="/nastavenie-turnaja/" class="btn btn-gold">🏆 Nový turnaj</a>
+    <a href="/priebeh-turnaja/" class="btn btn-dark">⚡ Live bracket</a>
+    <a href="/vytvorit-udalost/" class="btn btn-dark">📅 Udalosť</a>`;
+}
+
+function toolsHTML(plan){
+  const ultraOnly = plan!=='ultra';
+  return `
+    <a href="/nastavenie-turnaja/" class="tool gold">
+      <div class="tool-icon">🏆</div>
+      <div class="tool-name">Vytvoriť turnaj</div>
+      <div class="tool-desc">Bracket, live výsledky</div>
+    </a>
+    <a href="/priebeh-turnaja/" class="tool blue">
+      <div class="tool-icon">⚡</div>
+      <div class="tool-name">Live bracket</div>
+      <div class="tool-desc">Správa veľkých turnajov</div>
+    </a>
+    <a href="/vytvorit-udalost/" class="tool green">
+      <div class="tool-icon">📅</div>
+      <div class="tool-name">Vytvoriť udalosť</div>
+      <div class="tool-desc">Pridaj do kalendára</div>
+    </a>
+    <a href="${ultraOnly?'#':'#'}" class="tool purple ${ultraOnly?'locked':''}" ${ultraOnly?'onclick="return ultraAlert()"':''}>
+      ${ultraOnly?'<span class="lock-badge ultra">Ultra</span>':''}
+      <div class="tool-icon">🌐</div>
+      <div class="tool-name">Multi-klubové ligy</div>
+      <div class="tool-desc">Prepojené súťaže cez kluby</div>
+    </a>`;
+}
+
+async function loadStats(userId){
+  const [{count:tn},{count:ev}] = await Promise.all([
+    SB.from('tournaments').select('*',{count:'exact',head:true}).eq('organizer_id',userId),
+    SB.from('events').select('*',{count:'exact',head:true}).eq('organizer_id',userId)
+  ]);
+  if(tn!=null) document.getElementById('stTurnaje').textContent = tn;
+  if(ev!=null) document.getElementById('stUdalosti').textContent = ev;
+  // Hráči a ligy — placeholder kým nebudú tabuľky
+  document.getElementById('stHraci').textContent = '—';
+  document.getElementById('stLigy').textContent  = '—';
+}
+
+async function loadAktivity(userId){
+  const el = document.getElementById('aktivityList');
+  const [{data:ev},{data:tn}] = await Promise.all([
+    SB.from('events').select('id,nazov,datum,status').eq('organizer_id',userId)
+      .order('created_at',{ascending:false}).limit(5),
+    SB.from('tournaments').select('id,nazov,datum,status').eq('organizer_id',userId)
+      .order('created_at',{ascending:false}).limit(5)
+      .then(r=>r).catch(()=>({data:[]}))
+  ]);
+
+  const all = [
+    ...(tn||[]).map(t=>({...t,_type:'turnaj'})),
+    ...(ev||[]).map(e=>({...e,_type:'udalost'}))
+  ].sort((a,b)=>new Date(b.created_at||0)-new Date(a.created_at||0)).slice(0,6);
+
+  if(!all.length){
+    el.innerHTML='<div class="empty">Zatiaľ žiadne.<br><a href="/nastavenie-turnaja/">Vytvor prvý turnaj →</a></div>';
+    return [];
+  }
+
+  const ST={running:'st-running',open:'st-open',done:'st-done'};
+  const SL={running:'🟢 Prebieha',open:'Otvorená',done:'Ukončená',draft:'Draft'};
+  const IC={turnaj:{cls:'gold',icon:'🏆'},udalost:{cls:'blue',icon:'📅'}};
+
+  el.innerHTML='<div class="activity-list">'+all.map(item=>`
+    <div class="activity-row">
+      <div class="act-icon ${IC[item._type].cls}">${IC[item._type].icon}</div>
+      <div>
+        <div class="act-name">${item.nazov||'—'}</div>
+        <div class="act-meta">${item.datum||'—'} · ${item._type==='turnaj'?'Turnaj':'Udalosť'}</div>
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:5px">
+        <span class="act-status ${ST[item.status]||'st-done'}">${SL[item.status]||'—'}</span>
+        <a href="/${item._type==='turnaj'?'priebeh-turnaja':'udalost'}/?id=${item.id}" class="btn btn-dark btn-sm">Otvoriť</a>
+      </div>
+    </div>`).join('')+'</div>';
+
+  return all;
+}
+
+function renderCalendar(events){
+  const cal = document.getElementById('calMini');
+  const label = document.getElementById('calMonthLabel');
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = now.getMonth();
+
+  label.textContent = now.toLocaleDateString('sk-SK',{month:'long',year:'numeric'});
+
+  // Prvý deň mesiaca (pondelok = 0)
+  const firstDay = new Date(year,month,1).getDay();
+  const startOffset = (firstDay === 0) ? 6 : firstDay - 1;
+  const daysInMonth = new Date(year,month+1,0).getDate();
+
+  // Dátumy s udalosťami
+  const eventDates = new Set();
+  (events||[]).forEach(e=>{
+    if(e.datum){
+      const d = new Date(e.datum);
+      if(d.getMonth()===month && d.getFullYear()===year)
+        eventDates.add(d.getDate());
+    }
+  });
+
+  let html = '';
+  // Predošlý mesiac
+  for(let i=0;i<startOffset;i++) html += '<div class="cal-day other"></div>';
+  // Tento mesiac
+  for(let d=1;d<=daysInMonth;d++){
+    const cls = (d===now.getDate()?'today ':'') + (eventDates.has(d)?'has-event':'');
+    html += `<div class="cal-day ${cls}">${d}</div>`;
+  }
+  // Dorovnaj na 7×6
+  const total = startOffset + daysInMonth;
+  const remain = (7 - (total % 7)) % 7;
+  for(let i=0;i<remain;i++) html += '<div class="cal-day other"></div>';
+
+  cal.innerHTML = html;
+}
+
+async function loadRanking(userId, plan){
+  const el = document.getElementById('rankingList');
+  // TODO: napojiť na rankings tabuľku keď bude
+  // Zatiaľ placeholder
+  if(plan==='free'){
+    el.innerHTML = '<div class="empty">Rebríčky sú dostupné od plánu Pro.<br><a href="/nastavenie-profilu/">Vybrať plán →</a></div>';
+    return;
+  }
+  el.innerHTML = '<div class="empty">Rebríček sa zobrazí keď organizácia bude mať registrovaných hráčov a odohrané turnaje.</div>';
+}
+
+async function loadNews(userId, plan){
+  const el = document.getElementById('newsList');
+  // TODO: napojiť na news tabuľku keď bude
+  if(plan!=='ultra'){
+    el.innerHTML = '<div class="empty">Aktuality sú dostupné od plánu Ultra.<br><a href="/nastavenie-profilu/">Vybrať plán →</a></div>';
+    return;
+  }
+  el.innerHTML = '<div class="empty">Zatiaľ žiadne aktuality.<br><a href="#">+ Pridať prvú</a></div>';
+}
+
+function ultraAlert(){
+  if(confirm('Multi-klubové ligy sú dostupné od plánu Ultra. Prejsť na nastavenia?'))
+    window.location.href='/nastavenie-profilu/';
+  return false;
+}
+
+async function uploadAvatar(input){
+  const file=input.files[0];
+  if(!file) return;
+  if(file.size>5*1024*1024){ alert('Max 5 MB.'); return; }
+  const {data:{session}}=await SB.auth.getSession();
+  if(!session) return;
+  const ext=file.name.split('.').pop()||'jpg';
+  const path=`avatars/${session.user.id}/avatar.${ext}`;
+  const {error}=await SB.storage.from('avatars').upload(path,file,{upsert:true,contentType:file.type});
+  if(error){ alert('Chyba: '+error.message); return; }
+  const {data:u}=SB.storage.from('avatars').getPublicUrl(path);
+  await SB.from('profiles').update({avatar_url:u.publicUrl}).eq('id',session.user.id);
+  document.getElementById('avatarImg').src=u.publicUrl+'?t='+Date.now();
+  input.value='';
+}
+
+async function doLogout(){
+  await SB.auth.signOut();
+  window.location.href='/login/';
+}
+</script>
+</body>
+</html>

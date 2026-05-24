@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>ConnectScore Pro – Registrácia</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --bg:#060608;--bg2:#0e0e13;--bg3:#131318;
+  --line:rgba(255,255,255,.08);--line2:rgba(255,255,255,.04);
+  --text:#eeeef2;--muted:#55556a;--muted2:#80809a;
+  --gold:#d4a843;--gold-dim:rgba(212,168,67,.09);--gold-b:rgba(212,168,67,.25);
+  --green:#1ec86a;--green-dim:rgba(30,200,106,.08);--green-b:rgba(30,200,106,.2);
+  --blue:#4a82cc;--blue-dim:rgba(74,130,204,.08);--blue-b:rgba(74,130,204,.2);
+  --red:#d94f4f;--font:'Syne',sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  font-family:var(--font);background:var(--bg);color:var(--text);
+  min-height:100vh;padding:32px 16px 60px;
+  background:radial-gradient(ellipse 70% 40% at 50% 0%,rgba(212,168,67,.07),transparent 55%),var(--bg);
+}
+.wrap{max-width:520px;margin:0 auto;display:flex;flex-direction:column;gap:16px}
+
+/* Brand */
+.brand{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.brand-name{font-size:1.2rem;font-weight:800;letter-spacing:-.03em}
+.brand-name span{color:var(--gold)}
+.login-link{font-size:.78rem;font-weight:700;color:var(--muted2);text-decoration:none;
+  padding:6px 12px;border-radius:8px;border:1px solid var(--line);transition:.15s}
+.login-link:hover{color:var(--text);background:rgba(255,255,255,.04)}
+
+/* Steps */
+.steps{display:flex;gap:0;margin-bottom:4px}
+.step{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;position:relative}
+.step:not(:last-child)::after{content:'';position:absolute;top:13px;left:calc(50% + 13px);
+  right:calc(-50% + 13px);height:1px;background:var(--line)}
+.step-dot{width:26px;height:26px;border-radius:50%;border:1px solid var(--line);
+  background:var(--bg2);display:flex;align-items:center;justify-content:center;
+  font-size:.7rem;font-weight:700;color:var(--muted);transition:.2s;z-index:1}
+.step.active .step-dot{border-color:var(--gold-b);background:var(--gold-dim);color:var(--gold)}
+.step.done .step-dot{border-color:var(--green-b);background:var(--green-dim);color:var(--green)}
+.step-label{font-size:.58rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:600}
+.step.active .step-label{color:var(--gold)}
+.step.done .step-label{color:var(--green)}
+
+/* Card */
+.card{background:var(--bg2);border:1px solid var(--line);border-radius:20px;padding:24px;display:flex;flex-direction:column;gap:14px}
+.card-title{font-size:1rem;font-weight:800;margin-bottom:2px}
+.card-sub{font-size:.78rem;color:var(--muted2);line-height:1.5}
+
+/* Social */
+.social-btn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:13px;
+  border-radius:12px;border:1px solid var(--line);background:rgba(255,255,255,.03);
+  color:var(--text);font-family:var(--font);font-size:.9rem;font-weight:700;cursor:pointer;transition:.15s}
+.social-btn:hover{background:rgba(255,255,255,.07);border-color:rgba(255,255,255,.15)}
+
+/* Divider */
+.divider{display:flex;align-items:center;gap:10px;color:var(--muted);font-size:.72rem}
+.divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--line)}
+
+/* Role cards */
+.role-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.role-card{border:1px solid var(--line);border-radius:14px;padding:16px 12px;cursor:pointer;
+  transition:.18s;text-align:center;position:relative;background:rgba(255,255,255,.02)}
+.role-card:hover{border-color:rgba(255,255,255,.15);background:rgba(255,255,255,.04)}
+.role-card.sel{border-color:var(--gold-b);background:var(--gold-dim)}
+.role-card .chk{position:absolute;top:8px;right:8px;width:16px;height:16px;border-radius:4px;
+  background:var(--gold);color:#1a1000;font-size:.55rem;display:flex;align-items:center;
+  justify-content:center;opacity:0;transition:.15s}
+.role-card.sel .chk{opacity:1}
+.role-icon{font-size:1.8rem;margin-bottom:8px}
+.role-name{font-size:.85rem;font-weight:800;color:var(--text)}
+.role-desc{font-size:.68rem;color:var(--muted2);margin-top:4px;line-height:1.4}
+
+/* Field */
+.field{display:flex;flex-direction:column;gap:6px}
+.field label{font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:var(--muted2)}
+.field input,.field select,.field textarea{
+  background:var(--bg3);border:1px solid var(--line);border-radius:10px;
+  color:var(--text);font-family:var(--font);font-size:.88rem;padding:11px 13px;
+  outline:none;transition:.15s;width:100%;
+}
+.field input:focus,.field select:focus{border-color:var(--gold-b)}
+.field select{cursor:pointer}
+
+/* Sport checkboxes */
+.sport-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.sport-chk{display:flex;align-items:center;gap:8px;padding:10px 12px;border-radius:10px;
+  border:1px solid var(--line);background:rgba(255,255,255,.02);cursor:pointer;transition:.15s}
+.sport-chk:hover{border-color:rgba(255,255,255,.14)}
+.sport-chk.sel{border-color:var(--gold-b);background:var(--gold-dim)}
+.sport-chk input{display:none}
+.sport-chk-icon{font-size:1.1rem}
+.sport-chk-name{font-size:.82rem;font-weight:700}
+
+/* Row */
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+
+/* Btn */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;
+  padding:12px 20px;border-radius:11px;font:700 .9rem/1 var(--font);
+  cursor:pointer;border:none;transition:.15s;width:100%}
+.btn-gold{background:var(--gold);color:#1a1000}.btn-gold:hover{background:#e8b94f}
+.btn-dark{background:rgba(255,255,255,.05);color:var(--text);border:1px solid var(--line)}.btn-dark:hover{background:rgba(255,255,255,.08)}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+
+/* Msg */
+.msg{padding:10px 14px;border-radius:10px;font-size:.82rem;font-weight:600;display:none;text-align:center}
+.msg.ok{background:rgba(30,200,106,.1);border:1px solid rgba(30,200,106,.25);color:#c8ffdc;display:block}
+.msg.err{background:rgba(217,79,79,.1);border:1px solid rgba(217,79,79,.25);color:#ffd0d0;display:block}
+
+/* Screen visibility */
+.screen{display:none}
+.screen.active{display:flex;flex-direction:column;gap:14px}
+
+/* Sportovisko row */
+.sportovisko-row{display:flex;gap:8px;align-items:center}
+.sportovisko-row input{flex:1}
+.sportovisko-row .num{width:70px;flex:0 0 70px}
+.del-btn{width:32px;height:32px;border-radius:8px;border:1px solid rgba(217,79,79,.3);
+  background:rgba(217,79,79,.07);color:var(--red);cursor:pointer;font-size:.9rem;
+  display:flex;align-items:center;justify-content:center;flex:0 0 32px;transition:.15s}
+.del-btn:hover{background:rgba(217,79,79,.15)}
+.add-btn{width:100%;padding:8px;border-radius:9px;border:1px dashed rgba(255,255,255,.12);
+  background:transparent;color:var(--muted);font-size:.78rem;font-weight:700;
+  cursor:pointer;font-family:var(--font);transition:.15s}
+.add-btn:hover{color:var(--text);border-color:rgba(255,255,255,.25)}
+
+@media(max-width:500px){.role-grid{grid-template-columns:1fr}.sport-grid{grid-template-columns:1fr}.row2{grid-template-columns:1fr}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.fade{animation:fadeUp .3s ease both}
+</style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- Brand -->
+  <div class="brand fade">
+    <div class="brand-name"><span>ConnectScore</span>Pro</div>
+    <a href="/login/" class="login-link">Prihlásiť sa →</a>
+  </div>
+
+  <!-- Steps -->
+  <div class="steps fade" style="animation-delay:.05s" id="stepsBar">
+    <div class="step active" id="s1"><div class="step-dot">1</div><div class="step-label">Účet</div></div>
+    <div class="step" id="s2"><div class="step-dot">2</div><div class="step-label">Rola</div></div>
+    <div class="step" id="s3"><div class="step-dot">3</div><div class="step-label">Údaje</div></div>
+    <div class="step" id="s4"><div class="step-dot">4</div><div class="step-label">Hotovo</div></div>
+  </div>
+
+  <!-- ═══ STEP 1 — Vytvorenie účtu ═══ -->
+  <div class="screen active fade" id="screen1" style="animation-delay:.08s">
+    <div class="card">
+      <div>
+        <div class="card-title">Vytvor si účet</div>
+        <div class="card-sub">Zadarmo, bez záväzkov. Plán si vyberieš kedykoľvek neskôr.</div>
+      </div>
+
+      <button class="social-btn" id="btnGoogle" onclick="regGoogle()">
+        <svg width="18" height="18" viewBox="0 0 24 24">
+          <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+          <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+          <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/>
+          <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+        </svg>
+        Registrovať cez Google
+      </button>
+
+      <div class="divider">alebo e-mailom</div>
+
+      <div class="field">
+        <label>E-mailová adresa</label>
+        <input id="regEmail" type="email" placeholder="vas@email.sk" autocomplete="email"/>
+      </div>
+      <div class="field">
+        <label>Heslo</label>
+        <input id="regPassword" type="password" placeholder="min. 8 znakov" autocomplete="new-password"/>
+      </div>
+      <div class="field">
+        <label>Zopakovať heslo</label>
+        <input id="regPassword2" type="password" placeholder="••••••••" autocomplete="new-password"
+          onkeydown="if(event.key==='Enter')regEmail()"/>
+      </div>
+
+      <div class="msg" id="msg1"></div>
+      <button class="btn btn-gold" id="btnEmail" onclick="regEmail()">Pokračovať →</button>
+    </div>
+  </div>
+
+  <!-- ═══ STEP 2 — Výber roly ═══ -->
+  <div class="screen" id="screen2">
+    <div class="card">
+      <div>
+        <div class="card-title">Kto si?</div>
+        <div class="card-sub">Podľa roly ti zobrazíme správné nástroje. Kedykoľvek to môžeš zmeniť.</div>
+      </div>
+      <div class="role-grid">
+        <div class="role-card" onclick="selectRole('hrac',this)">
+          <div class="chk">✓</div>
+          <div class="role-icon">🎱</div>
+          <div class="role-name">Hráč</div>
+          <div class="role-desc">Tréningy, turnaje, štatistiky</div>
+        </div>
+        <div class="role-card" onclick="selectRole('klub',this)">
+          <div class="chk">✓</div>
+          <div class="role-icon">🏛️</div>
+          <div class="role-name">Klub</div>
+          <div class="role-desc">Rezervácie, ligy, správa členov</div>
+        </div>
+        <div class="role-card" onclick="selectRole('organizacia',this)">
+          <div class="chk">✓</div>
+          <div class="role-icon">🏆</div>
+          <div class="role-name">Organizácia</div>
+          <div class="role-desc">Multi-turnaje, ligy, rebríčky</div>
+        </div>
+      </div>
+      <div class="msg" id="msg2"></div>
+      <button class="btn btn-gold" onclick="goStep3()">Pokračovať →</button>
+    </div>
+  </div>
+
+  <!-- ═══ STEP 3A — Hráč ═══ -->
+  <div class="screen" id="screen3hrac">
+    <div class="card">
+      <div>
+        <div class="card-title">🎱 Údaje hráča</div>
+        <div class="card-sub">Základné informácie o tebe.</div>
+      </div>
+      <div class="row2">
+        <div class="field"><label>Meno a priezvisko</label><input id="hMeno" placeholder="Tomáš Pikna"/></div>
+        <div class="field"><label>Prezývka / Nick</label><input id="hNick" placeholder="tomaspiknaSVK"/></div>
+      </div>
+      <div class="row2">
+        <div class="field"><label>Mesto</label><input id="hMesto" placeholder="Kanianka"/></div>
+        <div class="field">
+          <label>Hlavný šport</label>
+          <select id="hSport">
+            <option value="">— vyber —</option>
+            <option value="billiard">🎱 Biliard</option>
+            <option value="darts">🎯 Šípky</option>
+            <option value="bowling">🎳 Bowling</option>
+            <option value="cards">🃏 Karty</option>
+          </select>
+        </div>
+      </div>
+      <div class="field">
+        <label>Klub kde hrám (voliteľné)</label>
+        <input id="hKlub" placeholder="Moment Club, Kanianka"/>
+      </div>
+      <div class="msg" id="msg3h"></div>
+      <div class="row2">
+        <button class="btn btn-dark" onclick="goStep2()">← Späť</button>
+        <button class="btn btn-gold" onclick="saveProfile()">Dokončiť →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ STEP 3B — Klub ═══ -->
+  <div class="screen" id="screen3klub">
+    <div class="card">
+      <div>
+        <div class="card-title">🏛️ Údaje klubu</div>
+        <div class="card-sub">Informácie o tvojom klube.</div>
+      </div>
+      <div class="field"><label>Názov klubu</label><input id="kNazov" placeholder="Moment Club"/></div>
+      <div class="row2">
+        <div class="field"><label>Mesto</label><input id="kMesto" placeholder="Kanianka"/></div>
+        <div class="field"><label>Adresa</label><input id="kAdresa" placeholder="Nábrežná 12"/></div>
+      </div>
+      <div class="row2">
+        <div class="field"><label>Kontaktný email</label><input id="kEmail" type="email" placeholder="kontakt@klub.sk"/></div>
+        <div class="field"><label>Otváracie hodiny</label><input id="kHodiny" placeholder="15:00 – 23:00"/></div>
+      </div>
+
+      <!-- Sporty -->
+      <div class="field">
+        <label>Ponúkané športy</label>
+        <div class="sport-grid">
+          <div class="sport-chk" onclick="toggleSport(this,'billiard')">
+            <input type="checkbox" value="billiard"/>
+            <div class="sport-chk-icon">🎱</div>
+            <div class="sport-chk-name">Biliard</div>
+          </div>
+          <div class="sport-chk" onclick="toggleSport(this,'darts')">
+            <input type="checkbox" value="darts"/>
+            <div class="sport-chk-icon">🎯</div>
+            <div class="sport-chk-name">Šípky</div>
+          </div>
+          <div class="sport-chk" onclick="toggleSport(this,'bowling')">
+            <input type="checkbox" value="bowling"/>
+            <div class="sport-chk-icon">🎳</div>
+            <div class="sport-chk-name">Bowling</div>
+          </div>
+          <div class="sport-chk" onclick="toggleSport(this,'cards')">
+            <input type="checkbox" value="cards"/>
+            <div class="sport-chk-icon">🃏</div>
+            <div class="sport-chk-name">Karty</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Športoviská -->
+      <div class="field">
+        <label>Športoviská</label>
+        <div id="sportoviska" style="display:flex;flex-direction:column;gap:8px">
+          <!-- Generuje JS -->
+        </div>
+        <button class="add-btn" onclick="addSportovisko()">+ Pridať športovisko</button>
+      </div>
+
+      <div class="msg" id="msg3k"></div>
+      <div class="row2">
+        <button class="btn btn-dark" onclick="goStep2()">← Späť</button>
+        <button class="btn btn-gold" onclick="saveProfile()">Dokončiť →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ STEP 3C — Organizácia ═══ -->
+  <div class="screen" id="screen3org">
+    <div class="card">
+      <div>
+        <div class="card-title">🏆 Údaje organizácie</div>
+        <div class="card-sub">Informácie o tvojej organizácii.</div>
+      </div>
+      <div class="field"><label>Názov organizácie</label><input id="oNazov" placeholder="Slovenský biliardový zväz"/></div>
+      <div class="row2">
+        <div class="field"><label>Štát / Región</label><input id="oStat" placeholder="Slovensko"/></div>
+        <div class="field"><label>Kontaktný email</label><input id="oEmail" type="email" placeholder="kontakt@org.sk"/></div>
+      </div>
+      <div class="field">
+        <label>Hlavný šport</label>
+        <select id="oSport">
+          <option value="">— vyber —</option>
+          <option value="billiard">🎱 Biliard</option>
+          <option value="darts">🎯 Šípky</option>
+          <option value="bowling">🎳 Bowling</option>
+          <option value="multi">🏅 Multi-šport</option>
+        </select>
+      </div>
+      <div class="msg" id="msg3o"></div>
+      <div class="row2">
+        <button class="btn btn-dark" onclick="goStep2()">← Späť</button>
+        <button class="btn btn-gold" onclick="saveProfile()">Dokončiť →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ STEP 4 — Hotovo ═══ -->
+  <div class="screen" id="screen4">
+    <div class="card" style="text-align:center;gap:16px;padding:36px 24px">
+      <div style="font-size:3rem">🎉</div>
+      <div>
+        <div class="card-title" style="font-size:1.3rem">Účet vytvorený!</div>
+        <div class="card-sub" style="margin-top:8px">Vitaj v ConnectScore Pro. Môžeš začať.</div>
+      </div>
+      <div id="doneBtn"></div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const SB = window.supabase.createClient(
+  'https://gilzomwhuwcxpkegtlhj.supabase.co',
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdpbHpvbXdodXdjeHBrZWd0bGhqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzcwMzMwMTgsImV4cCI6MjA5MjYwOTAxOH0.-KiLSdiB2mRWqUDB9GWyISfCu2o_ZBM80aGUEW9CcUg'
+);
+
+let currentUser = null;
+let selectedRole = null;
+let sportoviska = [];
+
+// Hash cleanup
+(function(){
+  if(window.location.hash && window.location.hash.includes('access_token'))
+    history.replaceState(null,'',window.location.pathname);
+})();
+
+// Auth state — ak má rolu, presmeruj priamo
+SB.auth.onAuthStateChange(async (event, session) => {
+  if(!session) return;
+  currentUser = session.user;
+  const {data:p} = await SB.from('profiles').select('role').eq('id',session.user.id).single();
+  if(p?.role){
+    const map = {hrac:'/hrac/',klub:'/klub/',organizacia:'/organizacia/'};
+    window.location.href = map[p.role] || '/klub/';
+    return;
+  }
+  // Nový používateľ — choď na step 2
+  if(event==='SIGNED_IN') goStep2();
+});
+
+// ── STEP 1 — Registrácia ────────────────────────────────
+async function regGoogle(){
+  const btn = document.getElementById('btnGoogle');
+  btn.disabled = true;
+  const {error} = await SB.auth.signInWithOAuth({
+    provider:'google',
+    options:{redirectTo:'https://cspboard.digital/registracia/'}
+  });
+  if(error){ showMsg('msg1', error.message,'err'); btn.disabled=false; }
+}
+
+async function regEmail(){
+  const email  = document.getElementById('regEmail').value.trim();
+  const pass1  = document.getElementById('regPassword').value;
+  const pass2  = document.getElementById('regPassword2').value;
+  if(!email){ showMsg('msg1','Zadaj e-mail.','err'); return; }
+  if(!pass1 || pass1.length < 8){ showMsg('msg1','Heslo musí mať aspoň 8 znakov.','err'); return; }
+  if(pass1 !== pass2){ showMsg('msg1','Heslá sa nezhodujú.','err'); return; }
+  const btn = document.getElementById('btnEmail');
+  btn.disabled=true; btn.textContent='Registrujem...';
+  const {data, error} = await SB.auth.signUp({email, password:pass1});
+  btn.disabled=false; btn.textContent='Pokračovať →';
+  if(error){
+    if(error.message.includes('already')) showMsg('msg1','Tento e-mail už existuje. <a href="/login/">Prihlásiť sa →</a>','err');
+    else showMsg('msg1', error.message,'err');
+    return;
+  }
+  currentUser = data.user;
+  goStep2();
+}
+
+// ── STEP 2 — Výber roly ─────────────────────────────────
+function selectRole(role, card){
+  selectedRole = role;
+  document.querySelectorAll('.role-card').forEach(c=>c.classList.remove('sel'));
+  card.classList.add('sel');
+}
+
+function goStep2(){
+  showScreen('screen2');
+  setStep(2);
+}
+
+function goStep3(){
+  if(!selectedRole){ showMsg('msg2','Vyber svoju rolu.','err'); return; }
+  const map = {hrac:'screen3hrac', klub:'screen3klub', organizacia:'screen3org'};
+  showScreen(map[selectedRole]);
+  if(selectedRole==='klub') renderSportoviska();
+  setStep(3);
+}
+
+// ── STEP 3 — Sporting ────────────────────────────────────
+function toggleSport(el){
+  el.classList.toggle('sel');
+  const cb = el.querySelector('input');
+  cb.checked = !cb.checked;
+}
+
+// Športoviská
+function renderSportoviska(){
+  const cont = document.getElementById('sportoviska');
+  cont.innerHTML = sportoviska.map((s,i)=>`
+    <div class="sportovisko-row">
+      <input class="num" type="number" min="1" max="99" value="${s.count}"
+        onchange="sportoviska[${i}].count=parseInt(this.value)||1" placeholder="9"/>
+      <input value="${s.label}" placeholder="napr. 9ft Rasson stôl"
+        oninput="sportoviska[${i}].label=this.value"/>
+      <button class="del-btn" onclick="removeSportovisko(${i})">✕</button>
+    </div>`).join('');
+}
+
+function addSportovisko(){
+  sportoviska.push({count:1, label:''});
+  renderSportoviska();
+}
+
+function removeSportovisko(i){
+  sportoviska.splice(i,1);
+  renderSportoviska();
+}
+
+// ── SAVE ─────────────────────────────────────────────────
+async function saveProfile(){
+  if(!currentUser){ showMsg('msg3'+selectedRole[0], 'Nie si prihlásený.','err'); return; }
+
+  const msgId = 'msg3' + (selectedRole==='hrac'?'h':selectedRole==='klub'?'k':'o');
+
+  let payload = { role: selectedRole };
+
+  if(selectedRole==='hrac'){
+    const meno = document.getElementById('hMeno').value.trim();
+    if(!meno){ showMsg(msgId,'Zadaj meno.','err'); return; }
+    payload.full_name  = meno;
+    payload.username   = document.getElementById('hNick').value.trim().toLowerCase().replace(/[^a-z0-9_.]/g,'') || null;
+    payload.city       = document.getElementById('hMesto').value.trim() || null;
+    payload.sport      = document.getElementById('hSport').value || null;
+    payload.club_name  = document.getElementById('hKlub').value.trim() || null;
+  }
+
+  if(selectedRole==='klub'){
+    const nazov = document.getElementById('kNazov').value.trim();
+    if(!nazov){ showMsg(msgId,'Zadaj názov klubu.','err'); return; }
+    const sports = [...document.querySelectorAll('.sport-chk input:checked')].map(el=>el.value);
+    // Športoviská uložíme ako JSON string
+    const sportoviskaData = sportoviska.filter(s=>s.label).map(s=>({count:s.count,label:s.label}));
+    payload.full_name     = nazov;
+    payload.city          = document.getElementById('kMesto').value.trim() || null;
+    payload.address       = document.getElementById('kAdresa').value.trim() || null;
+    payload.contact_email = document.getElementById('kEmail').value.trim() || null;
+    payload.open_hours    = document.getElementById('kHodiny').value.trim() || null;
+    payload.sport         = sports.join(',') || null;
+    payload.sportoviska   = sportoviskaData.length ? JSON.stringify(sportoviskaData) : null;
+  }
+
+  if(selectedRole==='organizacia'){
+    const nazov = document.getElementById('oNazov').value.trim();
+    if(!nazov){ showMsg(msgId,'Zadaj názov organizácie.','err'); return; }
+    payload.full_name     = nazov;
+    payload.city          = document.getElementById('oStat').value.trim() || null;
+    payload.contact_email = document.getElementById('oEmail').value.trim() || null;
+    payload.sport         = document.getElementById('oSport').value || null;
+  }
+
+  const {error} = await SB.from('profiles').update(payload).eq('id', currentUser.id);
+  if(error){ showMsg(msgId, error.message,'err'); return; }
+
+  // Step 4 — Hotovo
+  showScreen('screen4');
+  setStep(4);
+  const map = {hrac:'/hrac/',klub:'/klub/',organizacia:'/organizacia/'};
+  const url = map[selectedRole];
+  document.getElementById('doneBtn').innerHTML =
+    `<a href="${url}" class="btn btn-gold" style="text-decoration:none">Prejsť na profil →</a>`;
+  setTimeout(()=>window.location.href=url, 2500);
+}
+
+// ── HELPERS ──────────────────────────────────────────────
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id)?.classList.add('active');
+}
+
+function setStep(n){
+  [1,2,3,4].forEach(i=>{
+    const el = document.getElementById('s'+i);
+    el.classList.remove('active','done');
+    if(i < n) el.classList.add('done');
+    else if(i === n) el.classList.add('active');
+  });
+}
+
+function showMsg(id, text, type){
+  const el = document.getElementById(id);
+  if(!el) return;
+  el.textContent = text;
+  el.className = 'msg ' + type;
+}
+</script>
+</body>
+</html>
