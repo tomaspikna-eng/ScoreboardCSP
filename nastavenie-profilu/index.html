@@ -3,395 +3,267 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>CSP – Nastavenie profilu</title>
-<link rel="preconnect" href="https://fonts.googleapis.com"/>
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Syne:wght@400;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet"/>
+<title>ConnectScore Pro – Nastavenia profilu</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet"/>
 <style>
 :root{
-  --bg:#060608;--bg2:#0d0d11;--bg3:#131318;--bg4:#18181f;
+  --bg:#060608;--bg2:#0d0d11;--bg3:#131318;
   --line:rgba(255,255,255,.07);--line2:rgba(255,255,255,.04);
   --text:#eeeef2;--muted:#55556a;--muted2:#80809a;
   --gold:#d4a843;--gold-dim:rgba(212,168,67,.09);--gold-b:rgba(212,168,67,.22);
   --green:#1ec86a;--green-dim:rgba(30,200,106,.08);--green-b:rgba(30,200,106,.2);
-  --blue:#4a82cc;--blue-dim:rgba(74,130,204,.08);--blue-b:rgba(74,130,204,.2);
   --red:#d94f4f;--red-dim:rgba(217,79,79,.08);--red-b:rgba(217,79,79,.22);
-  --r:18px;--rs:11px;
-  --font:'Syne',sans-serif;--mono:'JetBrains Mono',monospace;
+  --font:'Syne',sans-serif;
 }
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-html{scroll-behavior:smooth}
-body{
-  font-family:var(--font);background:var(--bg);color:var(--text);
-  min-height:100vh;
-  background:
-    radial-gradient(ellipse 100% 45% at 50% 0%,rgba(212,168,67,.07) 0%,transparent 55%),
-    var(--bg);
-  display:grid;place-items:start center;padding:32px 16px 80px;
-}
-
-.shell{width:min(860px,100%);display:flex;flex-direction:column;gap:20px}
-
-/* brand */
-.brand{display:flex;align-items:center;gap:12px;padding-bottom:4px}
-.brand-name{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;letter-spacing:.06em;color:var(--text)}
-.brand-name span{color:var(--gold)}
-.back{margin-left:auto;display:inline-flex;align-items:center;gap:6px;font-size:.75rem;font-weight:700;color:var(--muted2);text-decoration:none;padding:6px 12px;border-radius:8px;border:1px solid var(--line);background:rgba(255,255,255,.02);transition:.15s}
-.back:hover{color:var(--text);background:rgba(255,255,255,.05)}
-
-/* heading */
-.page-head{display:flex;flex-direction:column;gap:4px}
-.page-head h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(1.8rem,4vw,2.8rem);letter-spacing:.04em;color:var(--gold);line-height:1}
-.page-head p{color:var(--muted2);font-size:.88rem}
-
-/* TYPE SELECTOR */
-.type-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
-.type-card{
-  border:1px solid var(--line);border-radius:16px;
-  background:rgba(255,255,255,.02);padding:20px 16px;
-  cursor:pointer;transition:.18s;text-align:center;
-  display:flex;flex-direction:column;align-items:center;gap:10px;
-  position:relative;
-}
-.type-card:hover{border-color:rgba(255,255,255,.14);background:rgba(255,255,255,.04)}
-.type-card.selected{border-color:var(--gold-b);background:var(--gold-dim)}
-.type-card.selected .type-check{opacity:1}
-.type-check{position:absolute;top:10px;right:10px;width:20px;height:20px;border-radius:6px;background:var(--gold);display:flex;align-items:center;justify-content:center;font-size:.7rem;opacity:0;transition:.15s}
-.type-icon{font-size:1.8rem}
-.type-name{font-size:.9rem;font-weight:800;color:var(--text)}
-.type-desc{font-size:.72rem;color:var(--muted2);line-height:1.4}
-
-/* PANEL */
-.panel{
-  border:1px solid var(--line);border-radius:var(--r);
-  background:linear-gradient(180deg,rgba(255,255,255,.025),rgba(255,255,255,.01));
-  padding:28px;display:flex;flex-direction:column;gap:20px;
-}
-.panel-title{font-family:'Bebas Neue',sans-serif;font-size:.95rem;letter-spacing:.1em;color:var(--muted2);text-transform:uppercase}
-
-/* AVATAR */
-.avatar-row{display:flex;align-items:center;gap:20px;padding:18px;border:1px solid var(--line);border-radius:14px;background:rgba(255,255,255,.015)}
-.avatar-ring{width:80px;height:80px;border-radius:50%;padding:3px;background:linear-gradient(135deg,var(--gold),rgba(74,130,204,.6));flex:0 0 80px;position:relative;cursor:pointer}
-.avatar-ring img{width:100%;height:100%;border-radius:50%;object-fit:cover;background:var(--bg3);display:block}
-.avatar-ring:hover::after{content:'📷';position:absolute;inset:3px;border-radius:50%;background:rgba(0,0,0,.6);display:flex;align-items:center;justify-content:center;font-size:1.2rem}
-.avatar-info{flex:1}
-.avatar-info strong{font-size:.88rem;font-weight:700;display:block;margin-bottom:4px}
-.avatar-info p{font-size:.75rem;color:var(--muted2)}
-.avatar-btn{font-size:.75rem;font-weight:700;padding:6px 14px;border-radius:8px;border:1px solid var(--line);background:rgba(255,255,255,.04);color:var(--muted2);cursor:pointer;font-family:var(--font);transition:.15s;margin-top:8px;display:inline-block}
-.avatar-btn:hover{color:var(--text);background:rgba(255,255,255,.08)}
-
-/* FORM */
-.form-grid{display:grid;gap:14px}
-.row-2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-.row-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
-.field{display:flex;flex-direction:column;gap:6px}
-.field label{font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:var(--muted2)}
-.field input,.field select,.field textarea{
-  background:var(--bg3);border:1px solid var(--line);border-radius:10px;
-  color:var(--text);font-family:var(--font);font-size:.88rem;
-  padding:10px 12px;outline:none;transition:.15s;width:100%;
-}
-.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--gold-b);background:var(--bg4)}
-.field textarea{min-height:90px;resize:vertical}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh;
+  background:radial-gradient(ellipse 80% 40% at 50% 0%,rgba(212,168,67,.06),transparent 55%),var(--bg);
+  padding:32px 16px 80px;}
+.shell{max-width:720px;margin:0 auto;display:flex;flex-direction:column;gap:16px}
+.topbar{display:flex;align-items:center;justify-content:space-between}
+.brand{font-size:1.1rem;font-weight:800;letter-spacing:-.02em}
+.brand span{color:var(--gold)}
+.back{display:inline-flex;align-items:center;gap:6px;font-size:.78rem;font-weight:700;color:var(--muted2);text-decoration:none;padding:6px 12px;border-radius:8px;border:1px solid var(--line);background:rgba(255,255,255,.02);transition:.15s}
+.back:hover{color:var(--text)}
+h1{font-size:1.8rem;font-weight:900;letter-spacing:-.04em;color:var(--gold)}
+.sub{color:var(--muted2);font-size:.88rem;margin-top:4px}
+.card{background:var(--bg2);border:1px solid var(--line);border-radius:18px;padding:22px}
+.card-title{font-size:.65rem;text-transform:uppercase;letter-spacing:.12em;color:var(--muted2);font-weight:700;margin-bottom:14px}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.field{display:flex;flex-direction:column;gap:5px}
+.field label{font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:var(--muted2)}
+.field input,.field select,.field textarea{background:var(--bg3);border:1px solid var(--line);border-radius:10px;color:var(--text);font-family:var(--font);font-size:.88rem;padding:10px 12px;outline:none;transition:.15s;width:100%}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--gold-b)}
+.field textarea{min-height:80px;resize:vertical}
 .field select{cursor:pointer}
-.field input::placeholder,.field textarea::placeholder{color:var(--muted)}
+.role-section{display:none}
+.role-section.visible{display:flex;flex-direction:column;gap:14px}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:0 18px;min-height:42px;border-radius:11px;font:700 .88rem/1 var(--font);cursor:pointer;border:none;text-decoration:none;transition:.15s}
+.btn-gold{background:var(--gold);color:#1a1000}.btn-gold:hover{background:#e8b94f}
+.btn-dark{background:rgba(255,255,255,.05);color:var(--text);border:1px solid var(--line)}.btn-dark:hover{background:rgba(255,255,255,.09)}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.msg{padding:10px 14px;border-radius:10px;font-size:.82rem;font-weight:600;display:none;text-align:center;margin-top:4px}
+.msg.ok{background:var(--green-dim);border:1px solid var(--green-b);color:#c8ffdc;display:block}
+.msg.err{background:var(--red-dim);border:1px solid var(--red-b);color:#ffd0d0;display:block}
+.avatar-row{display:flex;align-items:center;gap:16px;padding:14px;border:1px solid var(--line);border-radius:12px;background:rgba(255,255,255,.015)}
+.avatar-ring{width:70px;height:70px;border-radius:50%;padding:3px;background:linear-gradient(135deg,var(--gold),rgba(74,130,204,.5));cursor:pointer;flex:0 0 70px}
+.avatar-ring img{width:100%;height:100%;border-radius:50%;object-fit:cover;background:var(--bg3);display:block}
 
-/* ACCOUNT TYPE SPECIFIC SECTIONS */
-.section-block{border:1px solid var(--line2);border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:12px;background:rgba(255,255,255,.01)}
-.section-block-title{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:var(--muted2);margin-bottom:4px}
+/* PLÁN — Free badge for now */
+.plan-info{padding:14px 16px;border:1px solid var(--line);border-radius:12px;background:rgba(255,255,255,.02);display:flex;align-items:center;justify-content:space-between;gap:12px}
+.plan-info .label{font-size:.7rem;color:var(--muted2);text-transform:uppercase;letter-spacing:.08em;font-weight:700}
+.plan-info .val{font-size:.95rem;font-weight:800;color:var(--gold)}
 
-/* FEATURE TAGS */
-.feature-list{display:flex;flex-wrap:wrap;gap:6px}
-.ftag{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:999px;font-size:.72rem;font-weight:700;border:1px solid var(--line);background:rgba(255,255,255,.03);color:var(--muted2)}
-.ftag.on{border-color:var(--green-b);background:var(--green-dim);color:var(--green)}
-.ftag.gold{border-color:var(--gold-b);background:var(--gold-dim);color:var(--gold)}
-.ftag.blue{border-color:var(--blue-b);background:var(--blue-dim);color:var(--blue)}
+/* MULTI-SPORT ŠPORTOVISKÁ */
+.sport-block{border:1px solid var(--line);border-radius:12px;background:rgba(255,255,255,.02);overflow:hidden}
+.sport-head{display:flex;align-items:center;gap:10px;padding:12px 14px;cursor:pointer;user-select:none;transition:.15s}
+.sport-head:hover{background:rgba(255,255,255,.03)}
+.sport-block.sel .sport-head{background:var(--gold-dim);border-bottom:1px solid var(--gold-b)}
+.sport-cbx{width:18px;height:18px;border-radius:5px;border:1.5px solid var(--line);display:flex;align-items:center;justify-content:center;font-size:.7rem;flex:0 0 18px;transition:.15s}
+.sport-block.sel .sport-cbx{background:var(--gold);color:#1a1000;border-color:var(--gold)}
+.sport-icon{font-size:1.2rem}
+.sport-name{font-size:.88rem;font-weight:800;flex:1}
+.sport-body{display:none;padding:12px 14px;border-top:1px solid var(--line)}
+.sport-block.sel .sport-body{display:block}
+.sport-body-label{font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:8px}
+.venue-row{display:flex;gap:8px;align-items:center;margin-bottom:6px}
+.venue-row input{flex:1;padding:8px 10px;background:var(--bg3);border:1px solid var(--line);border-radius:8px;color:var(--text);font-family:var(--font);font-size:.82rem;outline:none}
+.venue-row .num{width:60px;flex:0 0 60px;text-align:center}
+.venue-row input:focus{border-color:var(--gold-b)}
+.del-btn{width:30px;height:30px;border-radius:7px;border:1px solid rgba(217,79,79,.3);background:rgba(217,79,79,.07);color:var(--red);cursor:pointer;font-size:.85rem;display:flex;align-items:center;justify-content:center;flex:0 0 30px;transition:.15s}
+.del-btn:hover{background:rgba(217,79,79,.15)}
+.add-venue{width:100%;padding:7px;margin-top:4px;border-radius:8px;border:1px dashed rgba(255,255,255,.15);background:transparent;color:var(--muted);font-size:.75rem;font-weight:700;cursor:pointer;font-family:var(--font);transition:.15s}
+.add-venue:hover{color:var(--text);border-color:rgba(255,255,255,.3)}
 
-/* ACTIONS */
-.actions{display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap;padding-top:4px}
-.btn{display:inline-flex;align-items:center;gap:6px;min-height:44px;padding:0 20px;border:none;border-radius:12px;font:700 .88rem/1 var(--font);cursor:pointer;text-decoration:none;transition:.15s;white-space:nowrap}
-.btn-green{background:var(--green);color:#06230f}
-.btn-green:hover{background:#1adf72}
-.btn-dark{background:rgba(255,255,255,.05);color:var(--text);border:1px solid var(--line)}
-.btn-dark:hover{background:rgba(255,255,255,.09)}
-.btn-gold{background:var(--gold);color:#1a1000}
-.btn-gold:hover{background:#e8b94f}
-
-/* MSG */
-.msg{padding:11px 16px;border-radius:10px;font-size:.84rem;font-weight:600;display:none;text-align:center;margin-top:4px}
-.msg.ok{background:var(--green-dim);border:1px solid var(--green-b);color:#c8ffdc}
-.msg.err{background:var(--red-dim);border:1px solid var(--red-b);color:#ffd0d0}
-
-/* RESPONSIVE */
-@media(max-width:640px){
-  .type-grid{grid-template-columns:1fr}
-  .row-2,.row-3{grid-template-columns:1fr}
-  .panel{padding:18px}
-}
-@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
-.fade-in{animation:fadeUp .35s ease both}
+@media(max-width:600px){.row2{grid-template-columns:1fr}}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
 <div class="shell">
 
-  <!-- BRAND -->
-  <div class="brand fade-in">
-    <div class="brand-name"><span>ConnectScore</span>Pro</div>
-    <a href="/klub/" class="back">← Späť na profil</a>
+  <div class="topbar">
+    <div class="brand"><span>ConnectScore</span>Pro</div>
+    <a href="#" id="backLink" class="back">← Späť na profil</a>
   </div>
 
-  <!-- HEADING -->
-  <div class="page-head fade-in" style="animation-delay:.05s">
-    <h1>Nastavenie profilu</h1>
-    <p>Vyber typ účtu a vyplň základné informácie.</p>
+  <div>
+    <h1>Nastavenia profilu</h1>
+    <p class="sub">Uprav svoje údaje a športoviská.</p>
   </div>
 
-  <!-- TYP ÚČTU -->
-  <div class="panel fade-in" style="animation-delay:.08s">
-    <div class="panel-title">Typ účtu</div>
-    <div class="type-grid">
-      <div class="type-card selected" onclick="selectType('player',this)">
-        <div class="type-check">✓</div>
-        <div class="type-icon">🎱</div>
-        <div class="type-name">Hráč</div>
-        <div class="type-desc">Turnaje, tréningy, štatistiky, rebríčky a herná história</div>
+  <!-- AKTUÁLNY PLÁN -->
+  <div class="card">
+    <div class="card-title">Tvoj plán</div>
+    <div class="plan-info">
+      <div>
+        <div class="label">Aktuálny plán</div>
+        <div class="val" id="currentPlan">Free</div>
       </div>
-      <div class="type-card" onclick="selectType('club',this)">
-        <div class="type-check">✓</div>
-        <div class="type-icon">🏛️</div>
-        <div class="type-name">Klub</div>
-        <div class="type-desc">Správa členov, ligy, rebríčky, rezervačný systém a udalosti</div>
-      </div>
-      <div class="type-card" onclick="selectType('organizer',this)">
-        <div class="type-check">✓</div>
-        <div class="type-icon">🏆</div>
-        <div class="type-name">Organizácia</div>
-        <div class="type-desc">Turnaje, bratety, multi-klubové ligy a live výsledky</div>
-      </div>
-    </div>
-
-    <!-- Features preview -->
-    <div id="featuresPreview" class="section-block">
-      <div class="section-block-title">Dostupné funkcie pre tento účet</div>
-      <div class="feature-list" id="featureList">
-        <span class="ftag on">▶ Tréning</span>
-        <span class="ftag on">📊 Štatistiky</span>
-        <span class="ftag on">🏆 Turnaje</span>
-        <span class="ftag on">📅 Udalosti</span>
-        <span class="ftag on">🎯 Výsledky</span>
-        <span class="ftag">🏛️ Správa klubu</span>
-        <span class="ftag">👥 Správa členov</span>
-        <span class="ftag">📋 Ligy</span>
-        <span class="ftag">📆 Rezervácie</span>
-        <span class="ftag">🌐 Multi-klubové ligy</span>
-        <span class="ftag">⚡ Live bracket</span>
-      </div>
+      <button class="btn btn-gold" onclick="alert('Plány budú dostupné čoskoro. Zatiaľ je všetko zdarma 🎉')" style="font-size:.78rem;min-height:34px;padding:0 14px">Zmeniť plán</button>
     </div>
   </div>
 
-  <!-- ZÁKLADNÉ ÚDAJE (spoločné) -->
-  <div class="panel fade-in" style="animation-delay:.12s">
-    <div class="panel-title">Základné informácie</div>
-
-    <!-- Avatar -->
+  <!-- AVATAR -->
+  <div class="card">
+    <div class="card-title">Profilový obrázok</div>
     <div class="avatar-row">
-      <div class="avatar-ring" onclick="document.getElementById('avatarFile').click()" title="Zmeniť avatar">
-        <img src="" alt="Avatar" id="avatarImg"/>
+      <div class="avatar-ring" onclick="document.getElementById('avatarFile').click()">
+        <img id="avatarImg" src="" alt=""/>
       </div>
       <input type="file" id="avatarFile" accept="image/*" style="display:none" onchange="uploadAvatar(this)"/>
-      <div class="avatar-info">
-        <strong id="avatarStatus">Profilový obrázok</strong>
-        <p>JPG, PNG alebo WebP · max 5 MB</p>
-        <span class="avatar-btn" onclick="document.getElementById('avatarFile').click()">Nahrať foto</span>
+      <div>
+        <div style="font-size:.85rem;font-weight:700" id="avatarStatus">Nahrať foto</div>
+        <div style="font-size:.73rem;color:var(--muted2);margin-top:3px">JPG, PNG, WebP · max 5 MB</div>
       </div>
     </div>
+  </div>
 
-    <div class="form-grid">
-      <!-- HRÁČ polia -->
-      <div id="fieldsPlayer">
-        <div class="row-2">
-          <div class="field">
-            <label>Meno a priezvisko / Prezývka</label>
-            <input id="inputName" placeholder="Tomáš Pikna"/>
-          </div>
-          <div class="field">
-            <label>Používateľské meno (@)</label>
-            <input id="inputUsername" placeholder="tomaspiknaSVK"/>
-          </div>
-        </div>
-        <div class="row-2" style="margin-top:14px">
-          <div class="field">
-            <label>Mesto</label>
-            <input id="inputCity" placeholder="Kanianka"/>
-          </div>
-          <div class="field">
-            <label>Krajina</label>
-            <input id="inputCountry" value="Slovensko"/>
-          </div>
-        </div>
-        <div class="row-2" style="margin-top:14px">
-          <div class="field">
-            <label>Hlavný šport</label>
-            <select id="inputSport">
-              <option value="billiard">🎱 Biliard</option>
-              <option value="darts">🎯 Šípky</option>
-              <option value="bowling">🎳 Bowling</option>
-              <option value="cards">🃏 Karty</option>
-              <option value="tabletennis">🏓 Stolný tenis</option>
-            </select>
-          </div>
-          <div class="field">
-            <label>Disciplína</label>
-            <select id="inputDiscipline">
-              <option>8-Ball</option>
-              <option>9-Ball</option>
-              <option>10-Ball</option>
-              <option>Blackball</option>
-              <option>501</option>
-              <option>301</option>
-            </select>
-          </div>
-        </div>
-        <div class="field" style="margin-top:14px">
-          <label>Krátky popis (voliteľné)</label>
-          <textarea id="inputBio" placeholder="Napíš niečo o sebe..."></textarea>
-        </div>
-      </div>
-
-      <!-- KLUB polia -->
-      <div id="fieldsClub" style="display:none">
-        <div class="row-2">
-          <div class="field">
-            <label>Názov klubu</label>
-            <input id="inputClubName" placeholder="Moment Club"/>
-          </div>
-          <div class="field">
-            <label>Slug / URL (@)</label>
-            <input id="inputClubSlug" placeholder="moment-club"/>
-          </div>
-        </div>
-        <div class="row-2" style="margin-top:14px">
-          <div class="field">
-            <label>Mesto</label>
-            <input id="inputClubCity" placeholder="Kanianka"/>
-          </div>
-          <div class="field">
-            <label>Kontaktný email</label>
-            <input id="inputClubEmail" type="email" placeholder="kontakt@klub.sk"/>
-          </div>
-        </div>
-        <div class="row-2" style="margin-top:14px">
-          <div class="field">
-            <label>Telefón</label>
-            <input id="inputClubPhone" placeholder="+421 900 000 000"/>
-          </div>
-          <div class="field">
-            <label>Web stránka (voliteľné)</label>
-            <input id="inputClubWeb" placeholder="https://mojklub.sk"/>
-          </div>
-        </div>
-        <div class="field" style="margin-top:14px">
-          <label>Popis klubu</label>
-          <textarea id="inputClubBio" placeholder="Napíš o klube, jeho histórii a aktivitách..."></textarea>
-        </div>
-        <div class="section-block" style="margin-top:14px">
-          <div class="section-block-title">Šport a kapacita</div>
-          <div class="row-3">
-            <div class="field">
-              <label>Hlavný šport</label>
-              <select id="inputClubSport">
-                <option value="billiard">🎱 Biliard</option>
-                <option value="darts">🎯 Šípky</option>
-                <option value="bowling">🎳 Bowling</option>
-                <option value="multi">🏅 Multi-šport</option>
-              </select>
-            </div>
-            <div class="field">
-              <label>Počet stolísk / dráh</label>
-              <input id="inputClubCapacity" type="number" placeholder="4" min="1"/>
-            </div>
-            <div class="field">
-              <label>Otváracie hodiny</label>
-              <input id="inputClubHours" placeholder="Po–Ne 15:00–23:00"/>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- ORGANIZÁCIA polia -->
-      <div id="fieldsOrganizer" style="display:none">
-        <div class="row-2">
-          <div class="field">
-            <label>Názov organizácie</label>
-            <input id="inputOrgName" placeholder="Slovenský biliardový zväz"/>
-          </div>
-          <div class="field">
-            <label>Slug / URL (@)</label>
-            <input id="inputOrgSlug" placeholder="sbz"/>
-          </div>
-        </div>
-        <div class="row-2" style="margin-top:14px">
-          <div class="field">
-            <label>Kontaktný email</label>
-            <input id="inputOrgEmail" type="email" placeholder="kontakt@organizacia.sk"/>
-          </div>
-          <div class="field">
-            <label>Web stránka (voliteľné)</label>
-            <input id="inputOrgWeb" placeholder="https://organizacia.sk"/>
-          </div>
-        </div>
-        <div class="row-2" style="margin-top:14px">
-          <div class="field">
-            <label>Región pôsobenia</label>
-            <select id="inputOrgRegion">
-              <option>Celé Slovensko</option>
-              <option>Trenčínsky kraj</option>
-              <option>Bratislavský kraj</option>
-              <option>Žilinský kraj</option>
-              <option>Nitriansky kraj</option>
-              <option>Banskobystrický kraj</option>
-              <option>Prešovský kraj</option>
-              <option>Košický kraj</option>
-              <option>Trnavský kraj</option>
-            </select>
-          </div>
-          <div class="field">
-            <label>Šport</label>
-            <select id="inputOrgSport">
-              <option value="billiard">🎱 Biliard</option>
-              <option value="darts">🎯 Šípky</option>
-              <option value="bowling">🎳 Bowling</option>
-              <option value="multi">🏅 Multi-šport</option>
-            </select>
-          </div>
-        </div>
-        <div class="field" style="margin-top:14px">
-          <label>Popis organizácie</label>
-          <textarea id="inputOrgBio" placeholder="Opíš organizáciu, jej ciele a aktivity..."></textarea>
-        </div>
+  <!-- HRÁČ FIELDS -->
+  <div class="card role-section" id="fieldsHrac">
+    <div class="card-title">Hráčske údaje</div>
+    <div class="row2">
+      <div class="field"><label>Meno a priezvisko</label><input id="hMeno"/></div>
+      <div class="field"><label>Prezývka</label><input id="hNick"/></div>
+    </div>
+    <div class="row2">
+      <div class="field"><label>Mesto</label><input id="hMesto"/></div>
+      <div class="field">
+        <label>Hlavný šport</label>
+        <select id="hSport">
+          <option value="">— vyber —</option>
+          <option value="billiard">🎱 Biliard</option>
+          <option value="darts">🎯 Šípky</option>
+          <option value="bowling">🎳 Bowling</option>
+          <option value="cards">🃏 Karty</option>
+        </select>
       </div>
     </div>
+    <div class="field"><label>Klub kde hrám (voliteľné)</label><input id="hKlub"/></div>
+    <div class="field"><label>O mne</label><textarea id="hBio"></textarea></div>
+  </div>
 
+  <!-- KLUB FIELDS -->
+  <div class="card role-section" id="fieldsKlub">
+    <div class="card-title">Údaje klubu</div>
+    <div class="field"><label>Názov klubu</label><input id="kNazov"/></div>
+    <div class="row2">
+      <div class="field"><label>Mesto</label><input id="kMesto"/></div>
+      <div class="field"><label>Adresa</label><input id="kAdresa"/></div>
+    </div>
+    <div class="row2">
+      <div class="field"><label>Kontaktný email</label><input id="kEmail" type="email"/></div>
+      <div class="field"><label>Telefón</label><input id="kPhone"/></div>
+    </div>
+    <div class="field"><label>Otváracie hodiny</label><input id="kHodiny" placeholder="15:00 – 23:00"/></div>
+    <div class="field"><label>O klube</label><textarea id="kBio"></textarea></div>
+
+    <div>
+      <label style="font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:var(--muted2);display:block;margin-bottom:8px">Ponúkané športy a športoviská</label>
+      <div id="sportBlocks" style="display:flex;flex-direction:column;gap:10px"></div>
+    </div>
+  </div>
+
+  <!-- ORG FIELDS -->
+  <div class="card role-section" id="fieldsOrg">
+    <div class="card-title">Údaje organizácie</div>
+    <div class="field"><label>Názov organizácie</label><input id="oNazov"/></div>
+    <div class="row2">
+      <div class="field"><label>Štát / Región</label><input id="oStat"/></div>
+      <div class="field"><label>Kontaktný email</label><input id="oEmail" type="email"/></div>
+    </div>
+    <div class="field">
+      <label>Hlavný šport</label>
+      <select id="oSport">
+        <option value="">— vyber —</option>
+        <option value="billiard">🎱 Biliard</option>
+        <option value="darts">🎯 Šípky</option>
+        <option value="bowling">🎳 Bowling</option>
+        <option value="multi">🏅 Multi-šport</option>
+      </select>
+    </div>
+    <div class="field"><label>O organizácii</label><textarea id="oBio"></textarea></div>
+  </div>
+
+  <div>
     <div class="msg" id="saveMsg"></div>
-
-    <div class="actions">
-      <a href="/klub/" class="btn btn-dark">Preskočiť</a>
-      <button class="btn btn-gold" onclick="saveProfile()">💾 Uložiť profil</button>
+    <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:8px">
+      <a href="#" id="cancelLink" class="btn btn-dark">Zrušiť</a>
+      <button class="btn btn-gold" id="btnSave">💾 Uložiť</button>
     </div>
   </div>
 
 </div>
 
 <script>
-const SB_URL  = "https://gilzomwhuwcxpkegtlhj.supabase.co";
-const SB_ANON = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdpbHpvbXdodXdjeHBrZWd0bGhqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzcwMzMwMTgsImV4cCI6MjA5MjYwOTAxOH0.-KiLSdiB2mRWqUDB9GWyISfCu2o_ZBM80aGUEW9CcUg";
-const db = window.supabase.createClient(SB_URL, SB_ANON);
-let currentUser = null;
-let accountType = 'player';
+const SB = window.supabase.createClient(
+  'https://gilzomwhuwcxpkegtlhj.supabase.co',
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdpbHpvbXdodXdjeHBrZWd0bGhqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzcwMzMwMTgsImV4cCI6MjA5MjYwOTAxOH0.-KiLSdiB2mRWqUDB9GWyISfCu2o_ZBM80aGUEW9CcUg'
+);
 
-// ── AUTH ─────────────────────────────────────────
-db.auth.onAuthStateChange(async (event, session) => {
+let currentUser = null;
+let currentRole = null;
+
+const SPORTS_DEF = [
+  {key:'billiard', icon:'🎱', name:'Biliard', placeholder:'napr. 9ft Rasson stôl'},
+  {key:'darts',    icon:'🎯', name:'Šípky',   placeholder:'napr. Steel terče Winmau'},
+  {key:'bowling',  icon:'🎳', name:'Bowling', placeholder:'napr. Profi dráhy'},
+  {key:'cards',    icon:'🃏', name:'Karty',   placeholder:'napr. Pokrový stôl 8 miest'},
+];
+
+const sportsState = {};
+SPORTS_DEF.forEach(s => sportsState[s.key] = {selected:false, venues:[]});
+
+function renderSportBlocks(){
+  const cont = document.getElementById('sportBlocks');
+  if(!cont) return;
+  cont.innerHTML = SPORTS_DEF.map(s => {
+    const st = sportsState[s.key];
+    const venuesHTML = (st.venues||[]).map((v,i) => `
+      <div class="venue-row">
+        <input class="num" type="number" min="1" max="99" value="${v.count}"
+          oninput="sportsState['${s.key}'].venues[${i}].count = parseInt(this.value)||1"/>
+        <input value="${(v.label||'').replace(/"/g,'&quot;')}" placeholder="${s.placeholder}"
+          oninput="sportsState['${s.key}'].venues[${i}].label = this.value"/>
+        <button class="del-btn" onclick="removeVenue('${s.key}',${i})">✕</button>
+      </div>`).join('');
+    return `
+      <div class="sport-block ${st.selected?'sel':''}">
+        <div class="sport-head" onclick="toggleSport('${s.key}')">
+          <div class="sport-cbx">${st.selected?'✓':''}</div>
+          <div class="sport-icon">${s.icon}</div>
+          <div class="sport-name">${s.name}</div>
+        </div>
+        <div class="sport-body">
+          <div class="sport-body-label">Športoviská (počet · popis)</div>
+          ${venuesHTML}
+          <button class="add-venue" onclick="addVenue('${s.key}')">+ Pridať športovisko</button>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+function toggleSport(key){
+  sportsState[key].selected = !sportsState[key].selected;
+  if(sportsState[key].selected && sportsState[key].venues.length === 0){
+    sportsState[key].venues.push({count:1, label:''});
+  }
+  renderSportBlocks();
+}
+
+function addVenue(key){
+  sportsState[key].venues.push({count:1, label:''});
+  renderSportBlocks();
+}
+
+function removeVenue(key, idx){
+  sportsState[key].venues.splice(idx,1);
+  if(sportsState[key].venues.length === 0) sportsState[key].selected = false;
+  renderSportBlocks();
+}
+
+// ── AUTH + LOAD ──
+SB.auth.onAuthStateChange(async (event, session) => {
   if(!session){ window.location.href = '/login/'; return; }
   if(event === 'SIGNED_IN' || event === 'INITIAL_SESSION'){
     currentUser = session.user;
@@ -400,175 +272,196 @@ db.auth.onAuthStateChange(async (event, session) => {
 });
 
 async function loadProfile(){
-  const { data: p } = await db.from('profiles').select('*').eq('id', currentUser.id).single();
-  if(!p) return;
+  const {data:p, error} = await SB.from('profiles').select('*').eq('id',currentUser.id).single();
+  if(error){ console.error('Load error:', error); }
 
-  // Nastav typ účtu
-  if(p.account_type) selectType(p.account_type, document.querySelector(`[onclick*="${p.account_type}"]`));
+  currentRole = p?.role || null;
 
   // Naplň polia
-  const set = (id, val) => { const el = document.getElementById(id); if(el && val) el.value = val; };
-  set('inputName',       p.full_name);
-  set('inputUsername',   p.username);
-  set('inputCity',       p.city);
-  set('inputCountry',    p.country);
-  set('inputSport',      p.sport);
-  set('inputBio',        p.bio);
-  set('inputClubName',   p.club_name);
-  set('inputClubSlug',   p.username);
-  set('inputClubCity',   p.city);
-  set('inputClubEmail',  p.contact_email);
-  set('inputClubBio',    p.bio);
-  set('inputOrgName',    p.org_name);
-  set('inputOrgEmail',   p.contact_email);
-  set('inputOrgBio',     p.bio);
+  const set = (id, v) => { const el = document.getElementById(id); if(el && v != null) el.value = v; };
 
-  const imgEl = document.getElementById('avatarImg');
-  if(imgEl && p.avatar_url) imgEl.src = p.avatar_url;
-}
-
-// ── TYP ÚČTU ─────────────────────────────────────
-const FEATURES = {
-  player: [
-    {label:'▶ Tréning', on:true},
-    {label:'📊 Štatistiky', on:true},
-    {label:'🏆 Turnaje', on:true},
-    {label:'📅 Udalosti', on:true},
-    {label:'🎯 Výsledky', on:true},
-    {label:'🏛️ Správa klubu', on:false},
-    {label:'👥 Správa členov', on:false},
-    {label:'📋 Ligy', on:false},
-    {label:'📆 Rezervácie', on:false},
-    {label:'⚡ Live bracket', on:false},
-  ],
-  club: [
-    {label:'🏛️ Správa klubu', on:true},
-    {label:'👥 Správa členov', on:true},
-    {label:'📋 Ligy a rebríčky', on:true},
-    {label:'📆 Rezervačný systém', on:true},
-    {label:'📅 Udalosti', on:true},
-    {label:'🏆 Turnaje & bratety', on:true},
-    {label:'⚡ Live bracket', on:true},
-    {label:'📊 Klubové štatistiky', on:true},
-    {label:'▶ Tréning (osobný)', on:false},
-    {label:'🌐 Multi-klubové ligy', on:false},
-  ],
-  organizer: [
-    {label:'🏆 Turnaje & bratety', on:true},
-    {label:'⚡ Live bracket', on:true},
-    {label:'🌐 Multi-klubové ligy', on:true},
-    {label:'📋 Rebríčky', on:true},
-    {label:'📅 Udalosti', on:true},
-    {label:'📊 Štatistiky', on:true},
-    {label:'👥 Správa hráčov', on:true},
-    {label:'🏛️ Správa klubu', on:false},
-    {label:'📆 Rezervácie', on:false},
-    {label:'▶ Tréning', on:false},
-  ],
-};
-
-function selectType(type, card){
-  accountType = type;
-  document.querySelectorAll('.type-card').forEach(c => c.classList.remove('selected'));
-  if(card) card.classList.add('selected');
-
-  // Zobraz správne polia
-  document.getElementById('fieldsPlayer').style.display   = type === 'player' ? '' : 'none';
-  document.getElementById('fieldsClub').style.display     = type === 'club' ? '' : 'none';
-  document.getElementById('fieldsOrganizer').style.display = type === 'organizer' ? '' : 'none';
-
-  // Obnov feature zoznam
-  const list = document.getElementById('featureList');
-  list.innerHTML = (FEATURES[type] || []).map(f =>
-    `<span class="ftag ${f.on ? 'on' : ''}">${f.label}</span>`
-  ).join('');
-}
-
-// ── ULOŽIŤ ───────────────────────────────────────
-async function saveProfile(){
-  if(!currentUser){ alert('Nie si prihlásený.'); return; }
-  const btn = document.querySelector('.btn-gold');
-  btn.disabled = true; btn.textContent = '⏳ Ukladám...';
-
-  let payload = { account_type: accountType };
-
-  if(accountType === 'player'){
-    const name = document.getElementById('inputName').value.trim();
-    const user = document.getElementById('inputUsername').value.trim().toLowerCase().replace(/[^a-z0-9_.]/g,'');
-    if(!name || !user){ showMsg('Vyplň meno a používateľské meno.','err'); btn.disabled=false; btn.textContent='💾 Uložiť profil'; return; }
-    payload = {
-      ...payload,
-      full_name: name,
-      username: user,
-      city: document.getElementById('inputCity').value.trim(),
-      country: document.getElementById('inputCountry').value.trim(),
-      sport: document.getElementById('inputSport').value,
-      bio: document.getElementById('inputBio').value.trim(),
-    };
-  } else if(accountType === 'club'){
-    const name = document.getElementById('inputClubName').value.trim();
-    const slug = document.getElementById('inputClubSlug').value.trim().toLowerCase().replace(/[^a-z0-9-]/g,'');
-    if(!name){ showMsg('Vyplň názov klubu.','err'); btn.disabled=false; btn.textContent='💾 Uložiť profil'; return; }
-    payload = {
-      ...payload,
-      full_name: name,
-      club_name: name,
-      username: slug,
-      city: document.getElementById('inputClubCity').value.trim(),
-      contact_email: document.getElementById('inputClubEmail').value.trim(),
-      bio: document.getElementById('inputClubBio').value.trim(),
-      sport: document.getElementById('inputClubSport').value,
-    };
-  } else if(accountType === 'organizer'){
-    const name = document.getElementById('inputOrgName').value.trim();
-    const slug = document.getElementById('inputOrgSlug').value.trim().toLowerCase().replace(/[^a-z0-9-]/g,'');
-    if(!name){ showMsg('Vyplň názov organizácie.','err'); btn.disabled=false; btn.textContent='💾 Uložiť profil'; return; }
-    payload = {
-      ...payload,
-      full_name: name,
-      org_name: name,
-      username: slug,
-      contact_email: document.getElementById('inputOrgEmail').value.trim(),
-      bio: document.getElementById('inputOrgBio').value.trim(),
-      sport: document.getElementById('inputOrgSport').value,
-    };
+  if(currentRole === 'hrac'){
+    document.getElementById('fieldsHrac').classList.add('visible');
+    set('hMeno', p.full_name);
+    set('hNick', p.username);
+    set('hMesto', p.city);
+    set('hSport', p.sport);
+    set('hKlub', p.club_name);
+    set('hBio', p.bio);
   }
+  if(currentRole === 'klub'){
+    document.getElementById('fieldsKlub').classList.add('visible');
+    set('kNazov', p.full_name || p.club_name);
+    set('kMesto', p.city);
+    set('kAdresa', p.address);
+    set('kEmail', p.contact_email);
+    set('kPhone', p.phone);
+    set('kHodiny', p.open_hours);
+    set('kBio', p.bio);
 
-  const { error } = await db.from('profiles').update(payload).eq('id', currentUser.id);
-  btn.disabled = false; btn.textContent = '💾 Uložiť profil';
-
-  if(error){
-    showMsg(error.message.includes('unique') ? 'Toto meno je už obsadené.' : error.message, 'err');
+    // Načítaj športoviská — môže byť starý formát (array) alebo nový (per sport)
+    if(p.sport){
+      const sports = p.sport.split(',').map(s => s.trim()).filter(Boolean);
+      sports.forEach(key => { if(sportsState[key]) sportsState[key].selected = true; });
+    }
+    if(p.sportoviska){
+      try{
+        const parsed = JSON.parse(p.sportoviska);
+        // Ak je to objekt {billiard:[...], darts:[...]} — nový formát
+        if(parsed && typeof parsed === 'object' && !Array.isArray(parsed)){
+          Object.keys(parsed).forEach(key => {
+            if(sportsState[key]){
+              sportsState[key].selected = true;
+              sportsState[key].venues = (parsed[key]||[]).map(v => ({count:v.count||1, label:v.label||''}));
+            }
+          });
+        }
+        // Ak je to array — starý formát, nedá sa priradiť k športu, ignorujeme
+      }catch(e){ console.warn('Parse sportoviska error:', e); }
+    }
+    // Ak je vybraný šport ale nemá venues, pridaj prázdnu položku
+    Object.keys(sportsState).forEach(key => {
+      if(sportsState[key].selected && sportsState[key].venues.length === 0){
+        sportsState[key].venues.push({count:1, label:''});
+      }
+    });
+    renderSportBlocks();
+  }
+  if(currentRole === 'organizacia'){
+    document.getElementById('fieldsOrg').classList.add('visible');
+    set('oNazov', p.full_name);
+    set('oStat', p.city);
+    set('oEmail', p.contact_email);
+    set('oSport', p.sport);
+    set('oBio', p.bio);
+  }
+  if(!currentRole){
+    // Nemá rolu → presmeruj na registráciu
+    alert('Najprv si dokonči registráciu.');
+    window.location.href = '/registracia/';
     return;
   }
-  showMsg('✓ Profil uložený!', 'ok');
-  setTimeout(() => window.location.href = '/klub/', 1200);
+
+  // Plán
+  document.getElementById('currentPlan').textContent = (p.plan || 'Free').charAt(0).toUpperCase() + (p.plan || 'free').slice(1);
+
+  // Linky späť
+  const profileMap = {hrac:'/hrac/', klub:'/klub/', organizacia:'/organizacia/'};
+  const backUrl = profileMap[currentRole] || '/klub/';
+  document.getElementById('backLink').href = backUrl;
+  document.getElementById('cancelLink').href = backUrl;
+
+  // Avatar
+  const img = document.getElementById('avatarImg');
+  if(p.avatar_url) img.src = p.avatar_url + '?t=' + Date.now();
+  else if(currentUser.user_metadata?.avatar_url) img.src = currentUser.user_metadata.avatar_url;
 }
+
+// ── SAVE ──
+document.getElementById('btnSave').addEventListener('click', async () => {
+  if(!currentUser){
+    showMsg('Nie si prihlásený.','err');
+    return;
+  }
+
+  const btn = document.getElementById('btnSave');
+  btn.disabled = true;
+  btn.textContent = '⏳ Ukladám...';
+
+  let payload = { id: currentUser.id, role: currentRole };
+
+  if(currentRole === 'hrac'){
+    const meno = document.getElementById('hMeno').value.trim();
+    if(!meno){ showMsg('Vyplň meno.','err'); btn.disabled=false; btn.textContent='💾 Uložiť'; return; }
+    payload.full_name = meno;
+    payload.username  = document.getElementById('hNick').value.trim().toLowerCase().replace(/[^a-z0-9_.]/g,'') || null;
+    payload.city      = document.getElementById('hMesto').value.trim() || null;
+    payload.sport     = document.getElementById('hSport').value || null;
+    payload.club_name = document.getElementById('hKlub').value.trim() || null;
+    payload.bio       = document.getElementById('hBio').value.trim() || null;
+  }
+
+  if(currentRole === 'klub'){
+    const nazov = document.getElementById('kNazov').value.trim();
+    if(!nazov){ showMsg('Vyplň názov klubu.','err'); btn.disabled=false; btn.textContent='💾 Uložiť'; return; }
+
+    const selectedSports = [];
+    const venuesData = {};
+    Object.keys(sportsState).forEach(key => {
+      if(sportsState[key].selected){
+        selectedSports.push(key);
+        venuesData[key] = sportsState[key].venues.filter(v => v.label && v.label.trim()).map(v => ({
+          count: parseInt(v.count)||1,
+          label: v.label.trim()
+        }));
+      }
+    });
+
+    payload.full_name     = nazov;
+    payload.club_name     = nazov;
+    payload.city          = document.getElementById('kMesto').value.trim() || null;
+    payload.address       = document.getElementById('kAdresa').value.trim() || null;
+    payload.contact_email = document.getElementById('kEmail').value.trim() || null;
+    payload.phone         = document.getElementById('kPhone').value.trim() || null;
+    payload.open_hours    = document.getElementById('kHodiny').value.trim() || null;
+    payload.bio           = document.getElementById('kBio').value.trim() || null;
+    payload.sport         = selectedSports.join(',') || null;
+    payload.sportoviska   = selectedSports.length ? JSON.stringify(venuesData) : null;
+  }
+
+  if(currentRole === 'organizacia'){
+    const nazov = document.getElementById('oNazov').value.trim();
+    if(!nazov){ showMsg('Vyplň názov organizácie.','err'); btn.disabled=false; btn.textContent='💾 Uložiť'; return; }
+    payload.full_name     = nazov;
+    payload.city          = document.getElementById('oStat').value.trim() || null;
+    payload.contact_email = document.getElementById('oEmail').value.trim() || null;
+    payload.sport         = document.getElementById('oSport').value || null;
+    payload.bio           = document.getElementById('oBio').value.trim() || null;
+  }
+
+  console.log('Saving:', payload);
+
+  const {data, error} = await SB.from('profiles').upsert(payload).select();
+
+  btn.disabled = false;
+  btn.textContent = '💾 Uložiť';
+
+  if(error){
+    console.error('Save error:', error);
+    let msg = 'Chyba: ' + error.message;
+    if(error.message.includes('column')) msg += ' — pravdepodobne chýba stĺpec v Supabase tabuľke profiles.';
+    if(error.message.includes('unique')) msg = 'Toto meno je už obsadené.';
+    showMsg(msg,'err');
+    return;
+  }
+
+  console.log('Saved:', data);
+  showMsg('✓ Uložené!','ok');
+
+  const profileMap = {hrac:'/hrac/', klub:'/klub/', organizacia:'/organizacia/'};
+  setTimeout(() => window.location.href = profileMap[currentRole] || '/klub/', 1200);
+});
 
 function showMsg(text, type){
   const el = document.getElementById('saveMsg');
-  el.textContent = text;
+  el.innerHTML = text;
   el.className = 'msg ' + type;
-  el.style.display = 'block';
-  setTimeout(() => el.style.display = 'none', 4000);
 }
 
-// ── AVATAR UPLOAD ────────────────────────────────
+// ── AVATAR ──
 async function uploadAvatar(input){
   const file = input.files[0];
   if(!file || !currentUser) return;
   if(file.size > 5*1024*1024){ alert('Max 5 MB.'); return; }
-
   document.getElementById('avatarStatus').textContent = '⏳ Nahrávam...';
   const ext = file.name.split('.').pop() || 'jpg';
-  const path = `avatars/${currentUser.id}/avatar.${ext}`;
-  const { error } = await db.storage.from('avatars').upload(path, file, {upsert:true, contentType:file.type});
-  if(error){ alert('Chyba: '+error.message); document.getElementById('avatarStatus').textContent='Profilový obrázok'; return; }
-  const { data: u } = db.storage.from('avatars').getPublicUrl(path);
-  const url = u.publicUrl + '?t=' + Date.now();
-  await db.from('profiles').update({avatar_url: u.publicUrl}).eq('id', currentUser.id);
-  document.getElementById('avatarImg').src = url;
-  document.getElementById('avatarStatus').textContent = '✓ Avatar aktualizovaný';
+  const path = 'avatars/' + currentUser.id + '/avatar.' + ext;
+  const {error} = await SB.storage.from('avatars').upload(path, file, {upsert:true, contentType:file.type});
+  if(error){ alert('Chyba: '+error.message); document.getElementById('avatarStatus').textContent='Nahrať foto'; return; }
+  const {data:u} = SB.storage.from('avatars').getPublicUrl(path);
+  await SB.from('profiles').update({avatar_url:u.publicUrl}).eq('id', currentUser.id);
+  document.getElementById('avatarImg').src = u.publicUrl + '?t=' + Date.now();
+  document.getElementById('avatarStatus').textContent = '✓ Aktualizované';
   input.value = '';
 }
 </script>
